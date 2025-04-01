@@ -15,8 +15,6 @@ Game::Game()
     WindowManager::SetScrollCallback(scroll_callback);
     WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    RessourceManager::AddShader("light", "shaders/lightShader.vs", "shaders/lightShader.fs");
-    
     lights.push_back(std::make_unique<PointLight>(ml::vec3(1, 0, 0), 15, ml::vec3(0, 0, -3)));
     lights.push_back(std::make_unique<PointLight>(ml::vec3(0, 1, 0), 15, ml::vec3(0, 0, 3)));
     lights.push_back(std::make_unique<PointLight>(ml::vec3(0, 0, 1), 15, ml::vec3(-3, 0, 0)));
