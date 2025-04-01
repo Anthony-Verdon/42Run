@@ -1,0 +1,6 @@
+42Run
+*.o
+*.d
+.vscode
+.xmake
+build
