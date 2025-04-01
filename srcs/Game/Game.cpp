@@ -29,7 +29,6 @@ Game::Game()
     lights[3].SetPos(ml::vec3(3, 0, 0));
     lights[3].SetColor(ml::vec3(1, 1, 1));
 
-    RessourceManager::AddShader("mesh_shader", "shaders/meshShader.vs", "shaders/meshShader.fs");
     RessourceManager::AddShader("light", "shaders/lightShader.vs", "shaders/lightShader.fs");
     
     LoadAssets();
