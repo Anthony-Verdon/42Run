@@ -15,22 +15,15 @@ Game::Game()
     WindowManager::SetScrollCallback(scroll_callback);
     WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    for (size_t i = 0; i < 4; i++)
-    {
-        lights[i].SetScale(ml::vec3(0.5, 0.5, 0.5));
-        lights[i].SetIntensity(15);
-    }
-    lights[0].SetPos(ml::vec3(0, 0, -3));
-    lights[0].SetColor(ml::vec3(1, 0, 0));
-    lights[1].SetPos(ml::vec3(0, 0, 3));
-    lights[1].SetColor(ml::vec3(0, 1, 0));
-    lights[2].SetPos(ml::vec3(-3, 0, 0));
-    lights[2].SetColor(ml::vec3(0, 0, 1));
-    lights[3].SetPos(ml::vec3(3, 0, 0));
-    lights[3].SetColor(ml::vec3(1, 1, 1));
-
     RessourceManager::AddShader("light", "shaders/lightShader.vs", "shaders/lightShader.fs");
     
+    lights.push_back(std::make_unique<PointLight>(ml::vec3(1, 0, 0), 15, ml::vec3(0, 0, -3)));
+    lights.push_back(std::make_unique<PointLight>(ml::vec3(0, 1, 0), 15, ml::vec3(0, 0, 3)));
+    lights.push_back(std::make_unique<PointLight>(ml::vec3(0, 0, 1), 15, ml::vec3(-3, 0, 0)));
+    lights.push_back(std::make_unique<PointLight>(ml::vec3(1, 1, 1), 15, ml::vec3(3, 0, 0)));
+    lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 0), 3, ml::vec3(0, -1, 0)));
+    lights.push_back(std::make_unique<SpotLight>(ml::vec3(0, 1, 1), 15, camera.getPosition(), camera.getFrontDirection(), 12.5f, 17.5f));
+
     LoadAssets();
 }
 
@@ -56,21 +49,12 @@ void Game::Run()
     ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     ml::mat4 transform(1.0f);
+
+    auto light = dynamic_cast<SpotLight*>(lights[5].get());
+    light->position = camera.getPosition();
+    light->direction = camera.getFrontDirection();
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Draw(camera.getPosition(), camera.getFrontDirection(), lights, projection, view, transform);
-
-    // light
-    auto shader = RessourceManager::GetShader("light");
-    shader->use();
-    shader->setMat4("view", view);
-    shader->setMat4("projection", projection);
-    for (size_t i = 0; i < 4; i++)
-    {
-        ml::mat4 model = ml::translate(ml::mat4(1.0f), lights[i].GetPos()) * ml::scale(ml::mat4(1.0f), lights[i].GetScale());
-        shader->setMat4("model", model);
-        shader->setVec3("lightColor", lights[i].GetColor());
-        lights[i].Draw();
-    }
 }
 
 void Game::ProcessInput()
