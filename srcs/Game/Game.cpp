@@ -54,7 +54,7 @@ void Game::Run()
     light->position = camera.getPosition();
     light->direction = camera.getFrontDirection();
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
-        ModelManager::GetModel(i).Draw(camera.getPosition(), camera.getFrontDirection(), lights, projection, view, transform);
+        ModelManager::GetModel(i).Draw(camera.getPosition(), lights, projection, view, transform);
 }
 
 void Game::ProcessInput()
