@@ -42,17 +42,7 @@ void Game::LoadAssets()
 void Game::Run()
 {
     ProcessInput();
-
-    // models
-    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
-    ml::mat4 transform(1.0f);
-
-    auto light = dynamic_cast<SpotLight*>(lights[5].get());
-    light->position = camera.getPosition();
-    light->direction = camera.getFrontDirection();
-    for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
-        ModelManager::GetModel(i).Draw(camera.getPosition(), lights, projection, view, transform);
+    Draw();
 }
 
 void Game::ProcessInput()
@@ -60,6 +50,7 @@ void Game::ProcessInput()
     if (WindowManager::IsInputPressed(GLFW_KEY_ESCAPE))
         WindowManager::StopUpdateLoop();
 
+    ModelManager::GetModel(0).Play("Idle");
     UpdateCamera();
 }
 
@@ -102,6 +93,19 @@ void Game::UpdateCamera()
                 sinf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())));
     camera.setFrontDirection(ml::normalize(direction));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
+}
+
+void Game::Draw()
+{
+    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
+    ml::mat4 transform(1.0f);
+
+    auto light = dynamic_cast<SpotLight*>(lights[5].get());
+    light->position = camera.getPosition();
+    light->direction = camera.getFrontDirection();
+    for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
+        ModelManager::GetModel(i).Draw(camera.getPosition(), lights, projection, view, transform);
 }
 
 void scroll_callback(GLFWwindow *window, double xOffset, double yOffset)

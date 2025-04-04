@@ -16,6 +16,8 @@ class Game: public AProgram
         void ProcessInput();
         void UpdateCamera();
 
+        void Draw();
+
     public:
         Game();
         ~Game();
