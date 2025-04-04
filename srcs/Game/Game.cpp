@@ -15,12 +15,7 @@ Game::Game()
     WindowManager::SetScrollCallback(scroll_callback);
     WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    lights.push_back(std::make_unique<PointLight>(ml::vec3(1, 0, 0), 15, ml::vec3(0, 0, -3)));
-    lights.push_back(std::make_unique<PointLight>(ml::vec3(0, 1, 0), 15, ml::vec3(0, 0, 3)));
-    lights.push_back(std::make_unique<PointLight>(ml::vec3(0, 0, 1), 15, ml::vec3(-3, 0, 0)));
-    lights.push_back(std::make_unique<PointLight>(ml::vec3(1, 1, 1), 15, ml::vec3(3, 0, 0)));
-    lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 0), 3, ml::vec3(0, -1, 0)));
-    lights.push_back(std::make_unique<SpotLight>(ml::vec3(0, 1, 1), 15, camera.getPosition(), camera.getFrontDirection(), 12.5f, 17.5f));
+    lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
     LoadAssets();
 }
@@ -101,9 +96,6 @@ void Game::Draw()
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     ml::mat4 transform(1.0f);
 
-    auto light = dynamic_cast<SpotLight*>(lights[5].get());
-    light->position = camera.getPosition();
-    light->direction = camera.getFrontDirection();
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Draw(camera.getPosition(), lights, projection, view, transform);
 }
