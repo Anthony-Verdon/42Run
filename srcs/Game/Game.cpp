@@ -44,11 +44,17 @@ void Game::ProcessInput()
         WindowManager::StopUpdateLoop();
 
     int frontBack = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_S);
-    int leftRight = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D);
-    ml::vec3 position = ml::vec3(leftRight, 0, frontBack);
+    int leftRight = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A);
+    ml::vec3 rightDirection =  ml::normalize(ml::crossProduct(player.GetDirection(), ml::vec3(0, 1, 0)));
+    ml::vec3 position = frontBack * player.GetDirection() + leftRight * rightDirection;
     if (position != ml::vec3(0, 0, 0))
         position = ml::normalize(position);
     player.AddToPosition(position * Time::getDeltaTime());
+
+    int turn = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_RIGHT) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_LEFT);
+    player.AddToAngle((float)turn * Time::getDeltaTime());
+    player.SetDirection(ml::normalize(ml::vec3(-sinf(player.GetAngle()), 0, cosf(player.GetAngle()))));
+
     UpdateCamera();
 }
 
@@ -56,6 +62,7 @@ void Game::UpdateCamera()
 {
     ml::vec3 cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
     camera.setPosition(player.GetPosition() + cameraPosition);
+
     ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);
     camera.setFrontDirection(ml::normalize(player.GetDirection() + cameraOrientation));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
@@ -65,7 +72,7 @@ void Game::Draw()
 {
     ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
-    ml::mat4 transform = ml::translate(ml::mat4(1.0f), player.GetPosition());
+    ml::mat4 transform = ml::translate(ml::mat4(1.0f), player.GetPosition()) * ml::rotate(ml::mat4(1.0f), ml::degrees(player.GetAngle()), ml::vec3(0, 1, 0));
     ModelManager::GetModel(player.GetModelIndex()).Draw(camera.getPosition(), lights, projection, view, transform);
 
     ml::vec2 path[] = {
