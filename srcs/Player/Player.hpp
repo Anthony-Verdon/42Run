@@ -14,6 +14,7 @@ class Player
         ml::vec3 direction;
         float angle;
         float speed;
+        int column;
 
     public:
         Player();

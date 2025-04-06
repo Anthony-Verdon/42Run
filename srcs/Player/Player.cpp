@@ -9,6 +9,7 @@ Player::Player()
     modelIndex = 0;
     angle = 0;
     speed = 5;
+    column = 0;
 }
 
 Player::~Player()
@@ -24,10 +25,16 @@ void Player::ProcessInput()
     if (currentAnim == "Run")
     {
         position += direction * speed * Time::getDeltaTime();
-        if (WindowManager::IsInputPressed(GLFW_KEY_D))
+        if (WindowManager::IsInputPressed(GLFW_KEY_D) && column != 1)
+        {
             ModelManager::GetModel(modelIndex).Play("DashRight");
-        else if (WindowManager::IsInputPressed(GLFW_KEY_A))
+            column++;
+        }
+        else if (WindowManager::IsInputPressed(GLFW_KEY_A) && column != -1)
+        {
             ModelManager::GetModel(modelIndex).Play("DashLeft");
+            column--;
+        }
         else if (WindowManager::IsInputPressed(GLFW_KEY_SPACE))
             ModelManager::GetModel(modelIndex).Play("Jump");
         else if (WindowManager::IsInputPressed(GLFW_KEY_LEFT_SHIFT))
