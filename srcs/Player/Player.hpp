@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Matrix/Matrix.hpp"
+#include <memory>
+#include "Engine/3D/Lights/Lights.hpp"
+#include <vector>
 
 class Player
 {
@@ -9,10 +12,14 @@ class Player
         ml::vec3 position;
         ml::vec3 direction;
         float angle;
+        float speed;
 
     public:
         Player();
         ~Player();
+
+        void ProcessInput();
+        void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
 
         int GetModelIndex() const { return (modelIndex); }
         void SetModelIndex(int modelIndex) { this->modelIndex = modelIndex; }
