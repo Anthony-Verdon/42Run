@@ -18,7 +18,7 @@ class MapManager
         ~MapManager() = delete;
 
         static std::vector<Tile> tiles;
-        static ml::vec3 lastPlayerPos;
+        static int lastPlayerPos;
 
     public:
         static std::vector<Tile> UpdateTerrain(const ml::vec3 &playerPos);
