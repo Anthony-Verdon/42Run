@@ -1,4 +1,5 @@
 #include "Game/Game.hpp"
+#include "MapManager/MapManager.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/RessourceManager/RessourceManager.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
@@ -60,7 +61,7 @@ void Game::ProcessInput()
     */
     player.SetDirection(ml::normalize(ml::vec3(-sinf(player.GetAngle()), 0, cosf(player.GetAngle()))));
     player.AddToPosition(player.GetDirection() * Time::getDeltaTime() * 5);
-    
+
     UpdateCamera();
 }
 
@@ -81,15 +82,7 @@ void Game::Draw()
     ml::mat4 transform = ml::translate(ml::mat4(1.0f), player.GetPosition()) * ml::rotate(ml::mat4(1.0f), ml::degrees(player.GetAngle()), ml::vec3(0, 1, 0));
     ModelManager::GetModel(player.GetModelIndex()).Draw(camera.getPosition(), lights, projection, view, transform);
 
-    ml::vec2 path[] = {
-        ml::vec2(0, 0),
-        ml::vec2(0, 1),
-        ml::vec2(0, 2),
-        ml::vec2(0, 3)
-    };
-
-    size_t size = sizeof(path) / sizeof(ml::vec2);
-    for (size_t i = 0; i < size; i++)
-        ModelManager::GetModel(1).Draw(camera.getPosition(), lights, projection, view, ml::translate(ml::mat4(1.0f), ml::vec3(path[i].x, 0, path[i].y) * 2.0f));
-        
+    auto tiles = MapManager::UpdateTerrain(player.GetPosition() / 2.0f);
+    for (auto it = tiles.begin(); it != tiles.end(); it++)
+        ModelManager::GetModel(it->second).Draw(camera.getPosition(), lights, projection, view, ml::translate(ml::mat4(1.0f), it->first * 2.0f)); 
 }
