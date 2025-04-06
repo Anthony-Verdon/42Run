@@ -14,6 +14,9 @@ Game::Game()
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
     LoadAssets();
+    player.SetModelIndex(0);
+    ModelManager::GetModel(0).Play("Run");
+    player.SetPosition(ml::vec3(0, 1, 0));
 }
 
 Game::~Game()
@@ -26,7 +29,6 @@ void Game::LoadAssets()
 {
     ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
     ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/low/tileLow_teamBlue.gltf.glb"));
-    player.SetModelIndex(0);
 
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Init();
@@ -43,18 +45,22 @@ void Game::ProcessInput()
     if (WindowManager::IsInputPressed(GLFW_KEY_ESCAPE))
         WindowManager::StopUpdateLoop();
 
+    /*
     int frontBack = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_S);
     int leftRight = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A);
     ml::vec3 rightDirection =  ml::normalize(ml::crossProduct(player.GetDirection(), ml::vec3(0, 1, 0)));
     ml::vec3 position = frontBack * player.GetDirection() + leftRight * rightDirection;
     if (position != ml::vec3(0, 0, 0))
         position = ml::normalize(position);
-    player.AddToPosition(position * Time::getDeltaTime());
+    player.AddToPosition(position * Time::getDeltaTime() * 5);
 
     int turn = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_RIGHT) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_LEFT);
-    player.AddToAngle((float)turn * Time::getDeltaTime());
+    player.AddToAngle((float)turn * Time::getDeltaTime() * 5);
     player.SetDirection(ml::normalize(ml::vec3(-sinf(player.GetAngle()), 0, cosf(player.GetAngle()))));
-
+    */
+    player.SetDirection(ml::normalize(ml::vec3(-sinf(player.GetAngle()), 0, cosf(player.GetAngle()))));
+    player.AddToPosition(player.GetDirection() * Time::getDeltaTime() * 5);
+    
     UpdateCamera();
 }
 
