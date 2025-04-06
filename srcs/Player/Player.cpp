@@ -29,6 +29,8 @@ void Player::ProcessInput()
             ModelManager::GetModel(modelIndex).Play("DashRight");
         else if (WindowManager::IsInputPressed(GLFW_KEY_A))
             ModelManager::GetModel(modelIndex).Play("DashLeft");
+        else if (WindowManager::IsInputPressed(GLFW_KEY_SPACE))
+            ModelManager::GetModel(modelIndex).Play("Jump");
     }
     else if (currentAnim == "DashRight")
     {
@@ -39,6 +41,12 @@ void Player::ProcessInput()
     else if (currentAnim == "DashLeft")
     {
         position += (direction * speed + ml::vec3(1, 0, 0) * 2.0f) * Time::getDeltaTime();
+        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
+            ModelManager::GetModel(modelIndex).Play("Run");
+    }
+    else if (currentAnim == "Jump")
+    {
+        position += (direction * speed) * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
             ModelManager::GetModel(modelIndex).Play("Run");
     }
