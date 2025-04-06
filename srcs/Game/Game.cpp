@@ -59,6 +59,8 @@ void Game::ProcessInput()
 void Game::UpdateCamera()
 {
     ml::vec3 cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
+    if (player.GetCurrentAnimation() == "Roll")
+        ;//cameraPosition -= ml::vec3(0, 0, 1);
     camera.setPosition(player.GetPosition() + cameraPosition);
 
     ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);

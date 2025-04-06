@@ -4,6 +4,7 @@
 #include <memory>
 #include "Engine/3D/Lights/Lights.hpp"
 #include <vector>
+#include "Engine/3D/ModelManager/ModelManager.hpp"
 
 class Player
 {
@@ -21,6 +22,7 @@ class Player
         void ProcessInput();
         void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
 
+        std::string GetCurrentAnimation() const { return (ModelManager::GetModel(modelIndex).GetCurrentAnimation()); }
         int GetModelIndex() const { return (modelIndex); }
         void SetModelIndex(int modelIndex) { this->modelIndex = modelIndex; }
         ml::vec3 GetPosition() const { return position; }
