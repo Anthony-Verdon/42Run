@@ -31,6 +31,11 @@ void Game::LoadAssets()
     ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
     ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/low/tileLow_teamBlue.gltf.glb"));
     ModelManager::AddModels(ModelLoader::LoadModel("assets/swiper/classic/swiper_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/barriers/barrierMedium.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/gates/smallWide/gateSmallWide_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/hoops/hoop_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/powerupBlock/powerupBlock_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/rings/ring_teamBlue.gltf.glb"));
 
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Init();
