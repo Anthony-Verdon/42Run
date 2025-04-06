@@ -1,7 +1,15 @@
 #pragma once
 
-#include "Matrix/vec/vec.hpp"
-#include <map>
+#include "Matrix/Matrix.hpp"
+#include <unordered_map>
+#include <vector>
+
+struct Tile
+{
+    ml::vec3 position;
+    int modelIndex;
+    ml::mat4 transform;
+};
 
 class MapManager
 {
@@ -9,8 +17,9 @@ class MapManager
         MapManager() = delete;
         ~MapManager() = delete;
 
-        static std::map<ml::vec3, int> tiles;
+        static std::vector<Tile> tiles;
+        static ml::vec3 lastPlayerPos;
 
     public:
-        static std::map<ml::vec3, int> UpdateTerrain(const ml::vec3 &playerPos);
+        static std::vector<Tile> UpdateTerrain(const ml::vec3 &playerPos);
 };

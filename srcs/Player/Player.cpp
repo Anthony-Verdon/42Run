@@ -46,7 +46,7 @@ void Player::ProcessInput()
     }
     else if (currentAnim == "Jump")
     {
-        position += (direction * speed) * Time::getDeltaTime();
+        position += (direction * speed + ml::vec3(0, 1, 0) * 2.0f) * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
             ModelManager::GetModel(modelIndex).Play("Run");
     }

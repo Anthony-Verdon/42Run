@@ -30,6 +30,7 @@ void Game::LoadAssets()
 {
     ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
     ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/low/tileLow_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/swiper/classic/swiper_teamBlue.gltf.glb"));
 
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Init();
@@ -68,5 +69,5 @@ void Game::Draw()
 
     auto tiles = MapManager::UpdateTerrain(player.GetPosition() / 2.0f);
     for (auto it = tiles.begin(); it != tiles.end(); it++)
-        ModelManager::GetModel(it->second).Draw(camera.getPosition(), lights, projection, view, ml::translate(ml::mat4(1.0f), it->first * 2.0f)); 
+        ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform); 
 }
