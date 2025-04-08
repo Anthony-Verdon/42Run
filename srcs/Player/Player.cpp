@@ -56,7 +56,7 @@ void Player::ProcessInput()
     {
         position += (direction * speed + ml::vec3(0, 1, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration() * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
-            ModelManager::GetModel(modelIndex).Play("Fall");
+            ModelManager::GetModel(modelIndex).Play("Fall", 2.0f);
     }
     else if (currentAnim == "Fall")
     {
