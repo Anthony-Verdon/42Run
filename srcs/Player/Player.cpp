@@ -42,25 +42,31 @@ void Player::ProcessInput()
     }
     else if (currentAnim == "DashRight")
     {
-        position += (direction * speed + ml::vec3(-1, 0, 0) * 2.0f) * Time::getDeltaTime();
+        position += (direction * speed + ml::vec3(-1, 0, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration() * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
             ModelManager::GetModel(modelIndex).Play("Run");
     }
     else if (currentAnim == "DashLeft")
     {
-        position += (direction * speed + ml::vec3(1, 0, 0) * 2.0f) * Time::getDeltaTime();
+        position += (direction * speed + ml::vec3(1, 0, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration() * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
             ModelManager::GetModel(modelIndex).Play("Run");
     }
     else if (currentAnim == "Jump")
     {
-        position += (direction * speed + ml::vec3(0, 1, 0) * 2.0f) * Time::getDeltaTime();
+        position += (direction * speed + ml::vec3(0, 1, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration() * Time::getDeltaTime();
+        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
+            ModelManager::GetModel(modelIndex).Play("Fall");
+    }
+    else if (currentAnim == "Fall")
+    {
+        position += (direction * speed + ml::vec3(0, -1, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration() * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
             ModelManager::GetModel(modelIndex).Play("Run");
     }
     else if (currentAnim == "Roll")
     {
-        position += (direction * speed + ml::vec3(0, 0, 1) * 4.0f) * Time::getDeltaTime();
+        position += (direction * speed + ml::vec3(0, 0, 1) * 4.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration() * Time::getDeltaTime();
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
             ModelManager::GetModel(modelIndex).Play("Run");
     }
