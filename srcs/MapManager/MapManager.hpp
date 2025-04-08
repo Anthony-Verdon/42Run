@@ -7,6 +7,7 @@
 struct Tile
 {
     ml::vec3 position;
+    ml::vec3 size;
     int modelIndex;
     ml::mat4 transform;
 };
