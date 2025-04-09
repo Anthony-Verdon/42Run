@@ -8,7 +8,8 @@ set_symbols("debug")
 add_requires("imgui", {configs = {glfw = true, opengl3 = true}})
 
 includes("submodules/Engine/")
-add_defines("PATH_TO_ENGINE=\"submodules/Engine/\"")
+
+set_config("PATH_TO_ENGINE", "submodules/Engine/")
 
 target("42Run")
     set_targetdir("./")
