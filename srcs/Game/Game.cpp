@@ -5,6 +5,7 @@
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/3D/ModelManager/ModelManager.hpp"
 #include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"
+#include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
 #include "globals.hpp"
 #include "Engine/Time/Time.hpp"
 #include <iostream>
@@ -17,9 +18,13 @@ Game::Game()
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
     LoadAssets();
+    
+    WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
+    JPH::DebugRenderer::sInstance = new DebugRendererImpl();
     player.SetModelIndex(0);
     ModelManager::GetModel(player.GetModelIndex()).Play("Run");
     player.SetPosition(ml::vec3(0, 1, 0));
+    player.Init();
 }
 
 Game::~Game()
@@ -28,6 +33,10 @@ Game::~Game()
         ModelManager::GetModel(i).Destroy();
 
     LineRenderer3D::Destroy();
+    WorldPhysic3D::Destroy();
+    delete JPH::DebugRenderer::sInstance;
+    JPH::DebugRenderer::sInstance = nullptr;
+
 }
 
 void Game::LoadAssets()
@@ -45,6 +54,9 @@ void Game::Run()
 {
     ProcessInput();
     Draw();
+
+    WorldPhysic3D::Update();
+    WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
 }
 
 void Game::ProcessInput()

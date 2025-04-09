@@ -5,6 +5,8 @@
 #include "Engine/3D/Lights/Lights.hpp"
 #include <vector>
 #include "Engine/3D/ModelManager/ModelManager.hpp"
+#include <Jolt/Jolt.h>
+#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 
 class Player
 {
@@ -15,11 +17,14 @@ class Player
         float angle;
         float speed;
         int column;
+        JPH::BodyID bodyId;
 
     public:
         Player();
         ~Player();
 
+        void Init();
+        
         void ProcessInput();
         void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
 

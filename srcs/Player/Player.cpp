@@ -1,6 +1,8 @@
 #include "Player/Player.hpp"
 #include "Engine/Time/Time.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
+#include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
+#include "WorldPhysic.hpp"
 
 Player::Player()
 {
@@ -10,6 +12,12 @@ Player::Player()
     angle = 0;
     speed = 5;
     column = 0;
+}
+
+void Player::Init()
+{
+    JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(1, 0.5), JPH::RVec3(0, -1, 0), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
+    bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
 }
 
 Player::~Player()
