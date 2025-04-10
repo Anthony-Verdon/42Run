@@ -159,66 +159,45 @@ class MyBodyActivationListener : public JPH::BodyActivationListener
         }
 };
 
-#include <Jolt/Renderer/DebugRenderer.h>
+#include <Jolt/Renderer/DebugRendererSimple.h>
+#include "Engine/3D/Camera3D/Camera3D.hpp"
+#include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"
+#include "globals.hpp"
 
-class DebugRendererImpl : public JPH::DebugRenderer
+class DebugRendererImpl : public JPH::DebugRendererSimple
 {
-    virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor)
-    {
-        std::cout << "DrawLine" << std::endl;
-        (void)inFrom;
-        (void)inTo;
-        (void)inColor;
-    }
+    private:
+        const Camera3D &camera;
 
-    virtual void DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off)
-    {
-        std::cout << "DrawTriangle" << std::endl;
-        (void)inV1;
-        (void)inV2;
-        (void)inV3;
-        (void)inColor;
-        (void)inCastShadow;
-    }
+    public:
+        DebugRendererImpl(const Camera3D &camera) : camera(camera) {}
+        
+        virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor)
+        {
+            std::cout << "DrawLine" << std::endl;
+            (void)inFrom;
+            (void)inTo;
+            (void)inColor;
+        }
 
-    virtual Batch CreateTriangleBatch(const JPH::DebugRenderer::Triangle *inTriangles, int inTriangleCount)
-    {
-        std::cout << "CreateTriangleBatch1" << std::endl;
-        (void)inTriangles;
-        (void)inTriangleCount;
+        virtual void DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off)
+        {
+            ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+            ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
 
-        return (Batch());
-    }
+            LineRenderer3D::Draw(projection, view, ml::vec3(inV1.GetX(), inV1.GetY(), inV1.GetZ()), ml::vec3(inV2.GetX(), inV2.GetY(), inV2.GetZ()), ml::vec3(1, 1, 1));
+            LineRenderer3D::Draw(projection, view, ml::vec3(inV1.GetX(), inV1.GetY(), inV1.GetZ()), ml::vec3(inV3.GetX(), inV3.GetY(), inV3.GetZ()), ml::vec3(1, 1, 1));
+            LineRenderer3D::Draw(projection, view, ml::vec3(inV2.GetX(), inV2.GetY(), inV2.GetZ()), ml::vec3(inV3.GetX(), inV3.GetY(), inV3.GetZ()), ml::vec3(1, 1, 1));
+            (void)inCastShadow;
+            (void)inColor;
+        }
 
-    virtual Batch CreateTriangleBatch(const Vertex *inVertices, int inVertexCount, const JPH::uint32 *inIndices, int inIndexCount)
-    {
-        std::cout << "CreateTriangleBatch2" << std::endl;
-        (void)inVertices;
-        (void)inVertexCount;
-        (void)inIndices;
-        (void)inIndexCount;
-
-        return (Batch());
-    }
-    virtual void DrawGeometry(JPH::RMat44Arg inModelMatrix, const JPH::AABox &inWorldSpaceBounds, float inLODScaleSq, JPH::ColorArg inModelColor, const GeometryRef &inGeometry, ECullMode inCullMode = ECullMode::CullBackFace, ECastShadow inCastShadow = ECastShadow::On, EDrawMode inDrawMode = EDrawMode::Solid)
-    {
-        std::cout << "DrawGeometry" << std::endl;
-        (void)inModelMatrix;
-        (void)inWorldSpaceBounds;
-        (void)inLODScaleSq;
-        (void)inModelColor;
-        (void)inGeometry;
-        (void)inCullMode;
-        (void)inCastShadow;
-        (void)inDrawMode;
-    }
-
-    virtual void DrawText3D(JPH::RVec3Arg inPosition, const JPH::string_view &inString, JPH::ColorArg inColor = JPH::Color::sWhite, float inHeight = 0.5f)
-    {
-        std::cout << "DrawText3D" << std::endl;
-        (void)inPosition;
-        (void)inString;
-        (void)inColor;
-        (void)inHeight;
-    }
+        virtual void DrawText3D(JPH::RVec3Arg inPosition, const JPH::string_view &inString, JPH::ColorArg inColor = JPH::Color::sWhite, float inHeight = 0.5f)
+        {
+            std::cout << "DrawText3D" << std::endl;
+            (void)inPosition;
+            (void)inString;
+            (void)inColor;
+            (void)inHeight;
+        }
 };

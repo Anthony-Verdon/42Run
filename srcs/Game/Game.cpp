@@ -20,11 +20,13 @@ Game::Game()
     LoadAssets();
     
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
-    JPH::DebugRenderer::sInstance = new DebugRendererImpl();
+    JPH::DebugRenderer::sInstance = new DebugRendererImpl(camera);
     player.SetModelIndex(0);
     ModelManager::GetModel(player.GetModelIndex()).Play("Run");
     player.SetPosition(ml::vec3(0, 1, 0));
     player.Init();
+
+    accumulatedTime = 0;
 }
 
 Game::~Game()
@@ -52,10 +54,14 @@ void Game::LoadAssets()
 
 void Game::Run()
 {
+    accumulatedTime += Time::getDeltaTime();
     ProcessInput();
     Draw();
 
-    WorldPhysic3D::Update();
+    while (accumulatedTime >= 1.0f / 60) {
+        WorldPhysic3D::Update();
+        accumulatedTime -= 1.0f / 60;
+    }
     WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
 }
 

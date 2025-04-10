@@ -19,6 +19,8 @@ class Game: public AProgram
         std::vector<std::unique_ptr<ALight>> lights;
         Player player;
 
+        float accumulatedTime;
+
         void LoadAssets();
 
         void ProcessInput();
