@@ -21,7 +21,7 @@ Game::Game()
     LoadAssets();
     
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
-    JPH::DebugRenderer::sInstance = new DebugRendererImpl(camera);
+    JPH::DebugRenderer::sInstance = new DebugRendererImpl();
     player.SetModelIndex(0);
     ModelManager::GetModel(player.GetModelIndex()).Play("Run");
     player.SetPosition(ml::vec3(0, 1, 0));
@@ -61,11 +61,17 @@ void Game::Run()
     ProcessInput();
     Draw();
 
-    while (accumulatedTime >= 1.0f / 60) {
+    while (accumulatedTime >= 1.0f / 60) 
+    {
         WorldPhysic3D::Update();
         accumulatedTime -= 1.0f / 60;
     }
-    WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance); // need to opti
+
+    WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
+
+    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
+    LineRenderer3D::Draw(projection, view);
 }
 
 void Game::ProcessInput()

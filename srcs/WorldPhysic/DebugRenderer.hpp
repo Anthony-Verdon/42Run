@@ -7,12 +7,7 @@
 
 class DebugRendererImpl : public JPH::DebugRendererSimple
 {
-    private:
-        const Camera3D &camera;
-
     public:
-        DebugRendererImpl(const Camera3D &camera) : camera(camera) {}
-        
         virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor)
         {
             std::cout << "DrawLine" << std::endl;
@@ -23,12 +18,9 @@ class DebugRendererImpl : public JPH::DebugRendererSimple
 
         virtual void DrawTriangle(JPH::RVec3Arg inV1, JPH::RVec3Arg inV2, JPH::RVec3Arg inV3, JPH::ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off)
         {
-            ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-            ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
-
-            LineRenderer3D::Draw(projection, view, ml::vec3(inV1.GetX(), inV1.GetY(), inV1.GetZ()), ml::vec3(inV2.GetX(), inV2.GetY(), inV2.GetZ()), ml::vec3(1, 1, 1));
-            LineRenderer3D::Draw(projection, view, ml::vec3(inV1.GetX(), inV1.GetY(), inV1.GetZ()), ml::vec3(inV3.GetX(), inV3.GetY(), inV3.GetZ()), ml::vec3(1, 1, 1));
-            LineRenderer3D::Draw(projection, view, ml::vec3(inV2.GetX(), inV2.GetY(), inV2.GetZ()), ml::vec3(inV3.GetX(), inV3.GetY(), inV3.GetZ()), ml::vec3(1, 1, 1));
+            LineRenderer3D::Draw(ml::vec3(inV1.GetX(), inV1.GetY(), inV1.GetZ()), ml::vec3(inV2.GetX(), inV2.GetY(), inV2.GetZ()), ml::vec3(1, 1, 1));
+            LineRenderer3D::Draw(ml::vec3(inV1.GetX(), inV1.GetY(), inV1.GetZ()), ml::vec3(inV3.GetX(), inV3.GetY(), inV3.GetZ()), ml::vec3(1, 1, 1));
+            LineRenderer3D::Draw(ml::vec3(inV2.GetX(), inV2.GetY(), inV2.GetZ()), ml::vec3(inV3.GetX(), inV3.GetY(), inV3.GetZ()), ml::vec3(1, 1, 1));
             (void)inCastShadow;
             (void)inColor;
         }
