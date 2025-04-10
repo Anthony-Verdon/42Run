@@ -6,6 +6,7 @@
 #include "Engine/3D/ModelManager/ModelManager.hpp"
 #include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
+#include "WorldPhysic/DebugRenderer.hpp"
 #include "globals.hpp"
 #include "Engine/Time/Time.hpp"
 #include <iostream>

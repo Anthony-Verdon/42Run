@@ -2,7 +2,7 @@
 #include "Engine/Time/Time.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
-#include "WorldPhysic.hpp"
+#include "WorldPhysic/WorldPhysic.hpp"
 
 Player::Player()
 {
