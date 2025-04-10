@@ -23,7 +23,10 @@ class MapManager
 
         static std::vector<Tile> tiles;
         static int lastPlayerPos;
+        static int nbRowDisplay;
 
+        static void SpawnTile(int x, int z);
     public:
+        static void Init();
         static std::vector<Tile> UpdateTerrain(const ml::vec3 &playerPos);
 };

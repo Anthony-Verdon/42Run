@@ -26,6 +26,7 @@ Game::Game()
     ModelManager::GetModel(player.GetModelIndex()).Play("Run");
     player.SetPosition(ml::vec3(0, 1, 0));
     player.Init();
+    MapManager::Init();
 
     accumulatedTime = 0;
 }
@@ -64,7 +65,7 @@ void Game::Run()
         WorldPhysic3D::Update();
         accumulatedTime -= 1.0f / 60;
     }
-    WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
+    WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance); // need to opti
 }
 
 void Game::ProcessInput()
