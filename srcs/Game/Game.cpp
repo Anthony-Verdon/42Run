@@ -35,6 +35,7 @@ Game::~Game()
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Destroy();
 
+    player.Destroy();
     LineRenderer3D::Destroy();
     WorldPhysic3D::Destroy();
     delete JPH::DebugRenderer::sInstance;
@@ -93,21 +94,5 @@ void Game::Draw()
 
     auto tiles = MapManager::UpdateTerrain(player.GetPosition());
     for (auto it = tiles.begin(); it != tiles.end(); it++)
-    {
         ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform); 
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(-it->size.x / 2, it->size.y / 2 + it->size.y / 2, -it->size.z / 2), it->position * it->size + ml::vec3(-it->size.x / 2, it->size.y / 2 + it->size.y / 2, it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(-it->size.x / 2, it->size.y / 2 + it->size.y / 2, -it->size.z / 2), it->position * it->size + ml::vec3(it->size.x / 2, it->size.y / 2 + it->size.y / 2, -it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(it->size.x / 2, it->size.y / 2 + it->size.y / 2, it->size.z / 2), it->position * it->size + ml::vec3(-it->size.x / 2, it->size.y / 2 + it->size.y / 2, it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(it->size.x / 2, it->size.y / 2 + it->size.y / 2, it->size.z / 2), it->position * it->size + ml::vec3(it->size.x / 2, it->size.y / 2 + it->size.y / 2, -it->size.z / 2), ml::vec3(1, 1, 1));
-
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(-it->size.x / 2, -it->size.y / 2 + it->size.y / 2, -it->size.z / 2), it->position * it->size + ml::vec3(-it->size.x / 2, -it->size.y / 2 + it->size.y / 2, it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(-it->size.x / 2, -it->size.y / 2 + it->size.y / 2, -it->size.z / 2), it->position * it->size + ml::vec3(it->size.x / 2, -it->size.y / 2 + it->size.y / 2, -it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(it->size.x / 2, -it->size.y / 2 + it->size.y / 2, it->size.z / 2), it->position * it->size + ml::vec3(-it->size.x / 2, -it->size.y / 2 + it->size.y / 2, it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(it->size.x / 2, -it->size.y / 2 + it->size.y / 2, it->size.z / 2), it->position * it->size + ml::vec3(it->size.x / 2, -it->size.y / 2 + it->size.y / 2, -it->size.z / 2), ml::vec3(1, 1, 1));
-
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(it->size.x / 2, it->size.y / 2 + it->size.y / 2, it->size.z / 2), it->position * it->size + ml::vec3(it->size.x / 2, -it->size.y / 2 + it->size.y / 2, it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(-it->size.x / 2, it->size.y / 2 + it->size.y / 2, it->size.z / 2), it->position * it->size + ml::vec3(-it->size.x / 2, -it->size.y / 2 + it->size.y / 2, it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(it->size.x / 2, it->size.y / 2 + it->size.y / 2, -it->size.z / 2), it->position * it->size + ml::vec3(it->size.x / 2, -it->size.y / 2 + it->size.y / 2, -it->size.z / 2), ml::vec3(1, 1, 1));
-        LineRenderer3D::Draw(projection, view, it->position * it->size + ml::vec3(-it->size.x / 2, it->size.y / 2 + it->size.y / 2, -it->size.z / 2), it->position * it->size + ml::vec3(-it->size.x / 2, -it->size.y / 2 + it->size.y / 2, -it->size.z / 2), ml::vec3(1, 1, 1));
-    }
 }

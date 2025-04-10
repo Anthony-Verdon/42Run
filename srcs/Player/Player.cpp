@@ -16,8 +16,15 @@ Player::Player()
 void Player::Init()
 {
     JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(0.5, 0.5), JPH::RVec3(0, 2, 0), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
+    capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
     capsuleSetting.mGravityFactor = 0;
     bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
+}
+
+void Player::Destroy()
+{
+    WorldPhysic3D::GetBodyInterface().RemoveBody(bodyId);
+    WorldPhysic3D::GetBodyInterface().DestroyBody(bodyId);
 }
 
 Player::~Player()
@@ -31,7 +38,7 @@ void Player::ProcessInput()
     std::string currentAnim = ModelManager::GetModel(modelIndex).GetCurrentAnimation();
     if (currentAnim == "Run")
     {
-        JPH::Vec3 velocity = JPH::Vec3(direction.x, direction.y, direction.z) * speed;
+        JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
         WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
         if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1)
         {

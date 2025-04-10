@@ -23,6 +23,7 @@ class Player
         ~Player();
 
         void Init();
+        void Destroy();
         
         void ProcessInput();
         void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
