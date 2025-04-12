@@ -25,6 +25,7 @@ class ChunkGenerator
         
         static int chunkSize;
         static Tile SpawnGroundTile(const ml::vec3 &position); 
+        static Tile SpawnSlopeTile(const ml::vec3 &position, float orientation, bool isMediumHigh); 
     
     public:
         static Chunk GenerateChunk(int chunkZ);
