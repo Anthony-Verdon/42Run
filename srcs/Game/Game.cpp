@@ -13,7 +13,9 @@
 
 Game::Game()
 {
-    WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    srand(time(NULL));
+
+    //WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     LineRenderer3D::Init();
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
@@ -101,7 +103,10 @@ void Game::Draw()
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     player.Draw(camera.getPosition(), lights, projection, view);
 
-    auto tiles = MapManager::UpdateTerrain(player.GetPosition());
-    for (auto it = tiles.begin(); it != tiles.end(); it++)
-        ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform); 
+    auto chunks = MapManager::UpdateTerrain(player.GetPosition());
+    for (; !chunks.empty(); chunks.pop())
+    {
+        for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
+            ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform); 
+    }
 }
