@@ -50,6 +50,8 @@ void Game::LoadAssets()
     ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/large/tileLarge_teamBlue.gltf.glb"));
     ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/high/tileHigh_teamBlue.gltf.glb"));
     ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/low/tileLow_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb"));
 
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Init();

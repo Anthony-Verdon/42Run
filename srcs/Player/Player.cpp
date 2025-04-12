@@ -17,7 +17,6 @@ void Player::Init()
 {
     JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(0.5, 0.5), JPH::RVec3(0, 2, 0), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
-    capsuleSetting.mGravityFactor = 0;
     bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
 }
 
@@ -31,6 +30,8 @@ Player::~Player()
 {
 }
 
+#define AUTOMATIC_MOVEMENT
+
 void Player::ProcessInput()
 {
     direction = ml::normalize(ml::vec3(-sinf(angle), 0, cosf(angle)));
@@ -38,17 +39,32 @@ void Player::ProcessInput()
     std::string currentAnim = ModelManager::GetModel(modelIndex).GetCurrentAnimation();
     if (currentAnim == "Run")
     {
+        #ifdef AUTOMATIC_MOVEMENT
         JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+        #else
+        JPH::Vec3 velocity = JPH::Vec3(0, 0, 0);
+        if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W))
+            velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+        #endif
         WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+
         if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1)
         {
+            #ifdef AUTOMATIC_MOVEMENT
             ModelManager::GetModel(modelIndex).Play("DashRight");
             column++;
+            #else
+            angle += Time::getDeltaTime();
+            #endif
         }
         else if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1)
         {
+            #ifdef AUTOMATIC_MOVEMENT
             ModelManager::GetModel(modelIndex).Play("DashLeft");
             column--;
+            #else
+            angle -= Time::getDeltaTime();
+            #endif
         }
         else if (WindowManager::IsInputPressed(GLFW_KEY_SPACE))
             ModelManager::GetModel(modelIndex).Play("Jump");

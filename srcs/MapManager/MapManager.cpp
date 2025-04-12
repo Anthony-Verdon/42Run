@@ -13,7 +13,7 @@ void MapManager::Init()
     for (int i = -1; i <= 1; i++)
     {
         for (int j = 0; j <= nbRowDisplay; j++)
-            SpawnTile(i, j);
+            SpawnTile(i, 0, j);
     }
 
 }
@@ -37,8 +37,117 @@ std::vector<Tile> MapManager::UpdateTerrain(const ml::vec3 &playerPos)
     {
         for (int i = -1; i <= 1; i++)
         {
-            SpawnTile(i, playerPosZ + nbRowDisplay);
+            SpawnTile(i, 0, playerPosZ + nbRowDisplay);
         }
+
+        if (playerPosZ == 5)
+        {
+            {
+                Tile tile;
+                tile.position = ml::vec3(ml::vec3(-1, 1, playerPosZ + nbRowDisplay));
+                tile.size = ml::vec3(2, 1, 2);
+                tile.modelIndex = 5;
+                ml::vec3 positionTimeSize = tile.position * tile.size;
+                ml::vec3 halfSize = tile.size / 2.0f;
+                tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), -90, ml::vec3(0, 1, 0));
+                JPH::Vec3 points[8] = {
+                    {0, 0, 0},
+                    {0, 0, 2},
+                    {2, 0, 0},
+                    {2, 0, 2},
+                    {0, 1.5, 0},
+                    {0, 2, 2},
+                    {2, 1.5, 0},
+                    {2, 2, 2},
+                };
+                JPH::Shape::ShapeResult outResult;
+                JPH::ConvexHullShapeSettings slopSetting(points, 8);
+                JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+                tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
+                tiles.push_back(tile);
+            }
+            {
+                Tile tile;
+                tile.position = ml::vec3(ml::vec3(-1, 1, playerPosZ + nbRowDisplay - 1));
+                tile.size = ml::vec3(2, 1, 2);
+                tile.modelIndex = 4;
+                ml::vec3 positionTimeSize = tile.position * tile.size;
+                ml::vec3 halfSize = tile.size / 2.0f;
+                tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), -90, ml::vec3(0, 1, 0));
+                JPH::Vec3 points[8] = {
+                    {0, 0, 0},
+                    {0, 0, 2},
+                    {2, 0, 0},
+                    {2, 0, 2},
+                    {0, 1, 0},
+                    {0, 1.5, 2},
+                    {2, 1, 0},
+                    {2, 1.5, 2},
+                };
+                JPH::Shape::ShapeResult outResult;
+                JPH::ConvexHullShapeSettings slopSetting(points, 8);
+                JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+                tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
+                tiles.push_back(tile);
+            }
+            {
+                Tile tile;
+                tile.position = ml::vec3(ml::vec3(-1, 0, playerPosZ + nbRowDisplay - 2));
+                tile.size = ml::vec3(2, 1, 2);
+                tile.modelIndex = 5;
+                ml::vec3 positionTimeSize = tile.position * tile.size;
+                ml::vec3 halfSize = tile.size / 2.0f;
+                tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), -90, ml::vec3(0, 1, 0));
+                JPH::Vec3 points[8] = {
+                    {0, 0, 0},
+                    {0, 0, 2},
+                    {2, 0, 0},
+                    {2, 0, 2},
+                    {0, 1.5, 0},
+                    {0, 2, 2},
+                    {2, 1.5, 0},
+                    {2, 2, 2},
+                };
+                JPH::Shape::ShapeResult outResult;
+                JPH::ConvexHullShapeSettings slopSetting(points, 8);
+                JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+                tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
+                tiles.push_back(tile);
+            }
+            {
+                Tile tile;
+                tile.position = ml::vec3(ml::vec3(-1, 0, playerPosZ + nbRowDisplay - 3));
+                tile.size = ml::vec3(2, 1, 2);
+                tile.modelIndex = 4;
+                ml::vec3 positionTimeSize = tile.position * tile.size;
+                ml::vec3 halfSize = tile.size / 2.0f;
+                tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), -90, ml::vec3(0, 1, 0));
+                JPH::Vec3 points[8] = {
+                    {0, 0, 0},
+                    {0, 0, 2},
+                    {2, 0, 0},
+                    {2, 0, 2},
+                    {0, 1, 0},
+                    {0, 1.5, 2},
+                    {2, 1, 0},
+                    {2, 1.5, 2},
+                };
+                JPH::Shape::ShapeResult outResult;
+                JPH::ConvexHullShapeSettings slopSetting(points, 8);
+                JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+                tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
+                tiles.push_back(tile);
+            }
+        }
+        if (playerPosZ > 5)
+        {
+            for (int i = 1; i <= 2; i++)
+            {
+                SpawnTile(-1, i, playerPosZ + nbRowDisplay);
+                SpawnTile(1, i, playerPosZ + nbRowDisplay);
+            }
+        }
+
 
         lastPlayerPos = playerPosZ;
     }
@@ -46,10 +155,10 @@ std::vector<Tile> MapManager::UpdateTerrain(const ml::vec3 &playerPos)
     return (tiles);
 }
 
-void MapManager::SpawnTile(int x, int z)
+void MapManager::SpawnTile(int x, int y, int z)
 {
     Tile tile;
-    tile.position = ml::vec3(ml::vec3(x, 0, z));
+    tile.position = ml::vec3(ml::vec3(x, y, z));
     int modelIndex = 3;
     switch (modelIndex)
     {
