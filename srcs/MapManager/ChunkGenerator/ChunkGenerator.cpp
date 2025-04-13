@@ -7,7 +7,7 @@
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 #include <magic_enum.hpp>
 
-int ChunkGenerator::chunkSize = 5;
+int ChunkGenerator::chunkSize = 6;
 Chunk ChunkGenerator::lastChunk = {};
 
 Chunk ChunkGenerator::GenerateChunk(int chunkZ)
@@ -114,15 +114,18 @@ void ChunkGenerator::SpawnSlopeDown(Chunk &chunk, int x, int y, int z)
     chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 1, z + 2), 90, false));
     chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 2, z + 3), 90, true));
     chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 2, z + 4), 90, false));
+    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, y - 2, z + 5)));
+
 }
 
 void ChunkGenerator::SpawnSlopeUp(Chunk &chunk, int x, int y, int z)
 {
-    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 2, z + 0), -90, false));
-    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 2, z + 1), -90, true));
-    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 1, z + 2), -90, false));
-    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 1, z + 3), -90, true));
-    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, y - 0, z + 4)));
+    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, y - 2, z + 0)));
+    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 2, z + 1), -90, false));
+    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 2, z + 2), -90, true));
+    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 1, z + 3), -90, false));
+    chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(x, y - 1, z + 4), -90, true));
+    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, y - 0, z + 5)));
 }
 Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, float orientation, bool isMediumHigh)
 {
