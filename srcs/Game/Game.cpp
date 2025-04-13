@@ -1,7 +1,7 @@
+#include "Engine/RessourceManager/RessourceManager.hpp"
 #include "Game/Game.hpp"
 #include "MapManager/MapManager.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
-#include "Engine/RessourceManager/RessourceManager.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/3D/ModelManager/ModelManager.hpp"
 #include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"

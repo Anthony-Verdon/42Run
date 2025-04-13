@@ -5,7 +5,7 @@ set_warnings("allextra", "error")
 set_optimize("fastest")
 set_symbols("debug")
 
-add_requires("imgui", {configs = {glfw = true, opengl3 = true}})
+add_requires("magic_enum")
 
 includes("submodules/Engine/")
 
@@ -16,5 +16,5 @@ target("42Run")
     set_kind("binary")
     add_files("srcs/**.cpp")
     add_includedirs("srcs")
-    add_packages("imgui")
+    add_packages("magic_enum")
     add_deps("Engine")

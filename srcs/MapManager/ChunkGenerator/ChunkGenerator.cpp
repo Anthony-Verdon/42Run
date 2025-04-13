@@ -5,69 +5,106 @@
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
+#include <magic_enum.hpp>
 
-int ChunkGenerator::chunkSize = 15;
+int ChunkGenerator::chunkSize = 5;
+Chunk ChunkGenerator::lastChunk = {};
 
 Chunk ChunkGenerator::GenerateChunk(int chunkZ)
 {
     Chunk chunk;
-
-    int value = rand() % 2;
-    if (value)
+    
+    if (lastChunk.tiles.empty())
     {
-        for (int x = -1; x <= 1; x++)
+        for (int i = 0; i < Lane::COUNT; i++)
         {
             for (int z = 0; z < chunkSize; z++)
             {
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 0, chunkZ * chunkSize + z)));
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + z)));
             }
+            chunk.levels[i] = Level::ZERO;
         }
     }
     else
     {
-        for (int x = -1; x <= 1; x++)
-            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 0, chunkZ * chunkSize + 0)));
-
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 0, chunkZ * chunkSize + 1), -90, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 0, chunkZ * chunkSize + 2), -90, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 1, chunkZ * chunkSize + 3), -90, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 1, chunkZ * chunkSize + 4), -90, true));
-
-        for (int x = 0; x <= 1; x++)
+        for (int i = 0; i < Lane::COUNT; i++)
         {
-            for (int z = 1; z < 5; z++)
+            switch (lastChunk.levels[i])
             {
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 0, chunkZ * chunkSize + z)));
+                case Level::TOP:
+                {
+                    int randomValue = rand() % 2;
+                    if (randomValue == 0)
+                    {
+                        for (int z = 0; z < chunkSize; z++)
+                            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 2, chunkZ * chunkSize + z)));
+                        chunk.levels[i] = Level::TOP;
+                    }
+                    else
+                    {
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 1, chunkZ * chunkSize + 0), 90, true));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 1, chunkZ * chunkSize + 1), 90, false));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 2), 90, true));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 3), 90, false));
+                        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 4)));
+                        chunk.levels[i] = Level::ZERO;
+                    }
+                    break;
+                }
+                case Level::ZERO:
+                {
+                    int randomValue = rand() % 3;
+                    if (randomValue == 0)
+                    {
+                        for (int z = 0; z < chunkSize; z++)
+                            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + z)));
+                        chunk.levels[i] = Level::ZERO;
+                    }
+                    else if (randomValue == 1)
+                    {
+                        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 0)));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 1), -90, false));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 2), -90, true));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 1, chunkZ * chunkSize + 3), -90, false));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), 1, chunkZ * chunkSize + 4), -90, true));
+                        chunk.levels[i] = Level::TOP;
+                    }
+                    else
+                    {
+                        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 0)));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -1, chunkZ * chunkSize + 1), 90, true));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -1, chunkZ * chunkSize + 2), 90, false));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -2, chunkZ * chunkSize + 3), 90, true));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -2, chunkZ * chunkSize + 4), 90, false));
+                        chunk.levels[i] = Level::BOTTOM;
+                    }
+                    break;
+                }
+                case Level::BOTTOM:
+                {
+                    int randomValue = rand() % 2;
+                    if (randomValue == 0)
+                    {
+                        for (int z = 0; z < chunkSize; z++)
+                            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), -2, chunkZ * chunkSize + z)));
+                        chunk.levels[i] = Level::BOTTOM;
+                    }
+                    else
+                    {
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -2, chunkZ * chunkSize + 0), -90, false));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -2, chunkZ * chunkSize + 1), -90, true));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -1, chunkZ * chunkSize + 2), -90, false));
+                        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(magic_enum::enum_value<Lane>(i), -1, chunkZ * chunkSize + 3), -90, true));
+                        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(magic_enum::enum_value<Lane>(i), 0, chunkZ * chunkSize + 4)));
+                        chunk.levels[i] = Level::ZERO;
+                    }
+                    break;
+                }
             }
         }
-
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int z = 5; z < 10; z++)
-            {
-                if (x == -1)
-                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 2, chunkZ * chunkSize + z)));
-                else
-                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 0, chunkZ * chunkSize + z)));
-            }
-        }
-
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 1, chunkZ * chunkSize + 10), 90, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 1, chunkZ * chunkSize + 11), 90, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 0, chunkZ * chunkSize + 12), 90, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(-1, 0, chunkZ * chunkSize + 13), 90, false));
-
-        for (int x = 0; x <= 1; x++)
-        {
-            for (int z = 10; z < 14; z++)
-            {
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 0, chunkZ * chunkSize + z)));
-            }
-        }
-
-        for (int x = -1; x <= 1; x++)
-            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, 0, chunkZ * chunkSize + 14)));
     }
+
+    lastChunk = chunk;
 
     return (chunk);
 }

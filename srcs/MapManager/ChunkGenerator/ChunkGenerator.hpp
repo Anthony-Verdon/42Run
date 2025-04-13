@@ -13,9 +13,26 @@ struct Tile
     JPH::BodyID bodyId;
 };
 
+enum Lane
+{
+    LEFT = 1,
+    MIDDLE = 0,
+    RIGHT = -1,
+    COUNT = 3
+};
+
+enum Level
+{
+    TOP,
+    ZERO,
+    BOTTOM
+};
+
 struct Chunk
 {
     std::vector<Tile> tiles;
+    Level levels[3];
+
 };
 
 class ChunkGenerator
@@ -24,7 +41,9 @@ class ChunkGenerator
         ChunkGenerator() = delete;
         
         static int chunkSize;
-        static Tile SpawnGroundTile(const ml::vec3 &position); 
+        static Chunk lastChunk;
+        static Tile SpawnGroundTile(const ml::vec3 &position);
+        static void SpawnSlope(Chunk &chunk);
         static Tile SpawnSlopeTile(const ml::vec3 &position, float orientation, bool isMediumHigh); 
     
     public:
