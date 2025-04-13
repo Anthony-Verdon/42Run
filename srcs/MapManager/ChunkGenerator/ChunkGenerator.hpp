@@ -42,8 +42,10 @@ class ChunkGenerator
         
         static int chunkSize;
         static Chunk lastChunk;
+        static void SpawnGround(Chunk &chunk, int x, int , int z);
         static Tile SpawnGroundTile(const ml::vec3 &position);
-        static void SpawnSlope(Chunk &chunk);
+        static void SpawnSlopeUp(Chunk &chunk, int x, int y, int z);
+        static void SpawnSlopeDown(Chunk &chunk, int x, int y, int z);
         static Tile SpawnSlopeTile(const ml::vec3 &position, float orientation, bool isMediumHigh); 
     
     public:
