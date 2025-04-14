@@ -30,7 +30,10 @@ enum Level
 
 struct Chunk
 {
+    int x;
     int z;
+    int dirX;
+    int dirZ;
     std::vector<Tile> tiles;
     Level levels[3];
 
@@ -57,6 +60,6 @@ class ChunkGenerator
         static Tile SpawnSlopeTile(const ml::vec3 &position, float orientation, bool isMediumHigh); 
     
     public:
-        static Chunk GenerateChunk(int chunkZ);
+        static Chunk GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ);
         static int GetChunkSize() { return (chunkSize); }
 };

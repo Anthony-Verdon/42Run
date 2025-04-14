@@ -13,10 +13,15 @@ Player::Player()
     column = 0;
 }
 
+//#define AUTOMATIC_MOVEMENT
+
 void Player::Init()
 {
-    JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(0.5, 0.5), JPH::RVec3(0, 2, 0), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
+    JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(0.5, 0.5), JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
+    #ifndef AUTOMATIC_MOVEMENT
+    capsuleSetting.mGravityFactor = 0;
+    #endif
     bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
 }
 
@@ -30,8 +35,6 @@ Player::~Player()
 {
 }
 
-#define AUTOMATIC_MOVEMENT
-
 void Player::ProcessInput()
 {
     direction = ml::normalize(ml::vec3(-sinf(angle), 0, cosf(angle)));
@@ -42,9 +45,7 @@ void Player::ProcessInput()
         #ifdef AUTOMATIC_MOVEMENT
         JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
         #else
-        JPH::Vec3 velocity = JPH::Vec3(0, 0, 0);
-        if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W))
-            velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+        JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, 0, direction.z * speed) * (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_S));
         #endif
         WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
 

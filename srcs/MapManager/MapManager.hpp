@@ -9,10 +9,11 @@ class MapManager
         MapManager() = delete;
         ~MapManager() = delete;
 
+        static int playerPosX;
         static int playerPosZ;
         static int nbChunk;
         static std::queue<Chunk> chunks;
     public:
         static void Init();
-        static std::queue<Chunk> UpdateTerrain(const ml::vec3 &playerPos);
+        static std::queue<Chunk> UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &playerDir);
 };

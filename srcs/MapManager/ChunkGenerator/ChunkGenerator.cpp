@@ -7,19 +7,42 @@
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 #include <magic_enum.hpp>
 
-int ChunkGenerator::chunkSize = 6;
+int ChunkGenerator::chunkSize = 7;
 Chunk ChunkGenerator::lastChunk = {};
 
-Chunk ChunkGenerator::GenerateChunk(int chunkZ)
+Chunk ChunkGenerator::GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ)
 {
     Chunk chunk;
 
+    chunk.x = chunkX;
     chunk.z = chunkZ;
+    chunk.dirX = dirX;
+    chunk.dirZ = dirZ;
     
-    if (lastChunk.tiles.empty())
+    if (false && lastChunk.tiles.empty())
         SpawnAllGround(chunk);
     else 
     {
+        SpawnAllGround(chunk);
+        if (chunk.dirZ != 0)
+        {
+            for (int x = -3; x < -1; x++)
+                for (int z = -1; z <= 1; z++)
+                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+            for (int x = 2; x < 4; x++)
+                for (int z = -1; z <= 1; z++)
+                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+        }
+        else
+        {
+            for (int z = -3; z < -1; z++)
+                for (int x = -1; x <= 1; x++)
+                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+            for (int z = 2; z < 4; z++)
+                for (int x = -1; x <= 1; x++)
+                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+        }
+        /*
         for (int i = 0; i < Lane::COUNT; i++)
         {
             switch (lastChunk.levels[i])
@@ -41,10 +64,10 @@ Chunk ChunkGenerator::GenerateChunk(int chunkZ)
                 }
             }
         }
+        */
     }
 
     lastChunk = chunk;
-
     return (chunk);
 }
 
@@ -52,9 +75,10 @@ void ChunkGenerator::SpawnAllGround(Chunk &chunk)
 {
     for (int i = 0; i < Lane::COUNT; i++)
     {
-        SpawnGround(chunk, magic_enum::enum_value<Lane>(i), 0);
+        //SpawnGround(chunk, magic_enum::enum_value<Lane>(i), 0);
         chunk.levels[i] = Level::GROUND;
     }
+    SpawnGround(chunk, 0, 0);
 }
 
 void ChunkGenerator::SpawnTopLevel(Chunk &chunk, int laneIndex)
@@ -109,8 +133,19 @@ void ChunkGenerator::SpawnBottomLevel(Chunk &chunk, int laneIndex)
 
 void ChunkGenerator::SpawnGround(Chunk &chunk, int x, int y)
 {
-    for (int z = 0; z < chunkSize; z++)
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(x, y, chunk.z * chunkSize + z)));
+    (void)x;
+    if (chunk.dirZ != 0)
+    {
+        for (int x = -1; x <= 1; x++)
+            for (int z = 0; z < chunkSize; z++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, y, chunk.z * chunkSize + z)));
+    }
+    else
+    {
+        for (int z = -1; z <= 1; z++)
+            for (int x = 0; x < chunkSize; x++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + x, y, chunk.z * chunkSize + chunkSize / 2 + z)));
+    }
 }
 
 Tile ChunkGenerator::SpawnGroundTile(const ml::vec3 &position)

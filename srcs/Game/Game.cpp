@@ -103,7 +103,7 @@ void Game::Draw()
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     player.Draw(camera.getPosition(), lights, projection, view);
 
-    auto chunks = MapManager::UpdateTerrain(player.GetPosition());
+    auto chunks = MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
     for (; !chunks.empty(); chunks.pop())
     {
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
