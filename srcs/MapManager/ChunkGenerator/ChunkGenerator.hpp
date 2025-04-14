@@ -28,12 +28,20 @@ enum Level
     BOTTOM
 };
 
+enum ChunkType
+{
+    SPAWN,
+    TURN,
+    OUT_OF_TURN,
+    CLASSIC
+};
 struct Chunk
 {
     int x;
     int z;
     int dirX;
     int dirZ;
+    ChunkType type;
     std::vector<Tile> tiles;
     Level levels[3];
 
@@ -47,7 +55,10 @@ class ChunkGenerator
         static int chunkSize;
         static Chunk lastChunk;
 
+        static bool CanSpawnTurn();
+
         static void SpawnAllGround(Chunk &chunk);
+        static void SpawnTurn(Chunk &chunk);
         static void SpawnTopLevel(Chunk &chunk, int laneIndex);
         static void SpawnGroundLevel(Chunk &chunk, int laneIndex);
         static void SpawnBottomLevel(Chunk &chunk, int laneIndex);

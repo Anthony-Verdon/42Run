@@ -19,29 +19,23 @@ Chunk ChunkGenerator::GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ)
     chunk.dirX = dirX;
     chunk.dirZ = dirZ;
     
-    if (false && lastChunk.tiles.empty())
-        SpawnAllGround(chunk);
-    else 
+    if (lastChunk.tiles.empty())
     {
         SpawnAllGround(chunk);
-        if (chunk.dirZ != 0)
-        {
-            for (int x = -3; x < -1; x++)
-                for (int z = -1; z <= 1; z++)
-                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
-            for (int x = 2; x < 4; x++)
-                for (int z = -1; z <= 1; z++)
-                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
-        }
-        else
-        {
-            for (int z = -3; z < -1; z++)
-                for (int x = -1; x <= 1; x++)
-                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
-            for (int z = 2; z < 4; z++)
-                for (int x = -1; x <= 1; x++)
-                    chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
-        }
+        chunk.type = ChunkType::SPAWN;
+    }
+    else if (CanSpawnTurn())
+    {
+        SpawnTurn(chunk);
+    }
+    else if (lastChunk.type == ChunkType::TURN)
+    {
+        SpawnAllGround(chunk);
+        chunk.type = ChunkType::OUT_OF_TURN;
+    }
+    else
+    {
+        SpawnAllGround(chunk);
         /*
         for (int i = 0; i < Lane::COUNT; i++)
         {
@@ -65,10 +59,23 @@ Chunk ChunkGenerator::GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ)
             }
         }
         */
+        chunk.type = ChunkType::CLASSIC;
     }
 
     lastChunk = chunk;
     return (chunk);
+}
+
+bool ChunkGenerator::CanSpawnTurn()
+{
+    if (lastChunk.type != ChunkType::CLASSIC)
+        return (false);
+
+    for (int i = 0; i < Lane::COUNT; i++)
+        if (lastChunk.levels[i] != Level::GROUND)
+            return (false);
+
+    return (true);
 }
 
 void ChunkGenerator::SpawnAllGround(Chunk &chunk)
@@ -78,6 +85,31 @@ void ChunkGenerator::SpawnAllGround(Chunk &chunk)
         SpawnGround(chunk, magic_enum::enum_value<Lane>(i), 0);
         chunk.levels[i] = Level::GROUND;
     }
+}
+
+void ChunkGenerator::SpawnTurn(Chunk &chunk)
+{
+    SpawnAllGround(chunk);
+    if (chunk.dirZ != 0)
+    {
+        for (int x = -3; x < -1; x++)
+            for (int z = -1; z <= 1; z++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+        for (int x = 2; x < 4; x++)
+            for (int z = -1; z <= 1; z++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+    }
+    else
+    {
+        for (int z = -3; z < -1; z++)
+            for (int x = -1; x <= 1; x++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+        for (int z = 2; z < 4; z++)
+            for (int x = -1; x <= 1; x++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+    }
+
+    chunk.type = ChunkType::TURN;
 }
 
 void ChunkGenerator::SpawnTopLevel(Chunk &chunk, int laneIndex)
