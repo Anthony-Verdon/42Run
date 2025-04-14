@@ -52,11 +52,11 @@ class ChunkGenerator
         static void SpawnGroundLevel(Chunk &chunk, int laneIndex);
         static void SpawnBottomLevel(Chunk &chunk, int laneIndex);
 
-        static void SpawnGround(Chunk &chunk, int x, int y);
+        static void SpawnGround(Chunk &chunk, int lane, int y);
         static Tile SpawnGroundTile(const ml::vec3 &position);
 
-        static void SpawnSlopeUp(Chunk &chunk, int x, int y);
-        static void SpawnSlopeDown(Chunk &chunk, int x, int y);
+        static void SpawnSlopeUp(Chunk &chunk, int lane, int y);
+        static void SpawnSlopeDown(Chunk &chunk, int lane, int y);
         static Tile SpawnSlopeTile(const ml::vec3 &position, float orientation, bool isMediumHigh); 
     
     public:

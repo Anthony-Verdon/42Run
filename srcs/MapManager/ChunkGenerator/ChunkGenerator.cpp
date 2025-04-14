@@ -75,10 +75,9 @@ void ChunkGenerator::SpawnAllGround(Chunk &chunk)
 {
     for (int i = 0; i < Lane::COUNT; i++)
     {
-        //SpawnGround(chunk, magic_enum::enum_value<Lane>(i), 0);
+        SpawnGround(chunk, magic_enum::enum_value<Lane>(i), 0);
         chunk.levels[i] = Level::GROUND;
     }
-    SpawnGround(chunk, 0, 0);
 }
 
 void ChunkGenerator::SpawnTopLevel(Chunk &chunk, int laneIndex)
@@ -131,20 +130,17 @@ void ChunkGenerator::SpawnBottomLevel(Chunk &chunk, int laneIndex)
     }
 }
 
-void ChunkGenerator::SpawnGround(Chunk &chunk, int x, int y)
+void ChunkGenerator::SpawnGround(Chunk &chunk, int lane, int y)
 {
-    (void)x;
     if (chunk.dirZ != 0)
     {
-        for (int x = -1; x <= 1; x++)
-            for (int z = 0; z < chunkSize; z++)
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, y, chunk.z * chunkSize + z)));
+        for (int z = 0; z < chunkSize; z++)
+            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y, chunk.z * chunkSize + z)));
     }
     else
     {
-        for (int z = -1; z <= 1; z++)
-            for (int x = 0; x < chunkSize; x++)
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + x, y, chunk.z * chunkSize + chunkSize / 2 + z)));
+        for (int x = 0; x < chunkSize; x++)
+            chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + x, y, chunk.z * chunkSize + chunkSize / 2 + lane)));
     }
 }
 
