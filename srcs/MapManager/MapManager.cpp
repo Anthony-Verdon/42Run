@@ -43,7 +43,11 @@ std::queue<Chunk> MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml:
             playerDirX = dirX;
             playerDirZ = dirZ;
             for (int i = 0; i <= nbChunk; i++)
+            {
+                if (ChunkGenerator::LastChunkGeneratedType() == ChunkType::TURN)
+                    break;
                 chunks.push(ChunkGenerator::GenerateChunk(playerDirX, playerDirZ));
+            }
         }
         
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
