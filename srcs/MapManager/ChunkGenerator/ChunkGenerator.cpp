@@ -235,7 +235,7 @@ void ChunkGenerator::SpawnSlopeUp(Chunk &chunk, int lane, int y)
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 6, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
     }
 }
-Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool toTheTop)
+Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp)
 {
     Tile tile;
     tile.position = ml::vec3(ml::vec3(position));
@@ -246,51 +246,8 @@ Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &di
         tile.modelIndex = 4;
     ml::vec3 positionTimeSize = tile.position * tile.size;
     ml::vec3 halfSize = tile.size / 2.0f;
-    const ml::vec3 originalDirection = ml::vec3(-1, 0, 0);
-    float angle = acos((direction.x * originalDirection.x + direction.y * originalDirection.y + direction.z * originalDirection.z)) / (sqrt(pow(originalDirection.x, 2) + pow(originalDirection.y, 2) + pow(originalDirection.z, 2)) * sqrt(pow(direction.x, 2) + pow(direction.y, 2) + pow(direction.z, 2)));
-    angle = ml::degrees(angle);
-    if ((toTheTop && direction.z == 1) || (toTheTop && direction.z == -1) || (toTheTop && direction.x == -1) || (!toTheTop && direction.x == 1))
-        angle += 180;
+    auto [angle, points] = CalculateSlopRotation(direction, goingUp);
     tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), angle, ml::vec3(0, 1, 0));
-
-    // angle: 90 (slope going down on z axis)
-    JPH::Vec3 points[8] = {
-        {0, 0, 0},
-        {0, 0, 2},
-        {2, 0, 0},
-        {2, 0, 2},
-        {0, 1.5, 0},
-        {0, 1, 2},
-        {2, 1.5, 0},
-        {2, 1, 2},
-    };
-
-    // angle: 180 (slope going down on x axis)
-    if ((int)angle % 360 == 180)
-    {
-        points[4].SetY(1);
-        points[7].SetY(1.5);
-    }
-
-    // angle: 270 (slope going up on z axis)
-    if ((int)angle % 360 == 270)
-    {
-        points[4].SetZ(2);
-        points[5].SetZ(0);
-        points[6].SetZ(2);
-        points[7].SetZ(0);
-    }
-
-    // angle: 360 (slope going up on x axis)
-    if ((int)angle % 360 == 0)
-    {
-        points[4].SetY(1);
-        points[7].SetY(1.5);
-        points[4].SetX(2);
-        points[5].SetX(2);
-        points[6].SetX(0);
-        points[7].SetX(0);
-    }
 
     if (isMediumHigh)
     {
@@ -299,9 +256,68 @@ Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &di
     }
 
     JPH::Shape::ShapeResult outResult;
-    JPH::ConvexHullShapeSettings slopSetting(points, 8);
+    JPH::ConvexHullShapeSettings slopSetting(points.data(), points.size());
     JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
 
     return (tile);
+}
+
+std::pair<float, std::vector<JPH::Vec3>> ChunkGenerator::CalculateSlopRotation(const ml::vec3 &direction, bool goingUp)
+{
+    const ml::vec3 originalDirection = ml::vec3(-1, 0, 0);
+    float angle = acos((direction.x * originalDirection.x + direction.y * originalDirection.y + direction.z * originalDirection.z)) / (sqrt(pow(originalDirection.x, 2) + pow(originalDirection.y, 2) + pow(originalDirection.z, 2)) * sqrt(pow(direction.x, 2) + pow(direction.y, 2) + pow(direction.z, 2)));
+    angle = ml::degrees(angle);
+    if ((goingUp && direction.z == 1) || (goingUp && direction.z == -1) || (goingUp && direction.x == -1) || (!goingUp && direction.x == 1))
+        angle += 180;
+
+    angle = (int)angle % 360;
+    std::vector<JPH::Vec3> points;
+    
+    if (angle == 0) // slope going up on x axis
+    {
+        points.push_back({0, 0, 0});
+        points.push_back({0, 0, 2});
+        points.push_back({2, 0, 0});
+        points.push_back({2, 0, 2});
+        points.push_back({2, 1, 0});
+        points.push_back({2, 1, 2});
+        points.push_back({0, 1.5, 0});
+        points.push_back({0, 1.5, 2});
+    }
+    else if (angle == 90) // slope going down on z axis
+    {
+        points.push_back({0, 0, 0});
+        points.push_back({0, 0, 2});
+        points.push_back({2, 0, 0});
+        points.push_back({2, 0, 2});
+        points.push_back({0, 1.5, 0});
+        points.push_back({0, 1, 2});
+        points.push_back({2, 1.5, 0});
+        points.push_back({2, 1, 2});
+    }
+    else if (angle == 180) // slope going down on x axis
+    {
+        points.push_back({0, 0, 0});
+        points.push_back({0, 0, 2});
+        points.push_back({2, 0, 0});
+        points.push_back({2, 0, 2});
+        points.push_back({0, 1, 0});
+        points.push_back({0, 1, 2});
+        points.push_back({2, 1.5, 0});
+        points.push_back({2, 1.5, 2});
+    }
+    else if (angle == 270) // slope going up on z axis
+    {
+        points.push_back({0, 0, 0});
+        points.push_back({0, 0, 2});
+        points.push_back({2, 0, 0});
+        points.push_back({2, 0, 2});
+        points.push_back({0, 1.5, 2});
+        points.push_back({0, 1, 0});
+        points.push_back({2, 1.5, 2});
+        points.push_back({2, 1, 0});
+    }
+
+    return (std::make_pair(angle, points));
 }

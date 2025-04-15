@@ -68,7 +68,8 @@ class ChunkGenerator
 
         static void SpawnSlopeUp(Chunk &chunk, int lane, int y);
         static void SpawnSlopeDown(Chunk &chunk, int lane, int y);
-        static Tile SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool toTheTop); 
+        static Tile SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp);
+        static std::pair<float, std::vector<JPH::Vec3>> CalculateSlopRotation(const ml::vec3 &direction, bool goingUp);
     
     public:
         static Chunk GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ);
