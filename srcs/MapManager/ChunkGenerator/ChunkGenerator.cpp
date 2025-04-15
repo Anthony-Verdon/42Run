@@ -10,12 +10,22 @@
 int ChunkGenerator::chunkSize = 7;
 Chunk ChunkGenerator::lastChunk = {};
 
-Chunk ChunkGenerator::GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ)
+Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
 {
+    static int nbChunk = -1;
+    nbChunk++;
     Chunk chunk;
 
-    chunk.x = chunkX;
-    chunk.z = chunkZ;
+    if (lastChunk.tiles.empty())
+    {
+        chunk.x = 0;        
+        chunk.z = 0;        
+    }
+    else
+    {
+        chunk.x = lastChunk.x + dirX;
+        chunk.z = lastChunk.z + dirZ;
+    }
     chunk.dirX = dirX;
     chunk.dirZ = dirZ;
     

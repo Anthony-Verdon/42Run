@@ -3,14 +3,20 @@
 #include <cmath>
 
 std::queue<Chunk> MapManager::chunks;
-int MapManager::playerPosZ = 0;
 int MapManager::playerPosX = 0;
-int MapManager::nbChunk = 1;
+int MapManager::playerPosZ = 0;
+int MapManager::playerDirX = 0;
+int MapManager::playerDirZ = 1;
+int MapManager::nbChunk = 5;
 
 void MapManager::Init()
 {
-    for (int z = 0; z < nbChunk; z++)
-        chunks.push(ChunkGenerator::GenerateChunk(0, z, 0, 1));
+    for (int i = 0; i <= nbChunk; i++)
+    {
+        if (ChunkGenerator::LastChunkGeneratedType() == ChunkType::TURN)
+            break;
+        chunks.push(ChunkGenerator::GenerateChunk(playerDirX, playerDirZ));
+    }
 }
 
 std::queue<Chunk> MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &playerDir)
@@ -28,12 +34,22 @@ std::queue<Chunk> MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml:
         playerPosZ = newPlayerPosZ;
         int dirX = (int)round(playerDir.x);
         int dirZ = (int)round(playerDir.z);
-        chunks.push(ChunkGenerator::GenerateChunk(newPlayerPosX, playerPosZ, dirX, dirZ));
+        if (ChunkGenerator::LastChunkGeneratedType() != ChunkType::TURN)
+        {
+            chunks.push(ChunkGenerator::GenerateChunk(playerDirX, playerDirZ));
+        }
+        else if (playerDirX != dirX || playerDirZ != dirZ)
+        {
+            playerDirX = dirX;
+            playerDirZ = dirZ;
+            for (int i = 0; i <= nbChunk; i++)
+                chunks.push(ChunkGenerator::GenerateChunk(playerDirX, playerDirZ));
+        }
+        
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
         {
             WorldPhysic3D::GetBodyInterface().RemoveBody(it->bodyId);
             WorldPhysic3D::GetBodyInterface().DestroyBody(it->bodyId);
-            
         }
         chunks.pop();
     }

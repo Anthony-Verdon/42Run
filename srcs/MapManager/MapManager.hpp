@@ -11,6 +11,8 @@ class MapManager
 
         static int playerPosX;
         static int playerPosZ;
+        static int playerDirX;
+        static int playerDirZ;
         static int nbChunk;
         static std::queue<Chunk> chunks;
     public:

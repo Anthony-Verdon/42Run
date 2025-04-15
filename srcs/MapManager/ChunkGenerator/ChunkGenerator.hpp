@@ -72,6 +72,7 @@ class ChunkGenerator
         static std::pair<float, std::vector<JPH::Vec3>> CalculateSlopRotation(const ml::vec3 &direction, bool goingUp);
     
     public:
-        static Chunk GenerateChunk(int chunkX, int chunkZ, int dirX, int dirZ);
+        static Chunk GenerateChunk(int dirX, int dirZ);
         static int GetChunkSize() { return (chunkSize); }
+        static ChunkType LastChunkGeneratedType() { return (lastChunk.type); }
 };
