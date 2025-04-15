@@ -248,10 +248,12 @@ Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &di
     ml::vec3 halfSize = tile.size / 2.0f;
     const ml::vec3 originalDirection = ml::vec3(-1, 0, 0);
     float angle = acos((direction.x * originalDirection.x + direction.y * originalDirection.y + direction.z * originalDirection.z)) / (sqrt(pow(originalDirection.x, 2) + pow(originalDirection.y, 2) + pow(originalDirection.z, 2)) * sqrt(pow(direction.x, 2) + pow(direction.y, 2) + pow(direction.z, 2)));
-    if ((toTheTop && direction.x == 0) || (!toTheTop && direction.z == 0))
-        angle += ml::radians(180);
-    tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), ml::degrees(angle), ml::vec3(0, 1, 0));
+    angle = ml::degrees(angle);
+    if ((toTheTop && direction.z == 1) || (toTheTop && direction.z == -1) || (toTheTop && direction.x == -1) || (!toTheTop && direction.x == 1))
+        angle += 180;
+    tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), angle, ml::vec3(0, 1, 0));
 
+    // angle: 90 (slope going down on z axis)
     JPH::Vec3 points[8] = {
         {0, 0, 0},
         {0, 0, 2},
@@ -262,16 +264,33 @@ Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &di
         {2, 1.5, 0},
         {2, 1, 2},
     };
-        
-    /*
-    if (orientation == -90.0f)
+
+    // angle: 180 (slope going down on x axis)
+    if ((int)angle % 360 == 180)
+    {
+        points[4].SetY(1);
+        points[7].SetY(1.5);
+    }
+
+    // angle: 270 (slope going up on z axis)
+    if ((int)angle % 360 == 270)
     {
         points[4].SetZ(2);
         points[5].SetZ(0);
         points[6].SetZ(2);
         points[7].SetZ(0);
     }
-    */
+
+    // angle: 360 (slope going up on x axis)
+    if ((int)angle % 360 == 0)
+    {
+        points[4].SetY(1);
+        points[7].SetY(1.5);
+        points[4].SetX(2);
+        points[5].SetX(2);
+        points[6].SetX(0);
+        points[7].SetX(0);
+    }
 
     if (isMediumHigh)
     {
