@@ -11,17 +11,15 @@ Player::Player()
     angle = 0;
     speed = 5;
     column = 0;
+    state = PlayerState::RUNNING;
+    timeElapsed = 0;
 }
-
-//#define AUTOMATIC_MOVEMENT
 
 void Player::Init()
 {
     JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(0.5, 0.5), JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
-    #ifndef AUTOMATIC_MOVEMENT
-    capsuleSetting.mGravityFactor = 0;
-    #endif
+    capsuleSetting.mFriction = 0;
     bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
 }
 
@@ -37,75 +35,68 @@ Player::~Player()
 
 void Player::ProcessInput()
 {
+    timeElapsed += 1.0f / 60.0f;
     direction = ml::normalize(ml::vec3(-sinf(angle), 0, cosf(angle)));
-    
-    std::string currentAnim = ModelManager::GetModel(modelIndex).GetCurrentAnimation();
-    if (currentAnim == "Run")
-    {
-        #ifdef AUTOMATIC_MOVEMENT
-        JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
-        #else
-        JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, 0, direction.z * speed) * (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_S));
-        #endif
-        WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
 
-        if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1)
+    switch (state)
+    {
+        case PlayerState::RUNNING:
         {
-            #ifdef AUTOMATIC_MOVEMENT
-            ModelManager::GetModel(modelIndex).Play("DashRight");
-            column++;
-            #else
-            angle += Time::getDeltaTime();
-            #endif
+            JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+
+            if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1)
+            {
+                state = PlayerState::MOVING_RIGHT;
+                timeElapsed = 0;
+                column++;
+            }
+            else if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1)
+            {
+                state = PlayerState::MOVING_LEFT;
+                timeElapsed = 0;
+                column--;
+            }
+            break;
         }
-        else if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1)
+        case PlayerState::MOVING_LEFT: //todo: factorize with moving right
         {
-            #ifdef AUTOMATIC_MOVEMENT
-            ModelManager::GetModel(modelIndex).Play("DashLeft");
-            column--;
-            #else
-            angle -= Time::getDeltaTime();
-            #endif
+            float time = 2;
+            JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+            JPH::Vec3 horizontalMovement;
+            if (direction.x != 0)
+                horizontalMovement = JPH::Vec3(0, 0, direction.x * 2 * speed / time);
+            else
+                horizontalMovement = JPH::Vec3(direction.z * 2 * speed / time, 0, 0);
+            
+            velocity += horizontalMovement;
+            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+            if (timeElapsed >= time / speed)
+            {
+                state = PlayerState::RUNNING;
+                timeElapsed = 0;
+            }
+            break;
         }
-        else if (WindowManager::IsInputPressed(GLFW_KEY_SPACE))
-            ModelManager::GetModel(modelIndex).Play("Jump");
-        else if (WindowManager::IsInputPressed(GLFW_KEY_LEFT_SHIFT))
-            ModelManager::GetModel(modelIndex).Play("Roll");
-    }
-    else if (currentAnim == "DashRight")
-    {
-        JPH::Vec3 velocity = (JPH::Vec3(direction.x, direction.y, direction.z) * speed + JPH::Vec3(-1, 0, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration();
-        WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
-            ModelManager::GetModel(modelIndex).Play("Run");
-    }
-    else if (currentAnim == "DashLeft")
-    {
-        JPH::Vec3 velocity = (JPH::Vec3(direction.x, direction.y, direction.z) * speed + JPH::Vec3(1, 0, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration();
-        WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
-            ModelManager::GetModel(modelIndex).Play("Run");
-    }
-    else if (currentAnim == "Jump")
-    {
-        JPH::Vec3 velocity = (JPH::Vec3(direction.x, direction.y, direction.z) * speed + JPH::Vec3(0, 1, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration();
-        WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
-            ModelManager::GetModel(modelIndex).Play("Fall", 2.0f);
-    }
-    else if (currentAnim == "Fall")
-    {
-        JPH::Vec3 velocity = (JPH::Vec3(direction.x, direction.y, direction.z) * speed + JPH::Vec3(0, -1, 0) * 2.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration();
-        WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
-            ModelManager::GetModel(modelIndex).Play("Run");
-    }
-    else if (currentAnim == "Roll")
-    {
-        JPH::Vec3 velocity = (JPH::Vec3(direction.x, direction.y, direction.z) * speed + JPH::Vec3(0, 0, 1) * 4.0f) / ModelManager::GetModel(modelIndex).GetCurrentAnimationDuration();
-        WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
-            ModelManager::GetModel(modelIndex).Play("Run");
+        case PlayerState::MOVING_RIGHT:
+        {
+            float time = 2;
+            JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+            JPH::Vec3 horizontalMovement;
+            if (direction.x != 0)
+                horizontalMovement = JPH::Vec3(0, 0, -direction.x * 2 * speed / time);
+            else
+                horizontalMovement = JPH::Vec3(-direction.z * 2 * speed / time, 0, 0);
+            
+            velocity += horizontalMovement;
+            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+            if (timeElapsed >= time / speed)
+            {
+                state = PlayerState::RUNNING;
+                timeElapsed = 0;
+            }
+            break;
+        }
     }
 }
 
