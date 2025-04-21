@@ -74,5 +74,6 @@ class ChunkGenerator
     public:
         static Chunk GenerateChunk(int dirX, int dirZ);
         static int GetChunkSize() { return (chunkSize); }
+        static int GetHalfChunkSize() { return (chunkSize / 2); }
         static ChunkType LastChunkGeneratedType() { return (lastChunk.type); }
 };

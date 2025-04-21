@@ -18,4 +18,5 @@ class MapManager
     public:
         static void Init();
         static std::queue<Chunk> UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &playerDir);
+        static ChunkType GetCurrentChunkType() { return (chunks.front().type); }
 };

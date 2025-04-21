@@ -3,6 +3,7 @@
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
+#include "MapManager/MapManager.hpp"
 
 Player::Player()
 {
@@ -35,8 +36,35 @@ Player::~Player()
 
 void Player::ProcessInput()
 {
+    if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
+    {
+        bool updateAngle = false;
+        if (direction.x != 0)
+        {
+            int posX = GetPosition().x / 2;
+            if (direction.x == -1)
+                posX++;
+            updateAngle = (abs(posX) % ChunkGenerator::GetChunkSize() == ChunkGenerator::GetHalfChunkSize());
+        }
+        else if (direction.z != 0)
+        {
+            int posZ = GetPosition().z / 2;
+            if (direction.z == -1)
+                posZ++;
+            updateAngle = (abs(posZ) % ChunkGenerator::GetChunkSize() == ChunkGenerator::GetHalfChunkSize());
+        }
+
+        if (updateAngle)
+        {
+            angle += ml::radians(90) * column;
+            column = 0;
+        }
+    }
+
     timeElapsed += 1.0f / 60.0f;
     direction = ml::normalize(ml::vec3(-sinf(angle), 0, cosf(angle)));
+    direction.x = round(direction.x);
+    direction.z = round(direction.z);
 
     switch (state)
     {
@@ -65,7 +93,7 @@ void Player::ProcessInput()
             JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
             JPH::Vec3 horizontalMovement;
             if (direction.x != 0)
-                horizontalMovement = JPH::Vec3(0, 0, direction.x * 2 * speed / time);
+                horizontalMovement = JPH::Vec3(0, 0, -direction.x * 2 * speed / time);
             else
                 horizontalMovement = JPH::Vec3(direction.z * 2 * speed / time, 0, 0);
             
@@ -84,7 +112,7 @@ void Player::ProcessInput()
             JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
             JPH::Vec3 horizontalMovement;
             if (direction.x != 0)
-                horizontalMovement = JPH::Vec3(0, 0, -direction.x * 2 * speed / time);
+                horizontalMovement = JPH::Vec3(0, 0, direction.x * 2 * speed / time);
             else
                 horizontalMovement = JPH::Vec3(-direction.z * 2 * speed / time, 0, 0);
             
