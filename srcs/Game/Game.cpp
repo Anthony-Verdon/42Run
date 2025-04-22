@@ -15,7 +15,7 @@ Game::Game()
 {
     srand(time(NULL));
 
-    //WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     LineRenderer3D::Init();
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
@@ -87,14 +87,57 @@ void Game::ProcessInput()
     UpdateCamera();
 }
 
+//#define CAMERA_DETACH
+
 void Game::UpdateCamera()
 {
+    #ifdef CAMERA_DETACH
+    // position
+    camera.setSpeed(20);
+    const float speed = camera.getSpeed() * Time::getDeltaTime();
+
+    int front = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_W) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_S);
+    camera.addToPosition((float)front * camera.getFrontDirection() * speed);
+
+    int right = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A);
+    camera.addToPosition((float)right * camera.getRightDirection() * speed);
+
+    int up = WindowManager::IsInputPressedOrMaintain(GLFW_KEY_SPACE) - WindowManager::IsInputPressedOrMaintain(GLFW_KEY_LEFT_SHIFT);
+    camera.addToPosition((float)up * camera.getUpDirection() * speed);
+
+    // orientation
+    const float sensitivity = 0.1f;
+
+    ml::vec2 mousePos = WindowManager::GetMousePosition();
+    static float lastX = mousePos.x;
+    static float lastY = mousePos.y;
+
+    float xOffset;
+    float yOffset;
+    xOffset = (mousePos.x - lastX) * sensitivity;
+    yOffset = (lastY - mousePos.y) * sensitivity;
+    lastX = mousePos.x;
+    lastY = mousePos.y;
+    camera.addToYaw(xOffset);
+    camera.addToPitch(yOffset);
+    if (camera.getPitch() > 89.0f)
+        camera.setPitch(89.0f);
+    else if (camera.getPitch() < -89.0f)
+        camera.setPitch(-89.0f);
+
+    ml::vec3 direction(cosf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())),
+                sinf(ml::radians(camera.getPitch())),
+                sinf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())));
+    camera.setFrontDirection(ml::normalize(direction));
+    camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
+    #else
     ml::vec3 cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
     camera.setPosition(player.GetPosition() + cameraPosition);
 
     ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);
     camera.setFrontDirection(ml::normalize(player.GetDirection() + cameraOrientation));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
+    #endif
 }
 
 void Game::Draw()

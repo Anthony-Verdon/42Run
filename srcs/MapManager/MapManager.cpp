@@ -21,10 +21,10 @@ void MapManager::Init()
 
 std::queue<Chunk> MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &playerDir)
 {
-    int newPlayerPosX = (int)round(playerPos.x / 2) / ChunkGenerator::GetChunkSize();
+    int newPlayerPosX = playerPos.x / 2 / ChunkGenerator::GetChunkSize();
     if (playerPos.x < 0)
         newPlayerPosX--;
-    int newPlayerPosZ = (int)round(playerPos.z / 2) / ChunkGenerator::GetChunkSize();
+    int newPlayerPosZ = playerPos.z / 2 / ChunkGenerator::GetChunkSize();
     if (playerPos.z < 0)
         newPlayerPosZ--;
 
