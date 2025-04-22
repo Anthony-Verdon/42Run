@@ -8,6 +8,7 @@ int MapManager::playerPosZ = 0;
 int MapManager::playerDirX = 0;
 int MapManager::playerDirZ = 1;
 int MapManager::nbChunk = 5;
+bool MapManager::tryDeleteChunk = false;
 
 void MapManager::Init()
 {
@@ -19,7 +20,14 @@ void MapManager::Init()
     }
 }
 
-std::queue<Chunk> MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &playerDir)
+void MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &playerDir)
+{
+    GenerateChunks(playerPos, playerDir);
+    if (tryDeleteChunk)
+        DeleteChunk(playerPos);        
+}
+
+void MapManager::GenerateChunks(const ml::vec3 &playerPos, const ml::vec3 &playerDir)
 {
     int newPlayerPosX = playerPos.x / 2 / ChunkGenerator::GetChunkSize();
     if (playerPos.x < 0)
@@ -49,14 +57,37 @@ std::queue<Chunk> MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml:
                     break;
             }
         }
-        
+        tryDeleteChunk = true;
+    }
+}
+
+void MapManager::DeleteChunk(const ml::vec3 &playerPos)
+{
+    bool deleteChunk = false;
+    if (playerDirX != 0)
+    {
+        int posX = playerPos.x / 2;
+        if (playerDirX == -1)
+            posX++;
+        deleteChunk = (abs(posX) % ChunkGenerator::GetChunkSize() == ChunkGenerator::GetHalfChunkSize());
+    }
+    else if (playerDirZ != 0)
+    {
+        int posZ = playerPos.z / 2;
+        if (playerDirZ == -1)
+            posZ++;
+        deleteChunk = (abs(posZ) % ChunkGenerator::GetChunkSize() == ChunkGenerator::GetHalfChunkSize());
+    }
+
+    if (deleteChunk)
+    {
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
         {
             WorldPhysic3D::GetBodyInterface().RemoveBody(it->bodyId);
             WorldPhysic3D::GetBodyInterface().DestroyBody(it->bodyId);
         }
         chunks.pop();
-    }
 
-    return (chunks);
+        tryDeleteChunk = false;
+    }
 }

@@ -62,6 +62,7 @@ void Game::LoadAssets()
 void Game::Run()
 {
     accumulatedTime += Time::getDeltaTime();
+    MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
     ProcessInput();
     Draw();
 
@@ -146,7 +147,7 @@ void Game::Draw()
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     player.Draw(camera.getPosition(), lights, projection, view);
 
-    auto chunks = MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
+    auto chunks = MapManager::GetChunks();
     for (; !chunks.empty(); chunks.pop())
     {
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
