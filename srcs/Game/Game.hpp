@@ -14,6 +14,7 @@ class Game: public AProgram
         BPLayerInterfaceImpl BPLayerInterface;
         ObjectVsBroadPhaseLayerFilterImpl ObjectVsBPLayerFilter;
         ObjectLayerPairFilterImpl OBjectLPFilter;
+        ContactListener contactListener;
 
         Camera3D camera;
         std::vector<std::unique_ptr<ALight>> lights;

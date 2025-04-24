@@ -14,6 +14,7 @@ Player::Player()
     column = 0;
     state = PlayerStateFlag::RUNNING;
     timeElapsed = 0;
+    onGround = true;
 }
 
 void Player::Init()
@@ -50,10 +51,18 @@ void Player::ProcessInput()
         column++;
     }
 
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_SPACE) && !(state & PlayerStateFlag::JUMPING) && onGround)
+    {
+        state += PlayerStateFlag::JUMPING;
+    }
+
 }
 
 void Player::Update()
 {
+    auto contactListener = dynamic_cast<ContactListener*>(WorldPhysic3D::GetContactListener());
+    onGround = contactListener->GetNbContact(bodyId) != 0;
+
     // direction
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
     {
@@ -104,6 +113,12 @@ void Player::Update()
             (state & PlayerStateFlag::MOVING_RIGHT) ? state = state - PlayerStateFlag::MOVING_RIGHT : state = state - PlayerStateFlag::MOVING_LEFT;
             timeElapsed = 0;
         }
+    }
+
+    if (state & PlayerStateFlag::JUMPING)
+    {
+        velocity += JPH::Vec3(0, 2, 0);
+        state = state - PlayerStateFlag::JUMPING;
     }
 
     WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);

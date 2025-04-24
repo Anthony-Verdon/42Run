@@ -11,6 +11,8 @@
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Jolt/Physics/Body/BodyActivationListener.h>
+#include <map>
+#include <vector>
 
 namespace Layers
 {
@@ -100,29 +102,29 @@ class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
         }
 };
 
-class MyContactListener : public JPH::ContactListener
+class ContactListener : public JPH::ContactListener
 {
+    private:
+        std::map<JPH::BodyID, std::vector<JPH::BodyID>> contacts;
+
     public:
-        // See: ContactListener
         virtual JPH::ValidateResult	OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult &inCollisionResult) override
         {
             (void)inBody1;
             (void)inBody2;
             (void)inBaseOffset;
             (void)inCollisionResult;
-            std::cout << "Contact validate callback" << std::endl;
 
-            // Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
             return JPH::ValidateResult::AcceptAllContactsForThisBodyPair;
         }
 
         virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
         {
-            (void)inBody1;
-            (void)inBody2;
             (void)inManifold;
             (void)ioSettings;
-            std::cout << "A contact was added" << std::endl;
+
+            contacts[inBody1.GetID()].push_back(inBody2.GetID());
+            contacts[inBody2.GetID()].push_back(inBody1.GetID());
         }
 
         virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
@@ -131,30 +133,36 @@ class MyContactListener : public JPH::ContactListener
             (void)inBody2;
             (void)inManifold;
             (void)ioSettings;
-            std::cout << "A contact was persisted" << std::endl;
         }
 
         virtual void OnContactRemoved(const JPH::SubShapeIDPair &inSubShapePair) override
         {
-            (void)inSubShapePair;
-            std::cout << "A contact was removed" << std::endl;
+            {
+                auto contactMapIt = contacts.find(inSubShapePair.GetBody1ID());
+                if (contactMapIt != contacts.end())
+                {
+                    auto contactVectorIt = std::find(contactMapIt->second.begin(), contactMapIt->second.end(), inSubShapePair.GetBody2ID());
+                    if (contactVectorIt != contactMapIt->second.end())
+                        contactMapIt->second.erase(contactVectorIt);
+                }
+            }
+            {
+                auto contactMapIt = contacts.find(inSubShapePair.GetBody2ID());
+                if (contactMapIt != contacts.end())
+                {
+                    auto contactVectorIt = std::find(contactMapIt->second.begin(), contactMapIt->second.end(), inSubShapePair.GetBody1ID());
+                    if (contactVectorIt != contactMapIt->second.end())
+                        contactMapIt->second.erase(contactVectorIt);
+                }
+            }
         }
-};
 
-class MyBodyActivationListener : public JPH::BodyActivationListener
-{
-    public:
-        virtual void OnBodyActivated(const JPH::BodyID &inBodyID, JPH::uint64 inBodyUserData) override
+        size_t GetNbContact(const JPH::BodyID &id)
         {
-            (void)inBodyID;
-            (void)inBodyUserData;
-            std::cout << "A body got activated" << std::endl;
-        }
-
-        virtual void OnBodyDeactivated(const JPH::BodyID &inBodyID, JPH::uint64 inBodyUserData) override
-        {
-            (void)inBodyID;
-            (void)inBodyUserData;
-            std::cout << "A body went to sleep" << std::endl;
+            auto contactMapIt = contacts.find(id);
+            if (contactMapIt != contacts.end())
+                return (contactMapIt->second.size());
+            else
+                return (0);
         }
 };

@@ -25,6 +25,7 @@ class Player
         float speed;
         int column;
         JPH::BodyID bodyId;
+        bool onGround;
 
         int state;
         float timeElapsed;

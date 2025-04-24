@@ -23,6 +23,7 @@ Game::Game()
     LoadAssets();
     
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
+    WorldPhysic3D::SetContactListener(&contactListener);
     JPH::DebugRenderer::sInstance = new DebugRendererImpl();
     player.SetModelIndex(0);
     ModelManager::GetModel(player.GetModelIndex()).Play("Run");
