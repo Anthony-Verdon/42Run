@@ -37,6 +37,7 @@ class Player
         void Destroy();
         
         void ProcessInput();
+        void Update();
         void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
 
         int GetModelIndex() const { return (modelIndex); }

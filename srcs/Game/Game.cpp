@@ -85,6 +85,7 @@ void Game::ProcessInput()
         WindowManager::StopUpdateLoop();
 
     player.ProcessInput();
+    player.Update();
     UpdateCamera();
 }
 

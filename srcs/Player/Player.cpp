@@ -36,7 +36,25 @@ Player::~Player()
 
 void Player::ProcessInput()
 {
-    // handle automatic turns
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
+    {
+        state += PlayerStateFlag::MOVING_LEFT;
+        timeElapsed = 0;
+        column--;
+    }
+
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
+    {
+        state += PlayerStateFlag::MOVING_RIGHT;
+        timeElapsed = 0;
+        column++;
+    }
+
+}
+
+void Player::Update()
+{
+    // direction
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
     {
         bool updateAngle = false;
@@ -62,26 +80,13 @@ void Player::ProcessInput()
         }
     }
 
-    timeElapsed += 1.0f / 60.0f;
     direction = ml::normalize(ml::vec3(-sinf(angle), 0, cosf(angle)));
     direction.x = round(direction.x);
     direction.z = round(direction.z);
-
+    
+    // velocity
+    timeElapsed += 1.0f / 60.0f;
     JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
-
-    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
-    {
-        state += PlayerStateFlag::MOVING_LEFT;
-        timeElapsed = 0;
-        column--;
-    }
-
-    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
-    {
-        state += PlayerStateFlag::MOVING_RIGHT;
-        timeElapsed = 0;
-        column++;
-    }
 
     if (state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT))
     {
