@@ -12,7 +12,7 @@ Player::Player()
     angle = 0;
     speed = 5;
     column = 0;
-    state = PlayerState::RUNNING;
+    state = PlayerStateFlag::RUNNING;
     timeElapsed = 0;
 }
 
@@ -36,6 +36,7 @@ Player::~Player()
 
 void Player::ProcessInput()
 {
+    // handle automatic turns
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
     {
         bool updateAngle = false;
@@ -66,66 +67,41 @@ void Player::ProcessInput()
     direction.x = round(direction.x);
     direction.z = round(direction.z);
 
-    switch (state)
-    {
-        case PlayerState::RUNNING:
-        {
-            JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
-            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+    JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
 
-            if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1)
-            {
-                state = PlayerState::MOVING_RIGHT;
-                timeElapsed = 0;
-                column++;
-            }
-            else if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1)
-            {
-                state = PlayerState::MOVING_LEFT;
-                timeElapsed = 0;
-                column--;
-            }
-            break;
-        }
-        case PlayerState::MOVING_LEFT: //todo: factorize with moving right
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
+    {
+        state += PlayerStateFlag::MOVING_LEFT;
+        timeElapsed = 0;
+        column--;
+    }
+
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
+    {
+        state += PlayerStateFlag::MOVING_RIGHT;
+        timeElapsed = 0;
+        column++;
+    }
+
+    if (state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT))
+    {
+        int sign = (state & PlayerStateFlag::MOVING_RIGHT) ? -1 : 1;
+        float time = 2;
+        JPH::Vec3 horizontalMovement;
+        if (direction.x != 0)
+            horizontalMovement = JPH::Vec3(0, 0, sign * -direction.x * 2 * speed / time);
+        else
+            horizontalMovement = JPH::Vec3(sign * direction.z * 2 * speed / time, 0, 0);
+        
+        velocity += horizontalMovement;
+        if (timeElapsed >= time / speed)
         {
-            float time = 2;
-            JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
-            JPH::Vec3 horizontalMovement;
-            if (direction.x != 0)
-                horizontalMovement = JPH::Vec3(0, 0, -direction.x * 2 * speed / time);
-            else
-                horizontalMovement = JPH::Vec3(direction.z * 2 * speed / time, 0, 0);
-            
-            velocity += horizontalMovement;
-            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-            if (timeElapsed >= time / speed)
-            {
-                state = PlayerState::RUNNING;
-                timeElapsed = 0;
-            }
-            break;
-        }
-        case PlayerState::MOVING_RIGHT:
-        {
-            float time = 2;
-            JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
-            JPH::Vec3 horizontalMovement;
-            if (direction.x != 0)
-                horizontalMovement = JPH::Vec3(0, 0, direction.x * 2 * speed / time);
-            else
-                horizontalMovement = JPH::Vec3(-direction.z * 2 * speed / time, 0, 0);
-            
-            velocity += horizontalMovement;
-            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
-            if (timeElapsed >= time / speed)
-            {
-                state = PlayerState::RUNNING;
-                timeElapsed = 0;
-            }
-            break;
+            (state & PlayerStateFlag::MOVING_RIGHT) ? state = state - PlayerStateFlag::MOVING_RIGHT : state = state - PlayerStateFlag::MOVING_LEFT;
+            timeElapsed = 0;
         }
     }
+
+    WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
 }
 
 void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view)

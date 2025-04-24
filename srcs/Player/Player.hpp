@@ -8,11 +8,12 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 
-enum PlayerState
+enum PlayerStateFlag
 {
-    RUNNING,
-    MOVING_LEFT,
-    MOVING_RIGHT
+    RUNNING = 0,
+    MOVING_LEFT = 0x1,
+    MOVING_RIGHT = 0x2,
+    JUMPING = 0x4,
 };
 
 class Player
@@ -25,7 +26,7 @@ class Player
         int column;
         JPH::BodyID bodyId;
 
-        PlayerState state;
+        int state;
         float timeElapsed;
 
     public:
