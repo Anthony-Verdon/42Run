@@ -71,8 +71,7 @@ void Player::Update()
         {
             state = PlayerStateFlag::DEFEATED;
             ModelManager::GetModel(modelIndex).Play("Defeat", false);
-            JPH::Vec3 velocity = JPH::Vec3(0, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), 0);
-            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+            WorldPhysic3D::GetBodyInterface().DeactivateBody(bodyId);
             return;
         }
     }
