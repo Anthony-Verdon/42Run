@@ -102,10 +102,16 @@ class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
         }
 };
 
+struct Contact
+{
+    JPH::BodyID id;
+    JPH::Vec3 normal;
+};
+
 class ContactListener : public JPH::ContactListener
 {
     private:
-        std::map<JPH::BodyID, std::vector<JPH::BodyID>> contacts;
+        std::map<JPH::BodyID, std::vector<Contact>> contacts;
 
     public:
         virtual JPH::ValidateResult	OnContactValidate(const JPH::Body &inBody1, const JPH::Body &inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult &inCollisionResult) override
@@ -120,11 +126,20 @@ class ContactListener : public JPH::ContactListener
 
         virtual void OnContactAdded(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
         {
-            (void)inManifold;
             (void)ioSettings;
 
-            contacts[inBody1.GetID()].push_back(inBody2.GetID());
-            contacts[inBody2.GetID()].push_back(inBody1.GetID());
+            {
+                Contact newContact;
+                newContact.id = inBody2.GetID();
+                newContact.normal = inManifold.mWorldSpaceNormal;
+                contacts[inBody1.GetID()].push_back(newContact);
+            }
+            {
+                Contact newContact;
+                newContact.id = inBody1.GetID();
+                newContact.normal = -inManifold.mWorldSpaceNormal;
+                contacts[inBody2.GetID()].push_back(newContact);
+            }
         }
 
         virtual void OnContactPersisted(const JPH::Body &inBody1, const JPH::Body &inBody2, const JPH::ContactManifold &inManifold, JPH::ContactSettings &ioSettings) override
@@ -141,28 +156,38 @@ class ContactListener : public JPH::ContactListener
                 auto contactMapIt = contacts.find(inSubShapePair.GetBody1ID());
                 if (contactMapIt != contacts.end())
                 {
-                    auto contactVectorIt = std::find(contactMapIt->second.begin(), contactMapIt->second.end(), inSubShapePair.GetBody2ID());
-                    if (contactVectorIt != contactMapIt->second.end())
-                        contactMapIt->second.erase(contactVectorIt);
+                    for (auto contactVectorIt = contactMapIt->second.begin(); contactVectorIt != contactMapIt->second.end(); contactVectorIt++)
+                    {
+                        if (contactVectorIt->id == inSubShapePair.GetBody2ID())
+                        {
+                            contactMapIt->second.erase(contactVectorIt);
+                            break;
+                        }
+                    }
                 }
             }
             {
                 auto contactMapIt = contacts.find(inSubShapePair.GetBody2ID());
                 if (contactMapIt != contacts.end())
                 {
-                    auto contactVectorIt = std::find(contactMapIt->second.begin(), contactMapIt->second.end(), inSubShapePair.GetBody1ID());
-                    if (contactVectorIt != contactMapIt->second.end())
-                        contactMapIt->second.erase(contactVectorIt);
+                    for (auto contactVectorIt = contactMapIt->second.begin(); contactVectorIt != contactMapIt->second.end(); contactVectorIt++)
+                    {
+                        if (contactVectorIt->id == inSubShapePair.GetBody1ID())
+                        {
+                            contactMapIt->second.erase(contactVectorIt);
+                            break;
+                        }
+                    }
                 }
             }
         }
 
-        size_t GetNbContact(const JPH::BodyID &id)
+        std::vector<Contact> GetContacts(const JPH::BodyID &id)
         {
             auto contactMapIt = contacts.find(id);
             if (contactMapIt != contacts.end())
-                return (contactMapIt->second.size());
+                return (contactMapIt->second);
             else
-                return (0);
+                return (std::vector<Contact>{});
         }
 };
