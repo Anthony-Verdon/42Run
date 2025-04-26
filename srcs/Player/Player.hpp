@@ -51,5 +51,5 @@ class Player
         void SetDirection(const ml::vec3 &direction) { this->direction = direction; }
         float GetAngle() const { return angle; }
         void AddToAngle(float angle) { this->angle += angle; }
-
+        bool IsDefeated() const { return (state & PlayerStateFlag::DEFEATED); }
 };

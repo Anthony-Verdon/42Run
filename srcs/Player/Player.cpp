@@ -140,11 +140,7 @@ void Player::Update()
 
 void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view)
 {
-    ml::mat4 transform;
-    if (ModelManager::GetModel(modelIndex).GetCurrentAnimation() == "Roll")
-        transform = ml::translate(ml::mat4(1.0f), GetPosition() - ml::vec3(0, 0, 2.0f)) * ml::rotate(ml::mat4(1.0f), ml::degrees(angle), ml::vec3(0, 1, 0));
-    else
-        transform = ml::translate(ml::mat4(1.0f), GetPosition()) * ml::rotate(ml::mat4(1.0f), ml::degrees(angle), ml::vec3(0, 1, 0));
+    ml::mat4 transform = ml::translate(ml::mat4(1.0f), GetPosition()) * ml::rotate(ml::mat4(1.0f), ml::degrees(angle), ml::vec3(0, 1, 0));
     ModelManager::GetModel(modelIndex).Draw(camPos, lights, projection, view, transform);
 }
 

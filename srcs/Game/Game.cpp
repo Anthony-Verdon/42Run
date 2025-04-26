@@ -134,7 +134,11 @@ void Game::UpdateCamera()
     camera.setFrontDirection(ml::normalize(direction));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
     #else
-    ml::vec3 cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
+    ml::vec3 cameraPosition;
+    if (player.IsDefeated())
+        cameraPosition = (ml::vec3(0, 1, 0) * 3 - ml::normalize(player.GetDirection()) * 5);
+    else
+        cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
     camera.setPosition(player.GetPosition() + cameraPosition);
 
     ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);
