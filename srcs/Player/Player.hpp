@@ -14,6 +14,7 @@ enum PlayerStateFlag
     MOVING_LEFT = 0x1,
     MOVING_RIGHT = 0x2,
     JUMPING = 0x4,
+    DEFEATED = 0x8,
 };
 
 class Player

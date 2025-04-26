@@ -60,15 +60,24 @@ void Player::ProcessInput()
 
 void Player::Update()
 {
+    if (state & PlayerStateFlag::DEFEATED)
+        return;
+    // collisions
     auto contactListener = dynamic_cast<ContactListener*>(WorldPhysic3D::GetContactListener());
     auto contacts = contactListener->GetContacts(bodyId);
     for (size_t i = 0; i < contacts.size(); i++)
     {
         if (ml::dotProduct(ml::vec3(contacts[0].normal.GetX(), contacts[0].normal.GetY(), contacts[0].normal.GetZ()), ml::vec3(0, 1, 0)) > -0.5)
-            exit(0);
+        {
+            state = PlayerStateFlag::DEFEATED;
+            ModelManager::GetModel(modelIndex).Play("Defeat");
+            JPH::Vec3 velocity = JPH::Vec3(0, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), 0);
+            WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+            return;
+        }
     }
-
     onGround = (contacts.size() != 0);
+
     // direction
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
     {
