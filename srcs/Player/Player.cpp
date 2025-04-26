@@ -70,7 +70,7 @@ void Player::Update()
         if (ml::dotProduct(ml::vec3(contacts[0].normal.GetX(), contacts[0].normal.GetY(), contacts[0].normal.GetZ()), ml::vec3(0, 1, 0)) > -0.5)
         {
             state = PlayerStateFlag::DEFEATED;
-            ModelManager::GetModel(modelIndex).Play("Defeat");
+            ModelManager::GetModel(modelIndex).Play("Defeat", false);
             JPH::Vec3 velocity = JPH::Vec3(0, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), 0);
             WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
             return;
