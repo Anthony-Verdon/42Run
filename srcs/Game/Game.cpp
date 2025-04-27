@@ -65,14 +65,15 @@ void Game::Run()
     accumulatedTime += Time::getDeltaTime();
     MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
     ProcessInput();
-    Draw();
-
+    
     while (accumulatedTime >= 1.0f / 60) 
     {
         WorldPhysic3D::Update();
         accumulatedTime -= 1.0f / 60;
     }
-
+    
+    UpdateCamera();
+    Draw();
     WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
 
     ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
@@ -87,7 +88,6 @@ void Game::ProcessInput()
 
     player.ProcessInput();
     player.Update();
-    UpdateCamera();
 }
 
 //#define CAMERA_DETACH
