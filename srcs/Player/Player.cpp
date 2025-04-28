@@ -51,9 +51,15 @@ void Player::ProcessInput()
         column++;
     }
 
-    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_SPACE) && !(state & PlayerStateFlag::JUMPING) && onGround)
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_SPACE) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround)
     {
         state += PlayerStateFlag::JUMPING;
+    }
+
+    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_LEFT_SHIFT) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround)
+    {
+        state += PlayerStateFlag::ROLLING;
+        ModelManager::GetModel(modelIndex).Play("Roll");
     }
 
 }
@@ -111,6 +117,17 @@ void Player::Update()
     timeElapsed += 1.0f / 60.0f;
     JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
 
+    if (state & PlayerStateFlag::ROLLING)
+    {
+        velocity.SetX(velocity.GetX() * 2);
+        velocity.SetZ(velocity.GetZ() * 2);
+        if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
+        {
+            state = state - PlayerStateFlag::ROLLING;
+            ModelManager::GetModel(modelIndex).Play("Run");
+        }
+    }
+
     if (state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT))
     {
         int sign = (state & PlayerStateFlag::MOVING_RIGHT) ? -1 : 1;
@@ -141,7 +158,8 @@ void Player::Update()
 void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view)
 {
     ml::mat4 transform = ml::translate(ml::mat4(1.0f), GetPosition()) * ml::rotate(ml::mat4(1.0f), ml::degrees(angle), ml::vec3(0, 1, 0));
-    ModelManager::GetModel(modelIndex).Draw(camPos, lights, projection, view, transform);
+    bool enableRootMotion = !(state & PlayerStateFlag::ROLLING);
+    ModelManager::GetModel(modelIndex).Draw(camPos, lights, projection, view, transform, enableRootMotion);
 }
 
 ml::vec3 Player::GetPosition() const

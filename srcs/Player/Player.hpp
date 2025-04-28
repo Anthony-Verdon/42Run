@@ -10,11 +10,12 @@
 
 enum PlayerStateFlag
 {
-    RUNNING = 0,
-    MOVING_LEFT = 0x1,
-    MOVING_RIGHT = 0x2,
-    JUMPING = 0x4,
-    DEFEATED = 0x8,
+    RUNNING = 1 << 0,
+    MOVING_LEFT = 1 << 1,
+    MOVING_RIGHT = 1 << 2,
+    JUMPING = 1 << 3,
+    ROLLING = 1 << 4,
+    DEFEATED = 1 << 5,
 };
 
 class Player
