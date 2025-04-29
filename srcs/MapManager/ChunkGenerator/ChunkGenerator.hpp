@@ -77,26 +77,28 @@ class ChunkGenerator
         static Chunk lastChunk;
 
         // ChunkGenerator.cpp
+        static void UpdateTerrainColor(Chunk &chunk);
+        
+        // TerrainGenerator.cpp
         static void GenerateTerrain(Chunk &chunk);
         static bool CanSpawnTurn();
-        static void UpdateTerrainColor(Chunk &chunk);
-        static void GenerateObstacles(Chunk &chunk);
-
-        // TerrainGenerator.cpp
         static void SpawnAllGround(Chunk &chunk);
         static void SpawnTurn(Chunk &chunk);
         static void SpawnTopLevel(Chunk &chunk, int laneIndex);
         static void SpawnGroundLevel(Chunk &chunk, int laneIndex);
         static void SpawnBottomLevel(Chunk &chunk, int laneIndex);
-
+        
         static void SpawnGround(Chunk &chunk, int lane, int y);
         static Tile SpawnGroundTile(const ml::vec3 &position);
-
+        
         static void SpawnSlopeUp(Chunk &chunk, int lane, int y);
         static void SpawnSlopeDown(Chunk &chunk, int lane, int y);
         static Tile SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp);
         static std::pair<float, std::vector<JPH::Vec3>> CalculateSlopRotation(const ml::vec3 &direction, bool goingUp);
-    
+        
+        // ObstaclesGenerator.cpp
+        static void GenerateObstacles(Chunk &chunk);
+        
     public:
         static void Init();
         static Chunk GenerateChunk(int dirX, int dirZ);

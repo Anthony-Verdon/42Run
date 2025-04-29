@@ -7,6 +7,61 @@
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include "WorldPhysic/WorldPhysic.hpp"
 
+void ChunkGenerator::GenerateTerrain(Chunk &chunk)
+{
+    if (lastChunk.tiles.empty())
+    {
+        SpawnAllGround(chunk);
+        chunk.type = ChunkType::SPAWN;
+    }
+    else if (CanSpawnTurn())
+    {
+        SpawnTurn(chunk);
+    }
+    else if (lastChunk.type == ChunkType::TURN)
+    {
+        SpawnAllGround(chunk);
+        chunk.type = ChunkType::OUT_OF_TURN;
+    }
+    else
+    {
+        for (int i = 0; i < Lane::COUNT; i++)
+        {
+            switch (lastChunk.levels[i])
+            {
+                case Level::TOP:
+                {
+                    SpawnTopLevel(chunk, i);
+                    break;
+                }
+                case Level::GROUND:
+                {
+                    SpawnGroundLevel(chunk, i);
+                    break;
+                }
+                case Level::BOTTOM:
+                {
+                   SpawnBottomLevel(chunk, i); 
+                    break;
+                }
+            }
+        }
+        chunk.type = ChunkType::CLASSIC;
+    }
+}
+
+bool ChunkGenerator::CanSpawnTurn()
+{
+    if (lastChunk.type != ChunkType::CLASSIC)
+        return (false);
+
+    for (int i = 0; i < Lane::COUNT; i++)
+        if (lastChunk.levels[i] != Level::GROUND)
+            return (false);
+
+    return (true);
+}
+
 void ChunkGenerator::SpawnAllGround(Chunk &chunk)
 {
     for (int i = 0; i < Lane::COUNT; i++)
