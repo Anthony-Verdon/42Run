@@ -21,17 +21,20 @@ enum PlayerStateFlag
 class Player
 {
     private:
-        int modelIndex;
-        ml::vec3 direction;
-        float angle;
-        float speed;
         int column;
-        JPH::BodyID bodyId;
+        int lastColumn;
+        float angle;
+        ml::vec3 direction;
+        float speed;
         bool onGround;
+        int state;
+        
+        int modelIndex;
+        float timeElapsed;
+        
+        JPH::BodyID bodyId;
         JPH::RefConst<JPH::Shape> standingShape;
         JPH::RefConst<JPH::Shape> rollingShape;
-        int state;
-        float timeElapsed;
 
     public:
         Player();

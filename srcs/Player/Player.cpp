@@ -7,14 +7,16 @@
 
 Player::Player()
 {
-    direction = ml::vec3(1, 0, 0);
-    modelIndex = 0;
-    angle = 0;
-    speed = 5;
     column = 0;
-    state = PlayerStateFlag::RUNNING;
-    timeElapsed = 0;
+    lastColumn = 0;
+    angle = 0;
+    direction = ml::vec3(1, 0, 0);
+    speed = 5;
     onGround = true;
+    state = PlayerStateFlag::RUNNING;
+
+    modelIndex = 0;
+    timeElapsed = 0;
 }
 
 void Player::Init()
@@ -43,6 +45,7 @@ void Player::ProcessInput()
     {
         state += PlayerStateFlag::MOVING_LEFT;
         timeElapsed = 0;
+        lastColumn = column;
         column--;
     }
 
@@ -50,6 +53,7 @@ void Player::ProcessInput()
     {
         state += PlayerStateFlag::MOVING_RIGHT;
         timeElapsed = 0;
+        lastColumn = column;
         column++;
     }
 
@@ -71,6 +75,7 @@ void Player::Update()
 {
     if (state & PlayerStateFlag::DEFEATED)
         return;
+
     // collisions
     auto contactListener = dynamic_cast<ContactListener*>(WorldPhysic3D::GetContactListener());
     auto contacts = contactListener->GetContacts(bodyId);
@@ -147,6 +152,7 @@ void Player::Update()
         {
             (state & PlayerStateFlag::MOVING_RIGHT) ? state = state - PlayerStateFlag::MOVING_RIGHT : state = state - PlayerStateFlag::MOVING_LEFT;
             timeElapsed = 0;
+            lastColumn = column;
         }
     }
 
@@ -162,6 +168,8 @@ void Player::Update()
 void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view)
 {
     ml::mat4 transform = ml::translate(ml::mat4(1.0f), GetPosition()) * ml::rotate(ml::mat4(1.0f), ml::degrees(angle), ml::vec3(0, 1, 0));
+    if (state & PlayerStateFlag::DEFEATED)
+        transform = transform * ml::rotate(ml::mat4(1.0f), 30 * (column - lastColumn), ml::vec3(0, 1, 0));
     bool enableRootMotion = !(state & PlayerStateFlag::ROLLING);
     ModelManager::GetModel(modelIndex).Draw(camPos, lights, projection, view, transform, enableRootMotion);
 }
