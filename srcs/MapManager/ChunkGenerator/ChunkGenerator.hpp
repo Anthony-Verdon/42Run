@@ -18,7 +18,8 @@ enum ChunkElements
     SLOPE_MEDIUM_HIGH_YELLOW,
     TILE_LOW_GREEN,
     SLOPE_LOW_MEDIUM_GREEN,
-    SLOPE_MEDIUM_HIGH_GREEN
+    SLOPE_MEDIUM_HIGH_GREEN,
+    SPIKE_ROLLER
 };
 
 struct Tile
@@ -28,6 +29,7 @@ struct Tile
     int modelIndex;
     ml::mat4 transform;
     JPH::BodyID bodyId;
+    bool updateColor;
 };
 
 enum Lane
@@ -77,6 +79,7 @@ class ChunkGenerator
         static void GenerateTerrain(Chunk &chunk);
         static bool CanSpawnTurn();
         static void UpdateTerrainColor(Chunk &chunk);
+        static void GenerateObstacles(Chunk &chunk);
 
         // TerrainGenerator.cpp
         static void SpawnAllGround(Chunk &chunk);
