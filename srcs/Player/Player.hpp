@@ -50,8 +50,6 @@ class Player
         int GetModelIndex() const { return (modelIndex); }
         void SetModelIndex(int modelIndex) { this->modelIndex = modelIndex; }
         ml::vec3 GetPosition() const;
-        void SetPosition(const ml::vec3 &position) { (void)position;}//this->position = position; }
-        void AddToPosition(const ml::vec3 &position) { (void)position;}//this->position += position; }
         ml::vec3 GetDirection() const { return direction; }
         void SetDirection(const ml::vec3 &direction) { this->direction = direction; }
         float GetAngle() const { return angle; }

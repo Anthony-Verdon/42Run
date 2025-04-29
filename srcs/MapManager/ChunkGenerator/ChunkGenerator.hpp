@@ -3,6 +3,16 @@
 #include <vector>
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
 #include "Matrix/Matrix.hpp"
+#include <map>
+
+enum ChunkElements
+{
+    TILE_LARGE_BLUE = 0,
+    TILE_HIGH_BLUE,
+    TILE_LOW_BLUE,
+    SLOPE_LOW_MEDIUM_BLUE,
+    SLOPE_MEDIUM_HIGH_BLUE
+};
 
 struct Tile
 {
@@ -52,6 +62,7 @@ class ChunkGenerator
     private:
         ChunkGenerator() = delete;
         
+        static std::map<ChunkElements, int> elements;
         static int chunkSize;
         static Chunk lastChunk;
 
@@ -72,6 +83,7 @@ class ChunkGenerator
         static std::pair<float, std::vector<JPH::Vec3>> CalculateSlopRotation(const ml::vec3 &direction, bool goingUp);
     
     public:
+        static void Init();
         static Chunk GenerateChunk(int dirX, int dirZ);
         static int GetChunkSize() { return (chunkSize); }
         static int GetHalfChunkSize() { return (chunkSize / 2); }

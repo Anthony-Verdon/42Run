@@ -22,8 +22,6 @@ class Game: public AProgram
 
         float accumulatedTime;
 
-        void LoadAssets();
-
         void ProcessInput();
         void UpdateCamera();
 

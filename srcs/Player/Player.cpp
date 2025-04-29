@@ -4,6 +4,7 @@
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
 #include "MapManager/MapManager.hpp"
+#include "Engine/3D/ModelLoader/ModelLoader.hpp"
 
 Player::Player()
 {
@@ -15,7 +16,10 @@ Player::Player()
     onGround = true;
     state = PlayerStateFlag::RUNNING;
 
-    modelIndex = 0;
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
+    modelIndex = ModelManager::GetNbModel() - 1;
+    ModelManager::GetModel(modelIndex).Init();
+    ModelManager::GetModel(modelIndex).Play("Run");
     timeElapsed = 0;
 }
 

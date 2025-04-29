@@ -20,14 +20,11 @@ Game::Game()
     LineRenderer3D::Init();
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
-    LoadAssets();
+    ChunkGenerator::Init();
     
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
     WorldPhysic3D::SetContactListener(&contactListener);
     JPH::DebugRenderer::sInstance = new DebugRendererImpl();
-    player.SetModelIndex(0);
-    ModelManager::GetModel(player.GetModelIndex()).Play("Run");
-    player.SetPosition(ml::vec3(0, 1, 0));
     player.Init();
     MapManager::Init();
 
@@ -45,19 +42,6 @@ Game::~Game()
     delete JPH::DebugRenderer::sInstance;
     JPH::DebugRenderer::sInstance = nullptr;
 
-}
-
-void Game::LoadAssets()
-{
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/large/tileLarge_teamBlue.gltf.glb"));
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/high/tileHigh_teamBlue.gltf.glb"));
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/tiles/low/tileLow_teamBlue.gltf.glb"));
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb"));
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb"));
-
-    for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
-        ModelManager::GetModel(i).Init();
 }
 
 void Game::Run()

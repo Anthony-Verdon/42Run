@@ -6,9 +6,32 @@
 #include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 #include <magic_enum.hpp>
+#include "Engine/3D/ModelManager/ModelManager.hpp"
+#include "Engine/3D/ModelLoader/ModelLoader.hpp"
 
+std::map<ChunkElements, int> ChunkGenerator::elements;
 int ChunkGenerator::chunkSize = 7;
 Chunk ChunkGenerator::lastChunk = {};
+
+void ChunkGenerator::Init()
+{
+    std::vector<std::string> paths = {
+        "assets/tiles/large/tileLarge_teamBlue.gltf.glb",
+        "assets/tiles/high/tileHigh_teamBlue.gltf.glb",
+        "assets/tiles/low/tileLow_teamBlue.gltf.glb",
+        "assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb",
+        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb"
+    };
+    int nbModel = ModelManager::GetNbModel();
+    for (size_t i = 0; i < paths.size(); i++)
+    {
+        ModelManager::AddModels(ModelLoader::LoadModel(paths[i]));
+        elements[(ChunkElements)i] = nbModel + i;
+        ModelManager::GetModel(nbModel + i).Init();
+
+    }
+
+}
 
 Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
 {
@@ -185,7 +208,7 @@ Tile ChunkGenerator::SpawnGroundTile(const ml::vec3 &position)
 {
     Tile tile;
     tile.position = position;
-    tile.modelIndex = 3;
+    tile.modelIndex = elements[ChunkElements::TILE_LOW_BLUE];
     tile.size = ml::vec3(2, 1, 2);
     ml::vec3 positionTimeSize = tile.position * tile.size;
     ml::vec3 halfSize = tile.size / 2.0f;
@@ -289,9 +312,9 @@ Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &di
     tile.position = ml::vec3(ml::vec3(position));
     tile.size = ml::vec3(2, 1, 2);
     if (isMediumHigh)
-        tile.modelIndex = 5;
+        tile.modelIndex = elements[ChunkElements::SLOPE_MEDIUM_HIGH_BLUE];
     else
-        tile.modelIndex = 4;
+        tile.modelIndex = elements[ChunkElements::SLOPE_LOW_MEDIUM_BLUE];
     ml::vec3 positionTimeSize = tile.position * tile.size;
     ml::vec3 halfSize = tile.size / 2.0f;
     auto [angle, points] = CalculateSlopRotation(direction, goingUp);
