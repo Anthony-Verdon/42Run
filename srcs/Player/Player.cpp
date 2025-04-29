@@ -76,7 +76,7 @@ void Player::Update()
     auto contacts = contactListener->GetContacts(bodyId);
     for (size_t i = 0; i < contacts.size(); i++)
     {
-        if (ml::dotProduct(ml::vec3(contacts[0].normal.GetX(), contacts[0].normal.GetY(), contacts[0].normal.GetZ()), ml::vec3(0, 1, 0)) > -0.5)
+        if (ml::dotProduct(ml::vec3(contacts[i].normal.GetX(), contacts[i].normal.GetY(), contacts[i].normal.GetZ()), ml::vec3(0, 1, 0)) > -0.5)
         {
             state = PlayerStateFlag::DEFEATED;
             ModelManager::GetModel(modelIndex).Play("Defeat", false);
