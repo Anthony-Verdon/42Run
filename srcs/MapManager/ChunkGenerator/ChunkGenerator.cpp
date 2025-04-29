@@ -22,6 +22,7 @@ void ChunkGenerator::Init()
         "assets/slopes/lowMedium/tileSlopeLowMedium_teamGreen.gltf.glb",
         "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamGreen.gltf.glb",
         "assets/spikeRoller.gltf.glb",
+        "assets/gates/small/gateSmall_teamBlue.gltf.glb"
     };
     int nbModel = ModelManager::GetNbModel();
     for (size_t i = 0; i < paths.size(); i++)
