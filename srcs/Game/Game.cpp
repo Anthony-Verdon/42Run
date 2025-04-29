@@ -138,7 +138,7 @@ void Game::Draw()
     player.Draw(camera.getPosition(), lights, projection, view);
 
     auto chunks = MapManager::GetChunks();
-    int rotationValue = (int)ml::degrees(Time::getTime()) % 360;
+    int rotationValue = (int)ml::degrees(Time::getTime() * 2) % 360;
     for (; !chunks.empty(); chunks.pop())
     {
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
