@@ -73,8 +73,12 @@ class ChunkGenerator
         static int chunkSize;
         static Chunk lastChunk;
 
+        // ChunkGenerator.cpp
+        static void GenerateTerrain(Chunk &chunk);
         static bool CanSpawnTurn();
+        static void UpdateTerrainColor(Chunk &chunk);
 
+        // TerrainGenerator.cpp
         static void SpawnAllGround(Chunk &chunk);
         static void SpawnTurn(Chunk &chunk);
         static void SpawnTopLevel(Chunk &chunk, int laneIndex);
@@ -92,6 +96,7 @@ class ChunkGenerator
     public:
         static void Init();
         static Chunk GenerateChunk(int dirX, int dirZ);
+
         static int GetChunkSize() { return (chunkSize); }
         static int GetHalfChunkSize() { return (chunkSize / 2); }
         static ChunkType LastChunkGeneratedType() { return (lastChunk.type); }
