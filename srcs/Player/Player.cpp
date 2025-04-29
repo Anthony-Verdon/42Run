@@ -117,7 +117,7 @@ void Player::Update()
     direction.z = round(direction.z);
     
     // velocity
-    timeElapsed += 1.0f / 60.0f;
+    timeElapsed += WorldPhysic3D::GetDeltaTime();
     JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
 
     if (state & PlayerStateFlag::ROLLING)

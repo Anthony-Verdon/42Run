@@ -66,10 +66,10 @@ void Game::Run()
     MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
     ProcessInput();
     
-    while (accumulatedTime >= 1.0f / 60) 
+    while (accumulatedTime >= WorldPhysic3D::GetDeltaTime()) 
     {
         WorldPhysic3D::Update();
-        accumulatedTime -= 1.0f / 60;
+        accumulatedTime -= WorldPhysic3D::GetDeltaTime();
     }
     
     UpdateCamera();
