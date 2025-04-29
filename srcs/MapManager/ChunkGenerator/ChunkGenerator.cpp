@@ -2,6 +2,7 @@
 #include "Engine/3D/ModelManager/ModelManager.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
+#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
 
 std::map<ChunkElements, int> ChunkGenerator::elements;
 int ChunkGenerator::chunkSize = 7;
@@ -150,7 +151,7 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
     ml::vec3 positionTimeSize = newTile.position * newTile.size;
     ml::vec3 halfSize = newTile.size / 2.0f;
     newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
-    JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+    JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
     newTile.updateColor = false;
     newTile.rotateOverTime = true;
