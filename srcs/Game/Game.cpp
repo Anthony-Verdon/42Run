@@ -138,9 +138,15 @@ void Game::Draw()
     player.Draw(camera.getPosition(), lights, projection, view);
 
     auto chunks = MapManager::GetChunks();
+    int rotationValue = (int)ml::degrees(Time::getTime()) % 360;
     for (; !chunks.empty(); chunks.pop())
     {
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
-            ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform); 
+        {
+            ml::mat4 rotation = ml::mat4(1.0f);
+            if (it->rotateOverTime)
+                rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
+            ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform * rotation); 
+        }
     }
 }

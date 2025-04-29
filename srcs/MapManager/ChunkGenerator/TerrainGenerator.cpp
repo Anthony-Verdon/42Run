@@ -117,6 +117,7 @@ Tile ChunkGenerator::SpawnGroundTile(const ml::vec3 &position)
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
     tile.updateColor = true;
+    tile.rotateOverTime = false;
     return (tile);
 }
 
@@ -233,6 +234,7 @@ Tile ChunkGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &di
     JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
     tile.updateColor = true;
+    tile.rotateOverTime = false;
 
     return (tile);
 }

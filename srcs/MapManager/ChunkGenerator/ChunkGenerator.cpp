@@ -153,6 +153,8 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
     newTile.updateColor = false;
+    newTile.rotateOverTime = true;
+
     chunk.tiles.push_back(newTile);
 }
 

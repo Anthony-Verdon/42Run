@@ -30,6 +30,7 @@ struct Tile
     ml::mat4 transform;
     JPH::BodyID bodyId;
     bool updateColor;
+    bool rotateOverTime;
 };
 
 enum Lane
