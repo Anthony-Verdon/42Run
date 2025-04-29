@@ -19,7 +19,9 @@ Player::Player()
 
 void Player::Init()
 {
-    JPH::BodyCreationSettings capsuleSetting(new JPH::CapsuleShape(0.5, 0.5), JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
+    standingShape = new JPH::CapsuleShape(0.5, 0.5);
+    rollingShape = new JPH::CapsuleShape(0.25, 0.5);
+    JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
     capsuleSetting.mFriction = 0;
     bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
@@ -60,6 +62,7 @@ void Player::ProcessInput()
     {
         state += PlayerStateFlag::ROLLING;
         ModelManager::GetModel(modelIndex).Play("Roll");
+        WorldPhysic3D::GetBodyInterface().SetShape(bodyId, rollingShape, true, JPH::EActivation::Activate);
     }
 
 }
@@ -125,6 +128,7 @@ void Player::Update()
         {
             state = state - PlayerStateFlag::ROLLING;
             ModelManager::GetModel(modelIndex).Play("Run");
+            WorldPhysic3D::GetBodyInterface().SetShape(bodyId, standingShape, true, JPH::EActivation::Activate);
         }
     }
 

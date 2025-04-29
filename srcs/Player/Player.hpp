@@ -28,7 +28,8 @@ class Player
         int column;
         JPH::BodyID bodyId;
         bool onGround;
-
+        JPH::RefConst<JPH::Shape> standingShape;
+        JPH::RefConst<JPH::Shape> rollingShape;
         int state;
         float timeElapsed;
 
