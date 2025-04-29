@@ -16,11 +16,18 @@ Chunk ChunkGenerator::lastChunk = {};
 void ChunkGenerator::Init()
 {
     std::vector<std::string> paths = {
-        "assets/tiles/large/tileLarge_teamBlue.gltf.glb",
-        "assets/tiles/high/tileHigh_teamBlue.gltf.glb",
         "assets/tiles/low/tileLow_teamBlue.gltf.glb",
         "assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb",
-        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb"
+        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb",
+        "assets/tiles/low/tileLow_teamRed.gltf.glb",
+        "assets/slopes/lowMedium/tileSlopeLowMedium_teamRed.gltf.glb",
+        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamRed.gltf.glb",
+        "assets/tiles/low/tileLow_teamYellow.gltf.glb",
+        "assets/slopes/lowMedium/tileSlopeLowMedium_teamYellow.gltf.glb",
+        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamYellow.gltf.glb",
+        "assets/tiles/low/tileLow_teamGreen.gltf.glb",
+        "assets/slopes/lowMedium/tileSlopeLowMedium_teamGreen.gltf.glb",
+        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamGreen.gltf.glb",
     };
     int nbModel = ModelManager::GetNbModel();
     for (size_t i = 0; i < paths.size(); i++)
@@ -90,6 +97,25 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
         chunk.type = ChunkType::CLASSIC;
     }
 
+    int tileColorModifier;
+    if (dirX != 0)
+    {
+        if (dirX == 1)
+            tileColorModifier = 3; // red
+        else
+            tileColorModifier = 6; // yellow
+    }
+    else
+    {
+        if (dirZ == 1)
+            tileColorModifier = 9; // green
+        else
+            tileColorModifier = 0; // blue
+    }
+    for (size_t i = 0; i < chunk.tiles.size(); i++)
+    {
+        chunk.tiles[i].modelIndex += tileColorModifier;
+    }
     lastChunk = chunk;
     return (chunk);
 }
