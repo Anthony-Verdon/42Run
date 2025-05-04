@@ -100,7 +100,7 @@ class ChunkGenerator
         // ObstaclesGenerator.cpp
         static void GenerateObstacles(Chunk &chunk);
         static void GenerateSpikeRoller(Chunk &chunk);
-        static void GenerateSmallGate(Chunk &chunk);
+        static void GenerateGate(Chunk &chunk);
 
     public:
         static void Init();
