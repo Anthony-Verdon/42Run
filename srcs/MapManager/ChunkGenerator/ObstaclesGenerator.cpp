@@ -6,7 +6,7 @@
 void ChunkGenerator::GenerateObstacles(Chunk &chunk)
 {
     GenerateSpikeRoller(chunk);
-    GenerateGate(chunk);
+    GenerateGate(chunk, true);
 }
 
 void ChunkGenerator::GenerateSpikeRoller(Chunk &chunk)
@@ -54,7 +54,7 @@ void ChunkGenerator::GenerateSpikeRoller(Chunk &chunk)
 }
 
 
-void ChunkGenerator::GenerateGate(Chunk &chunk)
+void ChunkGenerator::GenerateGate(Chunk &chunk, bool highGate)
 {
     if (chunk.levels[1] != lastChunk.levels[1] ||  chunk.type == ChunkType::TURN)
         return;
@@ -83,7 +83,11 @@ void ChunkGenerator::GenerateGate(Chunk &chunk)
     }
     newTile.position = ml::vec3((chunk.x * chunkSize + chunkSize / 2) * 2, height * 2 + 1, (chunk.z * chunkSize + chunkSize / 2) * 2);
     newTile.size = ml::vec3(1, 1, 1);
-    newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
+    if (highGate)
+        newTile.modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
+    else
+        newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
+
     ml::vec3 positionTimeSize = newTile.position * newTile.size;
     ml::vec3 halfSize = newTile.size / 2.0f;
     newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
@@ -151,6 +155,18 @@ void ChunkGenerator::GenerateGate(Chunk &chunk)
                 float tmp = triangles[i].mV[j].x;
                 triangles[i].mV[j].x = triangles[i].mV[j].z;
                 triangles[i].mV[j].z = tmp;
+            }
+        }
+    }
+
+    if (highGate)
+    {
+        for (size_t i = 0; i < triangles.size(); i++)
+        {
+            for (size_t j = 0; j < 3; j++)
+            {
+                if (triangles[i].mV[j].y != 0)
+                    triangles[i].mV[j].y += 1.1;
             }
         }
     }

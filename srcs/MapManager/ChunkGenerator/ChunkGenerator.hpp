@@ -20,7 +20,8 @@ enum ChunkElements
     SLOPE_LOW_MEDIUM_GREEN,
     SLOPE_MEDIUM_HIGH_GREEN,
     SPIKE_ROLLER,
-    GATE_SMALL_BLUE
+    GATE_SMALL_BLUE,
+    GATE_LARGE_BLUE,
 };
 
 struct Tile
@@ -100,7 +101,7 @@ class ChunkGenerator
         // ObstaclesGenerator.cpp
         static void GenerateObstacles(Chunk &chunk);
         static void GenerateSpikeRoller(Chunk &chunk);
-        static void GenerateGate(Chunk &chunk);
+        static void GenerateGate(Chunk &chunk, bool highGate);
 
     public:
         static void Init();
