@@ -174,7 +174,7 @@ void ChunkGenerator::GenerateGate(Chunk &chunk, bool highGate)
     JPH::MeshShapeSettings gateSettings(triangles);
     JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.updateColor = false;
+    newTile.updateColor = true;
     newTile.rotateOverTime = false;
 
     chunk.tiles.push_back(newTile);
