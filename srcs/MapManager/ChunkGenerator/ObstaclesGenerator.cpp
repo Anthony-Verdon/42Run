@@ -5,31 +5,36 @@
 
 void ChunkGenerator::GenerateObstacles(Chunk &chunk)
 {
-    int nbGates = 1;
-    int nbSpikeRollers = 1;
-    int nbBarriers = 1;
-
     size_t nbTiles = chunk.tiles.size();
-    for (size_t i = 0; i < nbTiles; i++)
+    int nbObstaclesSpawn = 0;
+    std::vector<int> tilesIndex;
+    while (true)
     {
-        if (!(chunk.tiles[i].flag & TileFlag::GROUND_TILE))
+        int pos = rand() % nbTiles;
+        if (std::find(tilesIndex.begin(), tilesIndex.end(), pos) != tilesIndex.end())
+            continue;
+        if (!(chunk.tiles[pos].flag & TileFlag::GROUND_TILE))
             continue;
 
-        if (nbGates > 0 && rand() % 100 > 70)
+        tilesIndex.push_back(pos);
+
+        ml::vec3 obstaclePos = ml::vec3(chunk.tiles[pos].position.x * 2, chunk.tiles[pos].position.y + 1, chunk.tiles[pos].position.z * 2);
+        switch(nbObstaclesSpawn)
         {
-            chunk.tiles.push_back(GenerateGate(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2), chunk.dirZ, rand() % 2));
-            nbGates--;
+            case 0:
+                chunk.tiles.push_back(GenerateSpikeRoller(obstaclePos));
+                break;
+            case 1:
+                chunk.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
+                break;
+            case 2:
+                chunk.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
+                break;
         }
-        else if (nbSpikeRollers > 0 && rand() % 100 > 70)
-        {
-            chunk.tiles.push_back(GenerateSpikeRoller(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2)));
-            nbSpikeRollers--;
-        }
-        else if (nbBarriers > 0 && rand() % 100 > 70)
-        {
-            chunk.tiles.push_back(GenerateBarrier(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2), chunk.dirZ));
-            nbBarriers--;
-        }
+
+        nbObstaclesSpawn++;
+        if (nbObstaclesSpawn == 3)
+            break;
     }
 }
 
