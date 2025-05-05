@@ -60,7 +60,8 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
     chunk.dirZ = dirZ;
     
     GenerateTerrain(chunk);
-    GenerateObstacles(chunk);
+    if (chunk.type == ChunkType::CLASSIC)
+        GenerateObstacles(chunk);
     UpdateTerrainColor(chunk);
 
     lastChunk = chunk;

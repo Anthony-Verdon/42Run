@@ -72,6 +72,7 @@ enum ChunkType
     OUT_OF_TURN,
     CLASSIC
 };
+
 struct Chunk
 {
     int x;
@@ -81,7 +82,6 @@ struct Chunk
     ChunkType type;
     std::vector<Tile> tiles;
     Level levels[3];
-
 };
 
 class ChunkGenerator
@@ -115,10 +115,10 @@ class ChunkGenerator
         
         // ObstaclesGenerator.cpp
         static void GenerateObstacles(Chunk &chunk);
-        static void GenerateSpikeRoller(Chunk &chunk);
+        static Tile GenerateSpikeRoller(const ml::vec3 &position);
         static Tile GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
         static JPH::TriangleList GetGateHitbox();
-        static void GenerateBarrier(Chunk &chunk);
+        static Tile GenerateBarrier(const ml::vec3 &position, int chunkDirZ);
 
     public:
         static void Init();

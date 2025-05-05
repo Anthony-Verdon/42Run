@@ -5,48 +5,38 @@
 
 void ChunkGenerator::GenerateObstacles(Chunk &chunk)
 {
+    int nbGates = 1;
+    int nbSpikeRollers = 1;
+    int nbBarriers = 1;
+
     size_t nbTiles = chunk.tiles.size();
     for (size_t i = 0; i < nbTiles; i++)
     {
         if (!(chunk.tiles[i].flag & TileFlag::GROUND_TILE))
             continue;
-        chunk.tiles.push_back(GenerateGate(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2), chunk.dirZ, true));
+
+        if (nbGates > 0 && rand() % 100 > 70)
+        {
+            chunk.tiles.push_back(GenerateGate(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2), chunk.dirZ, rand() % 2));
+            nbGates--;
+        }
+        else if (nbSpikeRollers > 0 && rand() % 100 > 70)
+        {
+            chunk.tiles.push_back(GenerateSpikeRoller(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2)));
+            nbSpikeRollers--;
+        }
+        else if (nbBarriers > 0 && rand() % 100 > 70)
+        {
+            chunk.tiles.push_back(GenerateBarrier(ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2), chunk.dirZ));
+            nbBarriers--;
+        }
     }
-    GenerateSpikeRoller(chunk);
-    GenerateBarrier(chunk);
 }
 
-void ChunkGenerator::GenerateSpikeRoller(Chunk &chunk)
+Tile ChunkGenerator::GenerateSpikeRoller(const ml::vec3 &position)
 {
-    if (chunk.levels[0] != lastChunk.levels[0] ||  chunk.type == ChunkType::TURN)
-        return;
-
     Tile newTile;
-    int height = 0;
-    switch (chunk.levels[0])
-    {
-        case TOP:
-        {
-            height = 1;
-            break;
-        }
-        case GROUND:
-        {
-            height = 0;
-            break;
-        }
-        case BOTTOM:
-        {
-            height = -1;
-            break;
-        }
-        default:
-            break;
-    }
-    if (chunk.dirZ != 0)
-        newTile.position = ml::vec3((chunk.x * chunkSize + chunkSize / 2 + -1) * 2, height * 2 + 1, (chunk.z * chunkSize + chunkSize / 2) * 2);
-    else
-        newTile.position = ml::vec3((chunk.x * chunkSize + chunkSize / 2) * 2, height * 2 + 1, (chunk.z * chunkSize + chunkSize / 2 + -1) * 2);
+    newTile.position = position;
     newTile.size = ml::vec3(1, 1, 1);
     newTile.modelIndex = elements[ChunkElements::SPIKE_ROLLER];
     ml::vec3 positionTimeSize = newTile.position * newTile.size;
@@ -56,14 +46,14 @@ void ChunkGenerator::GenerateSpikeRoller(Chunk &chunk)
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
     newTile.flag = TileFlag::OBSTACLES + TileFlag::ROTATE_OVER_TIME;
 
-    chunk.tiles.push_back(newTile);
+    return (newTile);
 }
 
 
 Tile ChunkGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
 {
     Tile newTile;
-    newTile.position =position;
+    newTile.position = position;
     newTile.size = ml::vec3(1, 1, 1);
     ml::vec3 positionTimeSize = newTile.position * newTile.size;
     ml::vec3 halfSize = newTile.size / 2.0f;
@@ -163,43 +153,16 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
     return (triangles);
 }
 
-void ChunkGenerator::GenerateBarrier(Chunk &chunk)
+Tile ChunkGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
 {
-    if (chunk.levels[2] != lastChunk.levels[2] ||  chunk.type == ChunkType::TURN)
-        return;
-
     Tile newTile;
-    int height = 0;
-    switch (chunk.levels[2])
-    {
-        case TOP:
-        {
-            height = 1;
-            break;
-        }
-        case GROUND:
-        {
-            height = 0;
-            break;
-        }
-        case BOTTOM:
-        {
-            height = -1;
-            break;
-        }
-        default:
-            break;
-    }
-    if (chunk.dirZ != 0)
-        newTile.position = ml::vec3((chunk.x * chunkSize + chunkSize / 2 + 1) * 2, height * 2 + 1, (chunk.z * chunkSize + chunkSize / 2) * 2);
-    else
-        newTile.position = ml::vec3((chunk.x * chunkSize + chunkSize / 2) * 2, height * 2 + 1, (chunk.z * chunkSize + chunkSize / 2 + 1) * 2);
+    newTile.position = position; 
     newTile.size = ml::vec3(1, 1, 1);
     newTile.modelIndex = elements[ChunkElements::BARRIER];
     ml::vec3 positionTimeSize = newTile.position * newTile.size;
     JPH::Vec3 boxData(1.0f, 0.5f, 0.25f);
     newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
-    if (chunk.dirZ == 0)
+    if (chunkDirZ == 0)
     {
         newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
         float tmp = boxData.GetX();
@@ -212,5 +175,5 @@ void ChunkGenerator::GenerateBarrier(Chunk &chunk)
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
     newTile.flag = TileFlag::OBSTACLES;
 
-    chunk.tiles.push_back(newTile);
+    return (newTile);
 }
