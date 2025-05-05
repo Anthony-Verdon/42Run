@@ -181,37 +181,37 @@ void ChunkGenerator::SpawnSlopeDown(Chunk &chunk, int lane, int y)
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 0)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 1), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 2), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 3), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 4), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 5)));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 3)));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 4), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 5), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 6)));
     }
     else if (chunk.dirZ == -1)
     {
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 0)));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 1)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 2), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 3), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 4), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 5), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 6)));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 4)));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 5), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 6), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 7)));
     }
     else if (chunk.dirX == 1)
     {
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 0, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 1, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 2, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 3, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 4, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 5, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane)));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 3, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane)));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 4, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 5, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 6, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane)));
     }
     else if (chunk.dirX == -1)
     {
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 0, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane)));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 1, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane)));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 2, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 3, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 1, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 2, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 3, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 4, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, false));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 5, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, false));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 6, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
@@ -226,17 +226,17 @@ void ChunkGenerator::SpawnSlopeUp(Chunk &chunk, int lane, int y)
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 0)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 1), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 2), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 3), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 4), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 5)));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 3)));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 4), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 5), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 6)));
     }
     else if (chunk.dirZ == -1)
     {
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 0)));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 0, chunk.z * chunkSize + 1)));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 2), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 3), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 1), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 2), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 1, chunk.z * chunkSize + 3)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 4), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 5), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + lane, y - 2, chunk.z * chunkSize + 6)));
@@ -246,17 +246,17 @@ void ChunkGenerator::SpawnSlopeUp(Chunk &chunk, int lane, int y)
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 0, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 1, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 2, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 3, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 4, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 5, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 3, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane)));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 4, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 5, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 6, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
     }
     else if (chunk.dirX == -1)
     {
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 0, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
-        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 1, y - 0, chunk.z * chunkSize + chunkSize / 2 + lane)));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 2, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
-        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 3, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 1, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
+        chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 2, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
+        chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 3, y - 1, chunk.z * chunkSize + chunkSize / 2 + lane)));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 4, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), true, true));
         chunk.tiles.push_back(SpawnSlopeTile(ml::vec3(chunk.x * chunkSize + 5, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane), ml::vec3(chunk.dirX, 0, chunk.dirZ), false, true));
         chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + 6, y - 2, chunk.z * chunkSize + chunkSize / 2 + lane)));
