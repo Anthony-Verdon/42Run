@@ -73,24 +73,23 @@ void ChunkGenerator::SpawnAllGround(Chunk &chunk)
 
 void ChunkGenerator::SpawnTurn(Chunk &chunk)
 {
-    SpawnAllGround(chunk);
     if (chunk.dirZ != 0)
     {
-        for (int x = -3; x < -1; x++)
-            for (int z = -1; z <= 1; z++)
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
-        for (int x = 2; x < 4; x++)
+        for (int z = -3; z < -1; z++)
+            for (int x = -1; x <= 1; x++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z * chunk.dirZ)));
+        for (int x = -3; x < 4; x++)
             for (int z = -1; z <= 1; z++)
                 chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
     }
     else
     {
-        for (int z = -3; z < -1; z++)
+        for (int x = -3; x < -1; x++)
+            for (int z = -1; z <= 1; z++)
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x * chunk.dirX, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+        for (int z = -3; z < 4; z++)
             for (int x = -1; x <= 1; x++)
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
-        for (int z = 2; z < 4; z++)
-            for (int x = -1; x <= 1; x++)
-                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + chunk.dirX * x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
+                chunk.tiles.push_back(SpawnGroundTile(ml::vec3(chunk.x * chunkSize + chunkSize / 2 + x, 0, chunk.z * chunkSize + chunkSize / 2 + z)));
     }
 
     chunk.type = ChunkType::TURN;
