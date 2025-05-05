@@ -117,6 +117,7 @@ class ChunkGenerator
         static void GenerateObstacles(Chunk &chunk);
         static void GenerateSpikeRoller(Chunk &chunk);
         static void GenerateGate(Chunk &chunk, bool highGate);
+        static JPH::TriangleList GetGateHitbox();
         static void GenerateBarrier(Chunk &chunk);
 
     public:

@@ -63,33 +63,61 @@ void ChunkGenerator::GenerateGate(Chunk &chunk, bool highGate)
             continue;
 
         Tile newTile;
-        
-        newTile.position = chunk.tiles[i].position;
-        newTile.position.x = newTile.position.x * 2;
-        newTile.position.y = newTile.position.y + 1;
-        newTile.position.z = newTile.position.z * 2;
+        newTile.position = ml::vec3(chunk.tiles[i].position.x * 2, chunk.tiles[i].position.y + 1, chunk.tiles[i].position.z * 2);
         newTile.size = ml::vec3(1, 1, 1);
-        if (highGate)
-            newTile.modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
-        else
-            newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
-
         ml::vec3 positionTimeSize = newTile.position * newTile.size;
         ml::vec3 halfSize = newTile.size / 2.0f;
+
         newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
-        JPH::RVec3 hitboxSize;
-        if (chunk.dirZ != 0)
+        JPH::TriangleList triangles = GetGateHitbox();
+        if (chunk.dirZ == 0)
         {
-            hitboxSize = JPH::RVec3(newTile.size.x, halfSize.y / 2, halfSize.z);
+            newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
+            for (size_t i = 0; i < triangles.size(); i++)
+            {
+                for (size_t j = 0; j < 3; j++)
+                {
+                    float tmp = triangles[i].mV[j].x;
+                    triangles[i].mV[j].x = triangles[i].mV[j].z;
+                    triangles[i].mV[j].z = tmp;
+                }
+            }
+        }
+
+        if (highGate)
+        {
+            newTile.modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
+            for (size_t i = 0; i < triangles.size(); i++)
+            {
+                for (size_t j = 0; j < 3; j++)
+                {
+                    if (triangles[i].mV[j].y != 0)
+                        triangles[i].mV[j].y += 1.1;
+                }
+            }
         }
         else
         {
-            hitboxSize = JPH::RVec3(halfSize.x, halfSize.y / 2, newTile.size.z);
-            newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
+            newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
         }
-
-        JPH::TriangleList triangles;
         
+        JPH::Shape::ShapeResult outResult;
+        JPH::MeshShapeSettings gateSettings(triangles);
+        JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+        newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
+        newTile.flag = TileFlag::OBSTACLES + TileFlag::UPDATE_COLOR;
+
+        chunk.tiles.push_back(newTile);
+    }
+}
+
+JPH::TriangleList ChunkGenerator::GetGateHitbox()
+{
+
+    static JPH::TriangleList triangles;
+    
+    if (triangles.size() == 0) // first time
+    {
         // front face
         triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 0, 0.25), JPH::Float3(-0.25, 0, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(-0.75, 2, 0.25)));
@@ -131,41 +159,10 @@ void ChunkGenerator::GenerateGate(Chunk &chunk, bool highGate)
 
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 0, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 0, 0.25)));
-
-        if (chunk.dirZ == 0)
-        {
-            for (size_t i = 0; i < triangles.size(); i++)
-            {
-                for (size_t j = 0; j < 3; j++)
-                {
-                    float tmp = triangles[i].mV[j].x;
-                    triangles[i].mV[j].x = triangles[i].mV[j].z;
-                    triangles[i].mV[j].z = tmp;
-                }
-            }
-        }
-
-        if (highGate)
-        {
-            for (size_t i = 0; i < triangles.size(); i++)
-            {
-                for (size_t j = 0; j < 3; j++)
-                {
-                    if (triangles[i].mV[j].y != 0)
-                        triangles[i].mV[j].y += 1.1;
-                }
-            }
-        }
-        JPH::Shape::ShapeResult outResult;
-        JPH::MeshShapeSettings gateSettings(triangles);
-        JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-        newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-        newTile.flag = TileFlag::OBSTACLES + TileFlag::UPDATE_COLOR;
-
-        chunk.tiles.push_back(newTile);
     }
-}
 
+    return (triangles);
+}
 
 void ChunkGenerator::GenerateBarrier(Chunk &chunk)
 {
