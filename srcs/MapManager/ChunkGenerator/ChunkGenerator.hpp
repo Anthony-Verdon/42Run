@@ -116,7 +116,7 @@ class ChunkGenerator
         // ObstaclesGenerator.cpp
         static void GenerateObstacles(Chunk &chunk);
         static void GenerateSpikeRoller(Chunk &chunk);
-        static void GenerateGate(Chunk &chunk, bool highGate);
+        static Tile GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
         static JPH::TriangleList GetGateHitbox();
         static void GenerateBarrier(Chunk &chunk);
 
