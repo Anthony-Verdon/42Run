@@ -86,7 +86,7 @@ void ChunkGenerator::UpdateTerrainColor(Chunk &chunk)
     }
     for (size_t i = 0; i < chunk.tiles.size(); i++)
     {
-        if (chunk.tiles[i].updateColor)
+        if (chunk.tiles[i].flag & TileFlag::UPDATE_COLOR)
             chunk.tiles[i].modelIndex += tileColorModifier;
     }
 

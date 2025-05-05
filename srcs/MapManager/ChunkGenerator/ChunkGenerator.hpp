@@ -31,6 +31,15 @@ enum ChunkElements
     BARRIER,
 };
 
+enum TileFlag
+{
+    SLOPE = 1 << 0,
+    GROUND_TILE = 1 << 1,
+    OBSTACLES = 1 << 2,
+    UPDATE_COLOR = 1 << 3,
+    ROTATE_OVER_TIME = 1 << 4,
+};
+
 struct Tile
 {
     ml::vec3 position;
@@ -38,8 +47,7 @@ struct Tile
     int modelIndex;
     ml::mat4 transform;
     JPH::BodyID bodyId;
-    bool updateColor;
-    bool rotateOverTime;
+    int flag;
 };
 
 enum Lane

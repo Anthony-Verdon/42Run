@@ -144,7 +144,7 @@ void Game::Draw()
         for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
         {
             ml::mat4 rotation = ml::mat4(1.0f);
-            if (it->rotateOverTime)
+            if (it->flag & TileFlag::ROTATE_OVER_TIME)
                 rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
             ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform * rotation); 
         }

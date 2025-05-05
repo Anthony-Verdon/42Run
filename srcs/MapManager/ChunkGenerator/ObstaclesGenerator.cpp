@@ -48,8 +48,7 @@ void ChunkGenerator::GenerateSpikeRoller(Chunk &chunk)
     newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
     JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.updateColor = false;
-    newTile.rotateOverTime = true;
+    newTile.flag = TileFlag::OBSTACLES + TileFlag::ROTATE_OVER_TIME;
 
     chunk.tiles.push_back(newTile);
 }
@@ -57,128 +56,114 @@ void ChunkGenerator::GenerateSpikeRoller(Chunk &chunk)
 
 void ChunkGenerator::GenerateGate(Chunk &chunk, bool highGate)
 {
-    if (chunk.levels[1] != lastChunk.levels[1] ||  chunk.type == ChunkType::TURN)
-        return;
-
-    Tile newTile;
-    int height = 0;
-    switch (chunk.levels[1])
+    size_t nbTiles = chunk.tiles.size();
+    for (size_t i = 0; i < nbTiles; i++)
     {
-        case TOP:
+        if (!(chunk.tiles[i].flag & TileFlag::GROUND_TILE))
+            continue;
+
+        Tile newTile;
+        
+        newTile.position = chunk.tiles[i].position;
+        newTile.position.x = newTile.position.x * 2;
+        newTile.position.y = newTile.position.y + 1;
+        newTile.position.z = newTile.position.z * 2;
+        newTile.size = ml::vec3(1, 1, 1);
+        if (highGate)
+            newTile.modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
+        else
+            newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
+
+        ml::vec3 positionTimeSize = newTile.position * newTile.size;
+        ml::vec3 halfSize = newTile.size / 2.0f;
+        newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
+        JPH::RVec3 hitboxSize;
+        if (chunk.dirZ != 0)
         {
-            height = 1;
-            break;
+            hitboxSize = JPH::RVec3(newTile.size.x, halfSize.y / 2, halfSize.z);
         }
-        case GROUND:
+        else
         {
-            height = 0;
-            break;
+            hitboxSize = JPH::RVec3(halfSize.x, halfSize.y / 2, newTile.size.z);
+            newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
         }
-        case BOTTOM:
+
+        JPH::TriangleList triangles;
+        
+        // front face
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 0, 0.25), JPH::Float3(-0.25, 0, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(-0.75, 2, 0.25)));
+
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.25), JPH::Float3(1.75, 0, 0.25), JPH::Float3(1.25, 0, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.25), JPH::Float3(1.25, 2, 0.25), JPH::Float3(1.75, 2, 0.25)));
+        
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(1.25, 1.75, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 2, 0.25)));
+
+        // back face
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.75), JPH::Float3(-0.75, 0, 0.75), JPH::Float3(-0.25, 0, 0.75)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.75), JPH::Float3(-0.25, 2, 0.75), JPH::Float3(-0.75, 2, 0.75)));
+
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.75), JPH::Float3(1.25, 0, 0.75)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 2, 0.75), JPH::Float3(1.75, 2, 0.75)));
+        
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.75), JPH::Float3(-0.25, 2, 0.75), JPH::Float3(1.25, 1.75, 0.75)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 2, 0.75)));
+
+        // top 
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
+
+        // bottom
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(1.25, 1.75, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 1.75, 0.25)));
+
+        // out sides
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(-0.75, 0, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 0, 0.75), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(-0.75, 0, 0.25)));
+
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.25), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 0, 0.75), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.25)));
+
+        // in sides
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 0, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.75), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 0, 0.25)));
+
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 0, 0.25)));
+        triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 0, 0.25)));
+
+        if (chunk.dirZ == 0)
         {
-            height = -1;
-            break;
-        }
-        default:
-            break;
-    }
-    newTile.position = ml::vec3((chunk.x * chunkSize + chunkSize / 2) * 2, height * 2 + 1, (chunk.z * chunkSize + chunkSize / 2) * 2);
-    newTile.size = ml::vec3(1, 1, 1);
-    if (highGate)
-        newTile.modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
-    else
-        newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
-
-    ml::vec3 positionTimeSize = newTile.position * newTile.size;
-    ml::vec3 halfSize = newTile.size / 2.0f;
-    newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
-    JPH::RVec3 hitboxSize;
-    if (chunk.dirZ != 0)
-    {
-        hitboxSize = JPH::RVec3(newTile.size.x, halfSize.y / 2, halfSize.z);
-    }
-    else
-    {
-        hitboxSize = JPH::RVec3(halfSize.x, halfSize.y / 2, newTile.size.z);
-        newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
-    }
-
-    JPH::TriangleList triangles;
-    
-    // front face
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 0, 0.25), JPH::Float3(-0.25, 0, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(-0.75, 2, 0.25)));
-
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.25), JPH::Float3(1.75, 0, 0.25), JPH::Float3(1.25, 0, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.25), JPH::Float3(1.25, 2, 0.25), JPH::Float3(1.75, 2, 0.25)));
-    
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(1.25, 1.75, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 2, 0.25)));
-
-    // back face
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.75), JPH::Float3(-0.75, 0, 0.75), JPH::Float3(-0.25, 0, 0.75)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.75), JPH::Float3(-0.25, 2, 0.75), JPH::Float3(-0.75, 2, 0.75)));
-
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.75), JPH::Float3(1.25, 0, 0.75)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 2, 0.75), JPH::Float3(1.75, 2, 0.75)));
-    
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.75), JPH::Float3(-0.25, 2, 0.75), JPH::Float3(1.25, 1.75, 0.75)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 2, 0.75)));
-
-    // top 
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
-
-    // bottom
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(1.25, 1.75, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 1.75, 0.25)));
-
-    // out sides
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(-0.75, 0, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 0, 0.75), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(-0.75, 0, 0.25)));
-
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.25), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 0, 0.75), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.25)));
-
-    // in sides
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 0, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(-0.25, 0, 0.75), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 0, 0.25)));
-
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 0, 0.25)));
-    triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(1.25, 0, 0.25)));
-
-    if (chunk.dirZ == 0)
-    {
-        for (size_t i = 0; i < triangles.size(); i++)
-        {
-            for (size_t j = 0; j < 3; j++)
+            for (size_t i = 0; i < triangles.size(); i++)
             {
-                float tmp = triangles[i].mV[j].x;
-                triangles[i].mV[j].x = triangles[i].mV[j].z;
-                triangles[i].mV[j].z = tmp;
+                for (size_t j = 0; j < 3; j++)
+                {
+                    float tmp = triangles[i].mV[j].x;
+                    triangles[i].mV[j].x = triangles[i].mV[j].z;
+                    triangles[i].mV[j].z = tmp;
+                }
             }
         }
-    }
 
-    if (highGate)
-    {
-        for (size_t i = 0; i < triangles.size(); i++)
+        if (highGate)
         {
-            for (size_t j = 0; j < 3; j++)
+            for (size_t i = 0; i < triangles.size(); i++)
             {
-                if (triangles[i].mV[j].y != 0)
-                    triangles[i].mV[j].y += 1.1;
+                for (size_t j = 0; j < 3; j++)
+                {
+                    if (triangles[i].mV[j].y != 0)
+                        triangles[i].mV[j].y += 1.1;
+                }
             }
         }
-    }
-    JPH::Shape::ShapeResult outResult;
-    JPH::MeshShapeSettings gateSettings(triangles);
-    JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-    newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.updateColor = true;
-    newTile.rotateOverTime = false;
+        JPH::Shape::ShapeResult outResult;
+        JPH::MeshShapeSettings gateSettings(triangles);
+        JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+        newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
+        newTile.flag = TileFlag::OBSTACLES + TileFlag::UPDATE_COLOR;
 
-    chunk.tiles.push_back(newTile);
+        chunk.tiles.push_back(newTile);
+    }
 }
 
 
@@ -229,8 +214,7 @@ void ChunkGenerator::GenerateBarrier(Chunk &chunk)
     ml::vec3 halfSize = newTile.size / 2.0f;
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(boxData), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.updateColor = false;
-    newTile.rotateOverTime = false;
+    newTile.flag = TileFlag::OBSTACLES;
 
     chunk.tiles.push_back(newTile);
 }
