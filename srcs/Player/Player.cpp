@@ -21,7 +21,6 @@ Player::Player()
     ModelManager::GetModel(modelIndex).Init();
     ModelManager::GetModel(modelIndex).Play("Run");
     timeElapsed = 0;
-    jumpTimer = 0;
 }
 
 void Player::Init()
@@ -62,10 +61,9 @@ void Player::ProcessInput()
         column++;
     }
 
-    if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_SPACE) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround && jumpTimer > 0.5)
+    if (WindowManager::IsInputPressed(GLFW_KEY_SPACE) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround)
     {
         state += PlayerStateFlag::JUMPING;
-        jumpTimer = 0;
     }
 
     if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_LEFT_SHIFT) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround)
@@ -129,7 +127,6 @@ void Player::Update()
     
     // velocity
     timeElapsed += WorldPhysic3D::GetDeltaTime();
-    jumpTimer += WorldPhysic3D::GetDeltaTime();
     JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
 
     if (state & PlayerStateFlag::ROLLING)

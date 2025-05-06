@@ -31,7 +31,6 @@ class Player
         
         int modelIndex;
         float timeElapsed;
-        float jumpTimer;
         
         JPH::BodyID bodyId;
         JPH::RefConst<JPH::Shape> standingShape;
