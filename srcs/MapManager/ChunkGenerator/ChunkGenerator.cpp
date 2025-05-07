@@ -5,6 +5,7 @@
 std::map<ChunkElements, int> ChunkGenerator::elements;
 int ChunkGenerator::chunkSize = 7;
 Chunk ChunkGenerator::lastChunk = {};
+bool ChunkGenerator::firstChunk = true;
 
 void ChunkGenerator::Init()
 {
@@ -39,14 +40,13 @@ void ChunkGenerator::Init()
         elements[(ChunkElements)i] = nbModel + i;
         ModelManager::GetModel(nbModel + i).Init();
     }
-
 }
 
 Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
 {
     Chunk chunk;
 
-    if (lastChunk.tiles.empty())
+    if (firstChunk)
     {
         chunk.x = 0;        
         chunk.z = 0;        
@@ -65,6 +65,7 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
     UpdateTerrainColor(chunk);
 
     lastChunk = chunk;
+    firstChunk = false;
     return (chunk);
 }
 

@@ -50,7 +50,7 @@ struct Tile
     int flag;
 };
 
-enum Lane
+enum LaneType
 {
     LEFT = 1,
     MIDDLE = 0,
@@ -73,6 +73,11 @@ enum ChunkType
     CLASSIC
 };
 
+struct Lane
+{
+    Level level;
+};
+
 struct Chunk
 {
     int x;
@@ -81,7 +86,7 @@ struct Chunk
     int dirZ;
     ChunkType type;
     std::vector<Tile> tiles;
-    Level levels[3];
+    Lane lanes[3];
 };
 
 class ChunkGenerator
@@ -92,6 +97,7 @@ class ChunkGenerator
         static std::map<ChunkElements, int> elements;
         static int chunkSize;
         static Chunk lastChunk;
+        static bool firstChunk;
 
         // ChunkGenerator.cpp
         static void UpdateTerrainColor(Chunk &chunk);

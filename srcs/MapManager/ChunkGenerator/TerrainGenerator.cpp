@@ -9,7 +9,7 @@
 
 void ChunkGenerator::GenerateTerrain(Chunk &chunk)
 {
-    if (lastChunk.tiles.empty())
+    if (firstChunk)
     {
         SpawnAllGround(chunk);
         chunk.type = ChunkType::SPAWN;
@@ -25,9 +25,9 @@ void ChunkGenerator::GenerateTerrain(Chunk &chunk)
     }
     else
     {
-        for (int i = 0; i < Lane::COUNT; i++)
+        for (int i = 0; i < LaneType::COUNT; i++)
         {
-            switch (lastChunk.levels[i])
+            switch (lastChunk.lanes[i].level)
             {
                 case Level::TOP:
                 {
@@ -55,8 +55,8 @@ bool ChunkGenerator::CanSpawnTurn()
     if (lastChunk.type != ChunkType::CLASSIC)
         return (false);
 
-    for (int i = 0; i < Lane::COUNT; i++)
-        if (lastChunk.levels[i] != Level::GROUND)
+    for (int i = 0; i < LaneType::COUNT; i++)
+        if (lastChunk.lanes[i].level != Level::GROUND)
             return (false);
 
     return (true);
@@ -64,10 +64,10 @@ bool ChunkGenerator::CanSpawnTurn()
 
 void ChunkGenerator::SpawnAllGround(Chunk &chunk)
 {
-    for (int i = 0; i < Lane::COUNT; i++)
+    for (int i = 0; i < LaneType::COUNT; i++)
     {
-        SpawnGround(chunk, magic_enum::enum_value<Lane>(i), 0);
-        chunk.levels[i] = Level::GROUND;
+        SpawnGround(chunk, magic_enum::enum_value<LaneType>(i), 0);
+        chunk.lanes[i].level = Level::GROUND;
     }
 }
 
@@ -100,13 +100,13 @@ void ChunkGenerator::SpawnTopLevel(Chunk &chunk, int laneIndex)
     int randomValue = rand() % 2;
     if (randomValue == 0)
     {
-        SpawnGround(chunk, magic_enum::enum_value<Lane>(laneIndex), 2);
-        chunk.levels[laneIndex] = Level::TOP;
+        SpawnGround(chunk, magic_enum::enum_value<LaneType>(laneIndex), 2);
+        chunk.lanes[laneIndex].level = Level::TOP;
     }
     else
     {
-        SpawnSlopeDown(chunk, magic_enum::enum_value<Lane>(laneIndex), 2);
-        chunk.levels[laneIndex] = Level::GROUND;
+        SpawnSlopeDown(chunk, magic_enum::enum_value<LaneType>(laneIndex), 2);
+        chunk.lanes[laneIndex].level = Level::GROUND;
     }
 }
 
@@ -115,18 +115,18 @@ void ChunkGenerator::SpawnGroundLevel(Chunk &chunk, int laneIndex)
     int randomValue = rand() % 3;
     if (randomValue == 0)
     {
-        SpawnGround(chunk, magic_enum::enum_value<Lane>(laneIndex), 0);
-        chunk.levels[laneIndex] = Level::GROUND;
+        SpawnGround(chunk, magic_enum::enum_value<LaneType>(laneIndex), 0);
+        chunk.lanes[laneIndex].level = Level::GROUND;
     }
     else if (randomValue == 1)
     {
-        SpawnSlopeUp(chunk, magic_enum::enum_value<Lane>(laneIndex), 2);
-        chunk.levels[laneIndex] = Level::TOP;
+        SpawnSlopeUp(chunk, magic_enum::enum_value<LaneType>(laneIndex), 2);
+        chunk.lanes[laneIndex].level = Level::TOP;
     }
     else
     {
-        SpawnSlopeDown(chunk, magic_enum::enum_value<Lane>(laneIndex), 0);
-        chunk.levels[laneIndex] = Level::BOTTOM;
+        SpawnSlopeDown(chunk, magic_enum::enum_value<LaneType>(laneIndex), 0);
+        chunk.lanes[laneIndex].level = Level::BOTTOM;
     }
 }
 
@@ -135,13 +135,13 @@ void ChunkGenerator::SpawnBottomLevel(Chunk &chunk, int laneIndex)
     int randomValue = rand() % 2;
     if (randomValue == 0)
     {
-        SpawnGround(chunk, magic_enum::enum_value<Lane>(laneIndex), -2);
-        chunk.levels[laneIndex] = Level::BOTTOM;
+        SpawnGround(chunk, magic_enum::enum_value<LaneType>(laneIndex), -2);
+        chunk.lanes[laneIndex].level = Level::BOTTOM;
     }
     else
     {
-        SpawnSlopeUp(chunk, magic_enum::enum_value<Lane>(laneIndex), 0);
-        chunk.levels[laneIndex] = Level::GROUND;
+        SpawnSlopeUp(chunk, magic_enum::enum_value<LaneType>(laneIndex), 0);
+        chunk.lanes[laneIndex].level = Level::GROUND;
     }
 }
 
