@@ -1,6 +1,6 @@
 #include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
-#include "Engine/3D/ModelManager/ModelManager.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
+#include "Engine/3D/ModelManager/ModelManager.hpp"
 
 std::map<ChunkElements, int> ChunkGenerator::elements;
 int ChunkGenerator::chunkSize = 7;
@@ -9,30 +9,28 @@ bool ChunkGenerator::firstChunk = true;
 
 void ChunkGenerator::Init()
 {
-    std::vector<std::string> paths = {
-        "assets/tiles/low/tileLow_teamBlue.gltf.glb",
-        "assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb",
-        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb",
-        "assets/gates/small/gateSmall_teamBlue.gltf.glb",
-        "assets/gates/large/gateLarge_teamBlue.gltf.glb",
-        "assets/tiles/low/tileLow_teamRed.gltf.glb",
-        "assets/slopes/lowMedium/tileSlopeLowMedium_teamRed.gltf.glb",
-        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamRed.gltf.glb",
-        "assets/gates/small/gateSmall_teamRed.gltf.glb",
-        "assets/gates/large/gateLarge_teamRed.gltf.glb",
-        "assets/tiles/low/tileLow_teamYellow.gltf.glb",
-        "assets/slopes/lowMedium/tileSlopeLowMedium_teamYellow.gltf.glb",
-        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamYellow.gltf.glb",
-        "assets/gates/small/gateSmall_teamYellow.gltf.glb",
-        "assets/gates/large/gateLarge_teamYellow.gltf.glb",
-        "assets/tiles/low/tileLow_teamGreen.gltf.glb",
-        "assets/slopes/lowMedium/tileSlopeLowMedium_teamGreen.gltf.glb",
-        "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamGreen.gltf.glb",
-        "assets/gates/small/gateSmall_teamGreen.gltf.glb",
-        "assets/gates/large/gateLarge_teamGreen.gltf.glb",
-        "assets/spikeRoller.gltf.glb",
-        "assets/barriers/barrierSmall.gltf.glb"
-    };
+    std::vector<std::string> paths = {"assets/tiles/low/tileLow_teamBlue.gltf.glb",
+                                      "assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb",
+                                      "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamBlue.gltf.glb",
+                                      "assets/gates/small/gateSmall_teamBlue.gltf.glb",
+                                      "assets/gates/large/gateLarge_teamBlue.gltf.glb",
+                                      "assets/tiles/low/tileLow_teamRed.gltf.glb",
+                                      "assets/slopes/lowMedium/tileSlopeLowMedium_teamRed.gltf.glb",
+                                      "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamRed.gltf.glb",
+                                      "assets/gates/small/gateSmall_teamRed.gltf.glb",
+                                      "assets/gates/large/gateLarge_teamRed.gltf.glb",
+                                      "assets/tiles/low/tileLow_teamYellow.gltf.glb",
+                                      "assets/slopes/lowMedium/tileSlopeLowMedium_teamYellow.gltf.glb",
+                                      "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamYellow.gltf.glb",
+                                      "assets/gates/small/gateSmall_teamYellow.gltf.glb",
+                                      "assets/gates/large/gateLarge_teamYellow.gltf.glb",
+                                      "assets/tiles/low/tileLow_teamGreen.gltf.glb",
+                                      "assets/slopes/lowMedium/tileSlopeLowMedium_teamGreen.gltf.glb",
+                                      "assets/slopes/mediumHigh/tileSlopeMediumHigh_teamGreen.gltf.glb",
+                                      "assets/gates/small/gateSmall_teamGreen.gltf.glb",
+                                      "assets/gates/large/gateLarge_teamGreen.gltf.glb",
+                                      "assets/spikeRoller.gltf.glb",
+                                      "assets/barriers/barrierSmall.gltf.glb"};
     int nbModel = ModelManager::GetNbModel();
     for (size_t i = 0; i < paths.size(); i++)
     {
@@ -48,8 +46,8 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
 
     if (firstChunk)
     {
-        chunk.x = 0;        
-        chunk.z = 0;        
+        chunk.x = 0;
+        chunk.z = 0;
     }
     else
     {
@@ -58,7 +56,7 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
     }
     chunk.dirX = dirX;
     chunk.dirZ = dirZ;
-    
+
     GenerateTerrain(chunk);
     if (chunk.type == ChunkType::CLASSIC)
         GenerateObstacles(chunk);
@@ -86,10 +84,14 @@ void ChunkGenerator::UpdateTerrainColor(Chunk &chunk)
         else
             tileColorModifier = 0; // blue
     }
-    for (size_t i = 0; i < chunk.tiles.size(); i++)
-    {
-        if (chunk.tiles[i].flag & TileFlag::UPDATE_COLOR)
-            chunk.tiles[i].modelIndex += tileColorModifier;
-    }
 
+    for (int i = 0; i < LaneType::COUNT; i++)
+    {
+        Lane &lane = chunk.lanes[i];
+        for (size_t i = 0; i < lane.tiles.size(); i++)
+        {
+            if (lane.tiles[i].flag & TileFlag::UPDATE_COLOR)
+                lane.tiles[i].modelIndex += tileColorModifier;
+        }
+    }
 }

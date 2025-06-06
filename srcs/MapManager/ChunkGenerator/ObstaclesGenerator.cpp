@@ -5,36 +5,40 @@
 
 void ChunkGenerator::GenerateObstacles(Chunk &chunk)
 {
-    size_t nbTiles = chunk.tiles.size();
-    int nbObstaclesSpawn = 0;
-    std::vector<int> tilesIndex;
-    while (true)
+    for (int i = 0; i < LaneType::COUNT; i++)
     {
-        int pos = rand() % nbTiles;
-        if (std::find(tilesIndex.begin(), tilesIndex.end(), pos) != tilesIndex.end())
-            continue;
-        if (!(chunk.tiles[pos].flag & TileFlag::GROUND_TILE))
-            continue;
-
-        tilesIndex.push_back(pos);
-
-        ml::vec3 obstaclePos = ml::vec3(chunk.tiles[pos].position.x * 2, chunk.tiles[pos].position.y + 1, chunk.tiles[pos].position.z * 2);
-        switch(nbObstaclesSpawn)
+        Lane &lane = chunk.lanes[i];
+        size_t nbTiles = lane.tiles.size();
+        int nbObstaclesSpawn = 0;
+        std::vector<int> tilesIndex;
+        while (true)
         {
+            int pos = rand() % nbTiles;
+            if (std::find(tilesIndex.begin(), tilesIndex.end(), pos) != tilesIndex.end())
+                continue;
+            if (!(lane.tiles[pos].flag & TileFlag::GROUND_TILE))
+                continue;
+
+            tilesIndex.push_back(pos);
+
+            ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
+            switch (nbObstaclesSpawn)
+            {
             case 0:
-                chunk.tiles.push_back(GenerateSpikeRoller(obstaclePos));
+                lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
                 break;
             case 1:
-                chunk.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
+                lane.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
                 break;
             case 2:
-                chunk.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
+                lane.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
+                break;
+            }
+
+            nbObstaclesSpawn++;
+            if (nbObstaclesSpawn == 3)
                 break;
         }
-
-        nbObstaclesSpawn++;
-        if (nbObstaclesSpawn == 3)
-            break;
     }
 }
 
@@ -53,7 +57,6 @@ Tile ChunkGenerator::GenerateSpikeRoller(const ml::vec3 &position)
 
     return (newTile);
 }
-
 
 Tile ChunkGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
 {
@@ -109,7 +112,7 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
 {
 
     static JPH::TriangleList triangles;
-    
+
     if (triangles.size() == 0) // first time
     {
         // front face
@@ -118,7 +121,7 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
 
         triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.25), JPH::Float3(1.75, 0, 0.25), JPH::Float3(1.25, 0, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.25), JPH::Float3(1.25, 2, 0.25), JPH::Float3(1.75, 2, 0.25)));
-        
+
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(1.25, 1.75, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 2, 0.25)));
 
@@ -128,11 +131,11 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
 
         triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.75), JPH::Float3(1.25, 0, 0.75)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 2, 0.75), JPH::Float3(1.75, 2, 0.75)));
-        
+
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.75), JPH::Float3(-0.25, 2, 0.75), JPH::Float3(1.25, 1.75, 0.75)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 2, 0.75)));
 
-        // top 
+        // top
         triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
 
@@ -161,7 +164,7 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
 Tile ChunkGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
 {
     Tile newTile;
-    newTile.position = position; 
+    newTile.position = position;
     newTile.size = ml::vec3(1, 1, 1);
     newTile.modelIndex = elements[ChunkElements::BARRIER];
     ml::vec3 positionTimeSize = newTile.position * newTile.size;

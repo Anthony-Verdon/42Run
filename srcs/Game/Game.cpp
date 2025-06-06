@@ -1,14 +1,14 @@
-#include "Engine/RessourceManager/RessourceManager.hpp"
 #include "Game/Game.hpp"
-#include "MapManager/MapManager.hpp"
-#include "Engine/WindowManager/WindowManager.hpp"
+#include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/3D/ModelManager/ModelManager.hpp"
-#include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
+#include "Engine/RessourceManager/RessourceManager.hpp"
+#include "Engine/Time/Time.hpp"
+#include "Engine/WindowManager/WindowManager.hpp"
+#include "MapManager/MapManager.hpp"
 #include "WorldPhysic/DebugRenderer.hpp"
 #include "globals.hpp"
-#include "Engine/Time/Time.hpp"
 #include <iostream>
 
 Game::Game()
@@ -21,7 +21,7 @@ Game::Game()
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
     ChunkGenerator::Init();
-    
+
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
     WorldPhysic3D::SetContactListener(&contactListener);
     JPH::DebugRenderer::sInstance = new DebugRendererImpl();
@@ -41,7 +41,6 @@ Game::~Game()
     WorldPhysic3D::Destroy();
     delete JPH::DebugRenderer::sInstance;
     JPH::DebugRenderer::sInstance = nullptr;
-
 }
 
 void Game::Run()
@@ -49,13 +48,13 @@ void Game::Run()
     accumulatedTime += Time::getDeltaTime();
     MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
     ProcessInput();
-    
-    while (accumulatedTime >= WorldPhysic3D::GetDeltaTime()) 
+
+    while (accumulatedTime >= WorldPhysic3D::GetDeltaTime())
     {
         WorldPhysic3D::Update();
         accumulatedTime -= WorldPhysic3D::GetDeltaTime();
     }
-    
+
     UpdateCamera();
     Draw();
     WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
@@ -74,11 +73,11 @@ void Game::ProcessInput()
     player.Update();
 }
 
-//#define CAMERA_DETACH
+// #define CAMERA_DETACH
 
 void Game::UpdateCamera()
 {
-    #ifdef CAMERA_DETACH
+#ifdef CAMERA_DETACH
     // position
     camera.setSpeed(20);
     const float speed = camera.getSpeed() * Time::getDeltaTime();
@@ -113,11 +112,11 @@ void Game::UpdateCamera()
         camera.setPitch(-89.0f);
 
     ml::vec3 direction(cosf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())),
-                sinf(ml::radians(camera.getPitch())),
-                sinf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())));
+                       sinf(ml::radians(camera.getPitch())),
+                       sinf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())));
     camera.setFrontDirection(ml::normalize(direction));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
-    #else
+#else
     ml::vec3 cameraPosition;
     if (player.IsDefeated())
         cameraPosition = (ml::vec3(0, 1, 0) * 3 - ml::normalize(player.GetDirection()) * 5);
@@ -128,7 +127,7 @@ void Game::UpdateCamera()
     ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);
     camera.setFrontDirection(ml::normalize(player.GetDirection() + cameraOrientation));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
-    #endif
+#endif
 }
 
 void Game::Draw()
@@ -141,12 +140,17 @@ void Game::Draw()
     int rotationValue = (int)ml::degrees(Time::getTime() * 2) % 360;
     for (; !chunks.empty(); chunks.pop())
     {
-        for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
+        Chunk &chunk = chunks.front();
+        for (int i = 0; i < LaneType::COUNT; i++)
         {
-            ml::mat4 rotation = ml::mat4(1.0f);
-            if (it->flag & TileFlag::ROTATE_OVER_TIME)
-                rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
-            ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform * rotation); 
+            Lane &lane = chunk.lanes[i];
+            for (auto it = lane.tiles.begin(); it != lane.tiles.end(); it++)
+            {
+                ml::mat4 rotation = ml::mat4(1.0f);
+                if (it->flag & TileFlag::ROTATE_OVER_TIME)
+                    rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
+                ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform * rotation);
+            }
         }
     }
 }
