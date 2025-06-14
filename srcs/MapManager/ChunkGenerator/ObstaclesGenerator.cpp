@@ -8,6 +8,8 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
     for (int i = 0; i < LaneType::COUNT; i++)
     {
         Lane &lane = chunk.lanes[i];
+        lane.hasSpikeRoller = false;
+
         size_t nbTiles = lane.tiles.size();
         int pos;
         do
@@ -16,10 +18,28 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
         } while (!(lane.tiles[pos].flag & TileFlag::GROUND_TILE));
 
         ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
-        switch (rand() % 3)
+        bool spikeRollerCanSpawn;
+        switch (i)
+        {
+        case 0:
+            spikeRollerCanSpawn = (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i + 1].hasSpikeRoller);
+            break;
+        case LaneType::COUNT - 1:
+            spikeRollerCanSpawn = (CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller);
+            break;
+        default:
+            spikeRollerCanSpawn = ((CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i + 1].hasSpikeRoller) || (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i - 1].hasSpikeRoller));
+            break;
+        }
+        if (!spikeRollerCanSpawn)
+            continue;
+        // switch (rand() % 3)
+
+        switch (0)
         {
         case 0:
             lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
+            lane.hasSpikeRoller = true;
             break;
         case 1:
             lane.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
@@ -28,6 +48,25 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
             lane.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
             break;
         }
+    }
+}
+
+bool ChunkGenerator::CanGoToLane(const Lane &currentLane, const Lane &futureLane)
+{
+    switch (currentLane.level)
+    {
+    case Level::TOP:
+    case Level::GOING_DOWN_TO_GROUND:
+        return true;
+    case Level::GOING_TO_TOP:
+        return (futureLane.level != Level::TOP); // technically it's accessible, in case we prevent our current lane to spawn a spike roller at the first tile
+    case Level::GROUND:
+        return (futureLane.level >= Level::GROUND);
+    case Level::GOING_UP_TO_GROUND:
+    case Level::GOING_TO_BOTTOM:
+        return (futureLane.level >= Level::GOING_TO_BOTTOM);
+    case Level::BOTTOM:
+        return (futureLane.level == Level::BOTTOM);
     }
 }
 

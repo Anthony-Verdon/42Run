@@ -28,12 +28,16 @@ void ChunkGenerator::GenerateTerrain(Chunk &chunk)
         {
             switch (lastChunk.lanes[i].level)
             {
+            case Level::GOING_TO_TOP:
             case Level::TOP:
                 SpawnTopLevel(chunk, i);
                 break;
+            case Level::GOING_DOWN_TO_GROUND:
+            case Level::GOING_UP_TO_GROUND:
             case Level::GROUND:
                 SpawnGroundLevel(chunk, i);
                 break;
+            case Level::GOING_TO_BOTTOM:
             case Level::BOTTOM:
                 SpawnBottomLevel(chunk, i);
                 break;
@@ -99,7 +103,7 @@ void ChunkGenerator::SpawnTopLevel(Chunk &chunk, int laneIndex)
     else
     {
         SpawnSlopeDown(chunk, laneIndex, 2);
-        chunk.lanes[laneIndex].level = Level::GROUND;
+        chunk.lanes[laneIndex].level = Level::GOING_DOWN_TO_GROUND;
     }
 }
 
@@ -114,12 +118,12 @@ void ChunkGenerator::SpawnGroundLevel(Chunk &chunk, int laneIndex)
     else if (randomValue == 1)
     {
         SpawnSlopeUp(chunk, laneIndex, 2);
-        chunk.lanes[laneIndex].level = Level::TOP;
+        chunk.lanes[laneIndex].level = Level::GOING_TO_TOP;
     }
     else
     {
         SpawnSlopeDown(chunk, laneIndex, 0);
-        chunk.lanes[laneIndex].level = Level::BOTTOM;
+        chunk.lanes[laneIndex].level = Level::GOING_TO_BOTTOM;
     }
 }
 
@@ -134,7 +138,7 @@ void ChunkGenerator::SpawnBottomLevel(Chunk &chunk, int laneIndex)
     else
     {
         SpawnSlopeUp(chunk, laneIndex, 0);
-        chunk.lanes[laneIndex].level = Level::GROUND;
+        chunk.lanes[laneIndex].level = Level::GOING_UP_TO_GROUND;
     }
 }
 

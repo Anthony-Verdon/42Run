@@ -58,10 +58,15 @@ enum LaneType
     COUNT = 3
 };
 
+// order matters
 enum Level
 {
     TOP,
+    GOING_TO_TOP,
+    GOING_DOWN_TO_GROUND,
     GROUND,
+    GOING_UP_TO_GROUND,
+    GOING_TO_BOTTOM,
     BOTTOM
 };
 
@@ -77,6 +82,7 @@ struct Lane
 {
     std::vector<Tile> tiles;
     Level level;
+    bool hasSpikeRoller;
 };
 
 struct Chunk
@@ -121,6 +127,7 @@ class ChunkGenerator
 
     // ObstaclesGenerator.cpp
     static void GenerateObstacles(Chunk &chunk);
+    static bool CanGoToLane(const Lane &currentLane, const Lane &futureLane);
     static Tile GenerateSpikeRoller(const ml::vec3 &position);
     static Tile GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
     static JPH::TriangleList GetGateHitbox();
