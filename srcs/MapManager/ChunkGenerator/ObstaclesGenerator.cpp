@@ -9,35 +9,24 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
     {
         Lane &lane = chunk.lanes[i];
         size_t nbTiles = lane.tiles.size();
-        int nbObstaclesSpawn = 0;
-        std::vector<int> tilesIndex;
-        while (true)
+        int pos;
+        do
         {
-            int pos = rand() % nbTiles;
-            if (std::find(tilesIndex.begin(), tilesIndex.end(), pos) != tilesIndex.end())
-                continue;
-            if (!(lane.tiles[pos].flag & TileFlag::GROUND_TILE))
-                continue;
+            pos = rand() % nbTiles;
+        } while (!(lane.tiles[pos].flag & TileFlag::GROUND_TILE));
 
-            tilesIndex.push_back(pos);
-
-            ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
-            switch (nbObstaclesSpawn)
-            {
-            case 0:
-                lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
-                break;
-            case 1:
-                lane.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
-                break;
-            case 2:
-                lane.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
-                break;
-            }
-
-            nbObstaclesSpawn++;
-            if (nbObstaclesSpawn == 3)
-                break;
+        ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
+        switch (rand() % 3)
+        {
+        case 0:
+            lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
+            break;
+        case 1:
+            lane.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
+            break;
+        case 2:
+            lane.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
+            break;
         }
     }
 }
