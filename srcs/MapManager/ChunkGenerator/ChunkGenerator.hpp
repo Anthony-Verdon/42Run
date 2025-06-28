@@ -110,15 +110,10 @@ class ChunkGenerator
     // ChunkGenerator.cpp
     static void UpdateTerrainColor(Chunk &chunk);
 
-    // ObstaclesGenerator.cpp
-    static void GenerateObstacles(Chunk &chunk);
-    static Tile GenerateSpikeRoller(const ml::vec3 &position);
-    static Tile GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
-    static JPH::TriangleList GetGateHitbox();
-    static Tile GenerateBarrier(const ml::vec3 &position, int chunkDirZ);
-
   public:
     class TerrainGenerator;
+    class ObstaclesGenerator;
+
     static void Init();
     static Chunk GenerateChunk(int dirX, int dirZ);
 
@@ -134,7 +129,4 @@ class ChunkGenerator
     {
         return (lastChunk.type);
     }
-
-    static bool CanGoToLane(const Lane &currentLane, const Lane &futureLane);
-    static bool CanGoToLane(Level currentLevel, Level futureLevel);
 };

@@ -1,9 +1,9 @@
-#include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
+#include "MapManager/ChunkGenerator/ObstaclesGenerator/ObstaclesGenerator.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
 #include <Jolt/Physics/Collision/Shape/CylinderShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 
-void ChunkGenerator::GenerateObstacles(Chunk &chunk)
+void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
 {
     for (int i = 0; i < LaneType::COUNT; i++)
         chunk.lanes[i].hasSpikeRoller = false;
@@ -62,14 +62,14 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
     }
 }
 
-bool ChunkGenerator::CanGoToLane(const Lane &currentLane, const Lane &futureLane)
+bool ChunkGenerator::ObstaclesGenerator::CanGoToLane(const Lane &currentLane, const Lane &futureLane)
 {
     return (CanGoToLane(currentLane.level, futureLane.level));
 }
 
 // return the possibility to go to another lane depending of it level at the start of the chunk
 // without taking into account potential obstacles
-bool ChunkGenerator::CanGoToLane(Level currentLevel, Level futureLevel)
+bool ChunkGenerator::ObstaclesGenerator::CanGoToLane(Level currentLevel, Level futureLevel)
 {
     switch (currentLevel)
     {
@@ -86,7 +86,7 @@ bool ChunkGenerator::CanGoToLane(Level currentLevel, Level futureLevel)
     }
 }
 
-Tile ChunkGenerator::GenerateSpikeRoller(const ml::vec3 &position)
+Tile ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(const ml::vec3 &position)
 {
     Tile newTile;
     newTile.position = position;
@@ -102,7 +102,7 @@ Tile ChunkGenerator::GenerateSpikeRoller(const ml::vec3 &position)
     return (newTile);
 }
 
-Tile ChunkGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
+Tile ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
 {
     Tile newTile;
     newTile.position = position;
@@ -152,7 +152,7 @@ Tile ChunkGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool 
     return (newTile);
 }
 
-JPH::TriangleList ChunkGenerator::GetGateHitbox()
+JPH::TriangleList ChunkGenerator::ObstaclesGenerator::GetGateHitbox()
 {
 
     static JPH::TriangleList triangles;
@@ -205,7 +205,7 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
     return (triangles);
 }
 
-Tile ChunkGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
+Tile ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
 {
     Tile newTile;
     newTile.position = position;
