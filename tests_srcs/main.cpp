@@ -1,9 +1,89 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
 #include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
+#include "MapManager/ChunkGenerator/TerrainGenerator/TerrainGenerator.hpp"
 #include "WorldPhysic/DebugRenderer.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
 #include <doctest/doctest.h>
+#include <magic_enum.hpp>
+
+TEST_CASE("ChunkGenerator::TerrainGenerator::CanSpawnTurn")
+{
+    SUBCASE("ChunkType::SPAWN")
+    {
+        Chunk chunk;
+        chunk.type = ChunkType::SPAWN;
+        CHECK_FALSE(ChunkGenerator::TerrainGenerator::CanSpawnTurn(chunk));
+    }
+    SUBCASE("ChunkType::TURN")
+    {
+        Chunk chunk;
+        chunk.type = ChunkType::TURN;
+        CHECK_FALSE(ChunkGenerator::TerrainGenerator::CanSpawnTurn(chunk));
+    }
+    SUBCASE("ChunkType::OUT_OF_TURN")
+    {
+        Chunk chunk;
+        chunk.type = ChunkType::OUT_OF_TURN;
+        CHECK_FALSE(ChunkGenerator::TerrainGenerator::CanSpawnTurn(chunk));
+    }
+    SUBCASE("ChunkType::CLASSIC")
+    {
+        Chunk chunk;
+        chunk.type = ChunkType::CLASSIC;
+        for (int i = 0; i < LaneType::COUNT; i++)
+            chunk.lanes[i].level = Level::GROUND;
+        SUBCASE("all lanes to ground")
+        {
+            CHECK(ChunkGenerator::TerrainGenerator::CanSpawnTurn(chunk));
+        }
+
+        // generate all combinations
+        size_t nbLevel = magic_enum::enum_count<Level>();
+        std::vector<size_t> indices(LaneType::COUNT, 0);
+        while (true)
+        {
+            for (size_t i = 0; i < LaneType::COUNT; i++)
+                chunk.lanes[i].level = magic_enum::enum_value<Level>(indices[i]);
+
+            bool checkAllGround = true;
+            std::string subcaseName = "chunk lanes level:";
+            for (size_t i = 0; i < LaneType::COUNT; i++)
+            {
+                subcaseName += " " + std::string(magic_enum::enum_name(chunk.lanes[i].level));
+                if (chunk.lanes[i].level != Level::GROUND)
+                    checkAllGround = false;
+            }
+
+            SUBCASE(subcaseName.c_str())
+            {
+                if (checkAllGround)
+                    CHECK(ChunkGenerator::TerrainGenerator::CanSpawnTurn(chunk));
+                else
+                    CHECK_FALSE(ChunkGenerator::TerrainGenerator::CanSpawnTurn(chunk));
+            }
+
+            bool done = false;
+            for (int i = 0; i < LaneType::COUNT; i++)
+            {
+                indices[i]++;
+                if (indices[i] < nbLevel)
+                    break;
+
+                indices[i] = 0;
+
+                if (i == LaneType::COUNT - 1)
+                    done = true;
+            }
+            if (done)
+                break;
+        }
+    }
+}
+
+TEST_CASE("ChunkGenerator::TerrainGenerator::CalculateSlopeRotation")
+{
+}
 
 TEST_CASE("ChunkGenerator::CanGoToLane")
 {

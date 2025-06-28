@@ -1,9 +1,11 @@
 #include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/3D/ModelManager/ModelManager.hpp"
+#include "MapManager/ChunkGenerator/TerrainGenerator/TerrainGenerator.hpp"
 
 std::map<ChunkElements, int> ChunkGenerator::elements = {};
 int ChunkGenerator::chunkSize = 7;
+int ChunkGenerator::halfChunkSize = chunkSize / 2;
 Chunk ChunkGenerator::lastChunk = {};
 bool ChunkGenerator::firstChunk = true;
 
@@ -57,7 +59,7 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
     chunk.dirX = dirX;
     chunk.dirZ = dirZ;
 
-    GenerateTerrain(chunk);
+    TerrainGenerator::GenerateTerrain(chunk);
     if (chunk.type == ChunkType::CLASSIC)
         GenerateObstacles(chunk);
     UpdateTerrainColor(chunk);
