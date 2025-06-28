@@ -96,6 +96,14 @@ struct Chunk
     Lane lanes[LaneType::COUNT];
 };
 
+enum TerrainColor
+{
+    BLUE = 0,
+    RED = 5,
+    YELLOW = 10,
+    GREEN = 15
+};
+
 class ChunkGenerator
 {
   private:
@@ -107,8 +115,7 @@ class ChunkGenerator
     static Chunk lastChunk;
     static bool firstChunk;
 
-    // ChunkGenerator.cpp
-    static void UpdateTerrainColor(Chunk &chunk);
+    static void UpdateTerrainColor(Chunk &chunk, TerrainColor color);
 
   public:
     class TerrainGenerator;
@@ -116,6 +123,8 @@ class ChunkGenerator
 
     static void Init();
     static Chunk GenerateChunk(int dirX, int dirZ);
+
+    static TerrainColor DetermineTerrainColor(const Chunk &chunk);
 
     static int GetChunkSize()
     {

@@ -176,3 +176,20 @@ TEST_CASE("ChunkGenerator::ObstaclesGenerator::CanGoToLane")
         CHECK(ChunkGenerator::ObstaclesGenerator::CanGoToLane(Level::BOTTOM, Level::BOTTOM));
     }
 }
+
+TEST_CASE("ChunkGenerator::DetermineTerrainColor")
+{
+    Chunk chunk;
+    chunk.dirX = 1;
+    chunk.dirZ = 0;
+    CHECK(ChunkGenerator::DetermineTerrainColor(chunk) == TerrainColor::RED);
+    chunk.dirX = -1;
+    chunk.dirZ = 0;
+    CHECK(ChunkGenerator::DetermineTerrainColor(chunk) == TerrainColor::YELLOW);
+    chunk.dirX = 0;
+    chunk.dirZ = 1;
+    CHECK(ChunkGenerator::DetermineTerrainColor(chunk) == TerrainColor::GREEN);
+    chunk.dirX = 0;
+    chunk.dirZ = -1;
+    CHECK(ChunkGenerator::DetermineTerrainColor(chunk) == TerrainColor::BLUE);
+}

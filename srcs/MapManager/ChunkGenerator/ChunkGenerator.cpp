@@ -63,38 +63,40 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
     TerrainGenerator::GenerateTerrain(chunk);
     if (chunk.type == ChunkType::CLASSIC)
         ObstaclesGenerator::GenerateObstacles(chunk);
-    UpdateTerrainColor(chunk);
+    UpdateTerrainColor(chunk, DetermineTerrainColor(chunk));
 
     lastChunk = chunk;
     firstChunk = false;
     return (chunk);
 }
 
-void ChunkGenerator::UpdateTerrainColor(Chunk &chunk)
+TerrainColor ChunkGenerator::DetermineTerrainColor(const Chunk &chunk)
 {
-    int tileColorModifier;
     if (chunk.dirX != 0)
     {
         if (chunk.dirX == 1)
-            tileColorModifier = 5; // red
+            return (TerrainColor::RED);
         else
-            tileColorModifier = 10; // yellow
+            return (TerrainColor::YELLOW);
     }
     else
     {
         if (chunk.dirZ == 1)
-            tileColorModifier = 15; // green
+            return (TerrainColor::GREEN);
         else
-            tileColorModifier = 0; // blue
+            return (TerrainColor::BLUE);
     }
+}
 
+void ChunkGenerator::UpdateTerrainColor(Chunk &chunk, TerrainColor color)
+{
     for (int i = 0; i < LaneType::COUNT; i++)
     {
         Lane &lane = chunk.lanes[i];
         for (size_t i = 0; i < lane.tiles.size(); i++)
         {
             if (lane.tiles[i].flag & TileFlag::UPDATE_COLOR)
-                lane.tiles[i].modelIndex += tileColorModifier;
+                lane.tiles[i].modelIndex += color;
         }
     }
 }
