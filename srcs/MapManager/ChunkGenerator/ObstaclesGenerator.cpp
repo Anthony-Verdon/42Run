@@ -35,7 +35,7 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
             continue;
         // switch (rand() % 3)
 
-        switch (0)
+        switch (0) // @TODO fix that
         {
         case 0:
             lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
@@ -53,20 +53,25 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
 
 bool ChunkGenerator::CanGoToLane(const Lane &currentLane, const Lane &futureLane)
 {
-    switch (currentLane.level)
+    return (CanGoToLane(currentLane.level, futureLane.level));
+}
+
+bool ChunkGenerator::CanGoToLane(Level currentLevel, Level futureLevel)
+{
+    switch (currentLevel)
     {
     case Level::TOP:
     case Level::GOING_DOWN_TO_GROUND:
         return true;
     case Level::GOING_TO_TOP:
-        return (futureLane.level != Level::TOP); // technically it's accessible, in case we prevent our current lane to spawn a spike roller at the first tile
+        return (futureLevel != Level::TOP); // technically it's accessible, in case we prevent our current lane to spawn a spike roller at the first tile
     case Level::GROUND:
-        return (futureLane.level >= Level::GROUND);
+        return (futureLevel >= Level::GROUND);
     case Level::GOING_UP_TO_GROUND:
     case Level::GOING_TO_BOTTOM:
-        return (futureLane.level >= Level::GOING_TO_BOTTOM);
+        return (futureLevel >= Level::GOING_TO_BOTTOM);
     case Level::BOTTOM:
-        return (futureLane.level == Level::BOTTOM);
+        return (futureLevel == Level::BOTTOM);
     }
 }
 

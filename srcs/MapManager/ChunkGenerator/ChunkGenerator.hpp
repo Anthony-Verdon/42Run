@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 
+// @TODO split this file
 enum ChunkElements
 {
     TILE_LOW_BLUE = 0,
@@ -127,7 +128,6 @@ class ChunkGenerator
 
     // ObstaclesGenerator.cpp
     static void GenerateObstacles(Chunk &chunk);
-    static bool CanGoToLane(const Lane &currentLane, const Lane &futureLane);
     static Tile GenerateSpikeRoller(const ml::vec3 &position);
     static Tile GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
     static JPH::TriangleList GetGateHitbox();
@@ -149,4 +149,6 @@ class ChunkGenerator
     {
         return (lastChunk.type);
     }
+    static bool CanGoToLane(const Lane &currentLane, const Lane &futureLane);
+    static bool CanGoToLane(Level currentLevel, Level futureLevel);
 };

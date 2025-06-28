@@ -2,7 +2,7 @@
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/3D/ModelManager/ModelManager.hpp"
 
-std::map<ChunkElements, int> ChunkGenerator::elements;
+std::map<ChunkElements, int> ChunkGenerator::elements = {};
 int ChunkGenerator::chunkSize = 7;
 Chunk ChunkGenerator::lastChunk = {};
 bool ChunkGenerator::firstChunk = true;
