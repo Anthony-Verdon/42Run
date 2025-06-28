@@ -83,6 +83,14 @@ TEST_CASE("ChunkGenerator::TerrainGenerator::CanSpawnTurn")
 
 TEST_CASE("ChunkGenerator::TerrainGenerator::CalculateSlopeRotation")
 {
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(-1, 0, 0), true) == 0);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(1, 0, 0), true) == 180);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(-1, 0, 0), false) == 180);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(1, 0, 0), false) == 0);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(0, 0, -1), true) == 90);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(0, 0, 1), true) == 270);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(0, 0, -1), false) == 270);
+    CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(0, 0, 1), false) == 90);
 }
 
 TEST_CASE("ChunkGenerator::CanGoToLane")
