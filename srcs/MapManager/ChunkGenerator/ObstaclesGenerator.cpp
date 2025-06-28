@@ -56,22 +56,22 @@ bool ChunkGenerator::CanGoToLane(const Lane &currentLane, const Lane &futureLane
     return (CanGoToLane(currentLane.level, futureLane.level));
 }
 
+// return the possibility to go to another lane depending of it level at the start of the chunk
+// without taking into account potential obstacles
 bool ChunkGenerator::CanGoToLane(Level currentLevel, Level futureLevel)
 {
     switch (currentLevel)
     {
     case Level::TOP:
     case Level::GOING_DOWN_TO_GROUND:
-        return true;
+        return true; // futureLevel >= Level::TOP always true
     case Level::GOING_TO_TOP:
-        return (futureLevel != Level::TOP); // technically it's accessible, in case we prevent our current lane to spawn a spike roller at the first tile
     case Level::GROUND:
-        return (futureLevel >= Level::GROUND);
-    case Level::GOING_UP_TO_GROUND:
     case Level::GOING_TO_BOTTOM:
-        return (futureLevel >= Level::GOING_TO_BOTTOM);
+        return (futureLevel >= Level::GOING_TO_TOP);
+    case Level::GOING_UP_TO_GROUND:
     case Level::BOTTOM:
-        return (futureLevel == Level::BOTTOM);
+        return (futureLevel >= Level::GOING_UP_TO_GROUND);
     }
 }
 

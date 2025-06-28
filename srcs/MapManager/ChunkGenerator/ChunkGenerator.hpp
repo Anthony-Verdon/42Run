@@ -63,11 +63,11 @@ enum LaneType
 enum Level
 {
     TOP,
-    GOING_TO_TOP,
     GOING_DOWN_TO_GROUND,
+    GOING_TO_TOP,
     GROUND,
-    GOING_UP_TO_GROUND,
     GOING_TO_BOTTOM,
+    GOING_UP_TO_GROUND,
     BOTTOM
 };
 
