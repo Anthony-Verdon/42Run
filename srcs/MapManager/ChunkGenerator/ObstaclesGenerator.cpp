@@ -18,7 +18,7 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
         case TOP:
         case GROUND:
         case BOTTOM:
-            pos = rand() % (GetChunkSize() - 2) + 1;
+            pos = rand() % (GetChunkSize() - 2) + 1; // avoid spawning on first or last tile
             break;
         case GOING_DOWN_TO_GROUND:
         case GOING_TO_TOP:
