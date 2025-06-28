@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-// @TODO split this file
 enum ChunkElements
 {
     TILE_LOW_BLUE = 0,
