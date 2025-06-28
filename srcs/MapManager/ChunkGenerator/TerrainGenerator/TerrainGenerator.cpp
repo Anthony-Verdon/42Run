@@ -280,7 +280,6 @@ Tile ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, 
     return (tile);
 }
 
-// @TODO: could pre-init each one and return directly
 std::vector<JPH::Vec3> ChunkGenerator::TerrainGenerator::InitSlopePoints(float angle)
 {
     std::vector<JPH::Vec3> points;
