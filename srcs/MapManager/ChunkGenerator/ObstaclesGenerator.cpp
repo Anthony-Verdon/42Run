@@ -6,18 +6,30 @@
 void ChunkGenerator::GenerateObstacles(Chunk &chunk)
 {
     for (int i = 0; i < LaneType::COUNT; i++)
+        chunk.lanes[i].hasSpikeRoller = false;
+    for (int i = 0; i < LaneType::COUNT; i++)
     {
         Lane &lane = chunk.lanes[i];
-        lane.hasSpikeRoller = false;
 
-        size_t nbTiles = lane.tiles.size();
+        // determine position
         int pos;
-        do
+        switch (lane.level)
         {
-            pos = rand() % nbTiles;
-        } while (!(lane.tiles[pos].flag & TileFlag::GROUND_TILE));
-
+        case TOP:
+        case GROUND:
+        case BOTTOM:
+            pos = rand() % (GetChunkSize() - 2) + 1;
+            break;
+        case GOING_DOWN_TO_GROUND:
+        case GOING_TO_TOP:
+        case GOING_TO_BOTTOM:
+        case GOING_UP_TO_GROUND:
+            pos = GetHalfChunkSize();
+            break;
+        }
         ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
+
+        // check if we can spawn or not a spike roller
         bool spikeRollerCanSpawn;
         switch (i)
         {
@@ -28,14 +40,13 @@ void ChunkGenerator::GenerateObstacles(Chunk &chunk)
             spikeRollerCanSpawn = (CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller);
             break;
         default:
-            spikeRollerCanSpawn = ((CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i + 1].hasSpikeRoller) || (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i - 1].hasSpikeRoller));
+            spikeRollerCanSpawn = ((CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller) || (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i + 1].hasSpikeRoller));
             break;
         }
-        if (!spikeRollerCanSpawn)
-            continue;
-        // switch (rand() % 3)
 
-        switch (0) // @TODO fix that
+        // spawn obstacle
+        int obstacle = (spikeRollerCanSpawn ? rand() % 3 : rand() % 2 + 1);
+        switch (obstacle)
         {
         case 0:
             lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
