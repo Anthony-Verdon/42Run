@@ -1,10 +1,11 @@
-#include "Player/Player.hpp"
-#include "Engine/Time/Time.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
-#include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
-#include "WorldPhysic/WorldPhysic.hpp"
-#include "MapManager/MapManager.hpp"
+
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
+#include "Engine/3D/WorldPhysic3D/WorldPhysic3D.hpp"
+#include "Engine/Time/Time.hpp"
+#include "MapManager/MapManager.hpp"
+#include "Player/Player.hpp"
+#include "WorldPhysic/WorldPhysic.hpp"
 
 Player::Player()
 {
@@ -72,7 +73,6 @@ void Player::ProcessInput()
         ModelManager::GetModel(modelIndex).Play("Roll");
         WorldPhysic3D::GetBodyInterface().SetShape(bodyId, rollingShape, true, JPH::EActivation::Activate);
     }
-
 }
 
 void Player::Update()
@@ -81,7 +81,7 @@ void Player::Update()
         return;
 
     // collisions
-    auto contactListener = dynamic_cast<ContactListener*>(WorldPhysic3D::GetContactListener());
+    auto contactListener = dynamic_cast<ContactListener *>(WorldPhysic3D::GetContactListener());
     auto contacts = contactListener->GetContacts(bodyId);
     for (size_t i = 0; i < contacts.size(); i++)
     {
@@ -124,7 +124,7 @@ void Player::Update()
     direction = ml::normalize(ml::vec3(-sinf(angle), 0, cosf(angle)));
     direction.x = round(direction.x);
     direction.z = round(direction.z);
-    
+
     // velocity
     timeElapsed += WorldPhysic3D::GetDeltaTime();
     JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
@@ -150,7 +150,7 @@ void Player::Update()
             horizontalMovement = JPH::Vec3(0, 0, sign * -direction.x * 2 * speed / time);
         else
             horizontalMovement = JPH::Vec3(sign * direction.z * 2 * speed / time, 0, 0);
-        
+
         velocity += horizontalMovement;
         if (timeElapsed >= time / speed)
         {

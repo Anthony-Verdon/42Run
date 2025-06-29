@@ -1,6 +1,6 @@
 #include "MapManager/MapManager.hpp"
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 std::queue<Chunk> MapManager::chunks;
 int MapManager::playerPosX = 0;
@@ -24,7 +24,7 @@ void MapManager::UpdateTerrain(const ml::vec3 &playerPos, const ml::vec3 &player
 {
     GenerateChunks(playerPos, playerDir);
     if (tryDeleteChunk)
-        DeleteChunk(playerPos);        
+        DeleteChunk(playerPos);
 }
 
 void MapManager::GenerateChunks(const ml::vec3 &playerPos, const ml::vec3 &playerDir)
@@ -81,10 +81,15 @@ void MapManager::DeleteChunk(const ml::vec3 &playerPos)
 
     if (deleteChunk)
     {
-        for (auto it = chunks.front().tiles.begin(); it != chunks.front().tiles.end(); it++)
+        Chunk &chunk = chunks.front();
+        for (int i = 0; i < LaneType::COUNT; i++)
         {
-            WorldPhysic3D::GetBodyInterface().RemoveBody(it->bodyId);
-            WorldPhysic3D::GetBodyInterface().DestroyBody(it->bodyId);
+            Lane &lane = chunk.lanes[i];
+            for (auto it = lane.tiles.begin(); it != lane.tiles.end(); it++)
+            {
+                WorldPhysic3D::GetBodyInterface().RemoveBody(it->bodyId);
+                WorldPhysic3D::GetBodyInterface().DestroyBody(it->bodyId);
+            }
         }
         chunks.pop();
 

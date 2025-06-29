@@ -1,44 +1,92 @@
-#include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
+#include "MapManager/ChunkGenerator/ObstaclesGenerator/ObstaclesGenerator.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
 #include <Jolt/Physics/Collision/Shape/CylinderShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
 
-void ChunkGenerator::GenerateObstacles(Chunk &chunk)
+void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
 {
-    size_t nbTiles = chunk.tiles.size();
-    int nbObstaclesSpawn = 0;
-    std::vector<int> tilesIndex;
-    while (true)
+    for (int i = 0; i < LaneType::COUNT; i++)
+        chunk.lanes[i].hasSpikeRoller = false;
+    for (int i = 0; i < LaneType::COUNT; i++)
     {
-        int pos = rand() % nbTiles;
-        if (std::find(tilesIndex.begin(), tilesIndex.end(), pos) != tilesIndex.end())
-            continue;
-        if (!(chunk.tiles[pos].flag & TileFlag::GROUND_TILE))
-            continue;
+        Lane &lane = chunk.lanes[i];
 
-        tilesIndex.push_back(pos);
-
-        ml::vec3 obstaclePos = ml::vec3(chunk.tiles[pos].position.x * 2, chunk.tiles[pos].position.y + 1, chunk.tiles[pos].position.z * 2);
-        switch(nbObstaclesSpawn)
+        // determine position
+        int pos;
+        switch (lane.level)
         {
-            case 0:
-                chunk.tiles.push_back(GenerateSpikeRoller(obstaclePos));
-                break;
-            case 1:
-                chunk.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
-                break;
-            case 2:
-                chunk.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
-                break;
+        case TOP:
+        case GROUND:
+        case BOTTOM:
+            pos = rand() % (GetChunkSize() - 2) + 1; // avoid spawning on first or last tile
+            break;
+        case GOING_DOWN_TO_GROUND:
+        case GOING_TO_TOP:
+        case GOING_TO_BOTTOM:
+        case GOING_UP_TO_GROUND:
+            pos = GetHalfChunkSize();
+            break;
+        }
+        ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
+
+        // check if we can spawn or not a spike roller
+        bool spikeRollerCanSpawn;
+        switch (i)
+        {
+        case 0:
+            spikeRollerCanSpawn = (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i + 1].hasSpikeRoller);
+            break;
+        case LaneType::COUNT - 1:
+            spikeRollerCanSpawn = (CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller);
+            break;
+        default:
+            spikeRollerCanSpawn = ((CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller) || (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i + 1].hasSpikeRoller));
+            break;
         }
 
-        nbObstaclesSpawn++;
-        if (nbObstaclesSpawn == 3)
+        // spawn obstacle
+        int obstacle = (spikeRollerCanSpawn ? rand() % 3 : rand() % 2 + 1);
+        switch (obstacle)
+        {
+        case 0:
+            lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
+            lane.hasSpikeRoller = true;
             break;
+        case 1:
+            lane.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
+            break;
+        case 2:
+            lane.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
+            break;
+        }
     }
 }
 
-Tile ChunkGenerator::GenerateSpikeRoller(const ml::vec3 &position)
+bool ChunkGenerator::ObstaclesGenerator::CanGoToLane(const Lane &currentLane, const Lane &futureLane)
+{
+    return (CanGoToLane(currentLane.level, futureLane.level));
+}
+
+// return the possibility to go to another lane depending of it level at the start of the chunk
+// without taking into account potential obstacles
+bool ChunkGenerator::ObstaclesGenerator::CanGoToLane(Level currentLevel, Level futureLevel)
+{
+    switch (currentLevel)
+    {
+    case Level::TOP:
+    case Level::GOING_DOWN_TO_GROUND:
+        return true; // futureLevel >= Level::TOP always true
+    case Level::GOING_TO_TOP:
+    case Level::GROUND:
+    case Level::GOING_TO_BOTTOM:
+        return (futureLevel >= Level::GOING_TO_TOP);
+    case Level::GOING_UP_TO_GROUND:
+    case Level::BOTTOM:
+        return (futureLevel >= Level::GOING_UP_TO_GROUND);
+    }
+}
+
+Tile ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(const ml::vec3 &position)
 {
     Tile newTile;
     newTile.position = position;
@@ -54,8 +102,7 @@ Tile ChunkGenerator::GenerateSpikeRoller(const ml::vec3 &position)
     return (newTile);
 }
 
-
-Tile ChunkGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
+Tile ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
 {
     Tile newTile;
     newTile.position = position;
@@ -105,11 +152,11 @@ Tile ChunkGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool 
     return (newTile);
 }
 
-JPH::TriangleList ChunkGenerator::GetGateHitbox()
+JPH::TriangleList ChunkGenerator::ObstaclesGenerator::GetGateHitbox()
 {
 
     static JPH::TriangleList triangles;
-    
+
     if (triangles.size() == 0) // first time
     {
         // front face
@@ -118,7 +165,7 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
 
         triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.25), JPH::Float3(1.75, 0, 0.25), JPH::Float3(1.25, 0, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.25), JPH::Float3(1.25, 2, 0.25), JPH::Float3(1.75, 2, 0.25)));
-        
+
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.25), JPH::Float3(-0.25, 2, 0.25), JPH::Float3(1.25, 1.75, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.25), JPH::Float3(-0.25, 1.75, 0.25), JPH::Float3(-0.25, 2, 0.25)));
 
@@ -128,11 +175,11 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
 
         triangles.push_back(JPH::Triangle(JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 0, 0.75), JPH::Float3(1.25, 0, 0.75)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 0, 0.75), JPH::Float3(1.25, 2, 0.75), JPH::Float3(1.75, 2, 0.75)));
-        
+
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 2, 0.75), JPH::Float3(-0.25, 2, 0.75), JPH::Float3(1.25, 1.75, 0.75)));
         triangles.push_back(JPH::Triangle(JPH::Float3(1.25, 1.75, 0.75), JPH::Float3(-0.25, 1.75, 0.75), JPH::Float3(-0.25, 2, 0.75)));
 
-        // top 
+        // top
         triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.25), JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
         triangles.push_back(JPH::Triangle(JPH::Float3(-0.75, 2, 0.75), JPH::Float3(1.75, 2, 0.75), JPH::Float3(1.75, 2, 0.25)));
 
@@ -158,10 +205,10 @@ JPH::TriangleList ChunkGenerator::GetGateHitbox()
     return (triangles);
 }
 
-Tile ChunkGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
+Tile ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
 {
     Tile newTile;
-    newTile.position = position; 
+    newTile.position = position;
     newTile.size = ml::vec3(1, 1, 1);
     newTile.modelIndex = elements[ChunkElements::BARRIER];
     ml::vec3 positionTimeSize = newTile.position * newTile.size;
