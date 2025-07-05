@@ -3,7 +3,6 @@
 #include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
 #include "MapManager/ChunkGenerator/ObstaclesGenerator/ObstaclesGenerator.hpp"
 #include "MapManager/ChunkGenerator/TerrainGenerator/TerrainGenerator.hpp"
-#include "WorldPhysic/DebugRenderer.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
 #include <doctest/doctest.h>
 #include <magic_enum.hpp>
@@ -103,7 +102,6 @@ TEST_CASE("ChunkGenerator::ObstaclesGenerator::CanGoToLane")
     ContactListener contactListener;
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
     WorldPhysic3D::SetContactListener(&contactListener);
-    JPH::DebugRenderer::sInstance = new DebugRendererImpl();
 
     SUBCASE("Current level: top")
     {

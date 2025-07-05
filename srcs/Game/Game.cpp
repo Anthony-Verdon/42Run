@@ -7,7 +7,6 @@
 #include "Engine/Time/Time.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "MapManager/MapManager.hpp"
-#include "WorldPhysic/DebugRenderer.hpp"
 #if DRAW_IMGUI
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -28,7 +27,6 @@ Game::Game()
 
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
     WorldPhysic3D::SetContactListener(&contactListener);
-    JPH::DebugRenderer::sInstance = new DebugRendererImpl();
     player.Init();
     MapManager::Init();
 
@@ -53,8 +51,6 @@ Game::~Game()
     player.Destroy();
     LineRenderer3D::Destroy();
     WorldPhysic3D::Destroy();
-    delete JPH::DebugRenderer::sInstance;
-    JPH::DebugRenderer::sInstance = nullptr;
 
 #if DRAW_IMGUI
     ImGui_ImplOpenGL3_Shutdown();
@@ -77,7 +73,7 @@ void Game::Run()
 
     UpdateCamera();
     Draw();
-    WorldPhysic3D::DebugDraw({}, JPH::DebugRenderer::sInstance);
+    WorldPhysic3D::DebugDraw();
 
     ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
