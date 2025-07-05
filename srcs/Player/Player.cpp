@@ -6,6 +6,7 @@
 #include "MapManager/MapManager.hpp"
 #include "Player/Player.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
+#include "Engine/3D/WorldPhysic3D/ContactListener/ContactListener.hpp"
 #if DRAW_IMGUI
 #include "imgui.h"
 #include <magic_enum_flags.hpp>
@@ -89,7 +90,7 @@ void Player::Update()
         return;
 
     // collisions
-    auto contactListener = dynamic_cast<ContactListener *>(WorldPhysic3D::GetContactListener());
+    auto contactListener = dynamic_cast<WorldPhysic3D::ContactListener *>(WorldPhysic3D::GetContactListener());
     auto contacts = contactListener->GetContacts(bodyId);
     for (size_t i = 0; i < contacts.size(); i++)
     {

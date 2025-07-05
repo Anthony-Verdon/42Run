@@ -99,7 +99,6 @@ TEST_CASE("ChunkGenerator::ObstaclesGenerator::CanGoToLane")
     BPLayerInterfaceImpl BPLayerInterface;
     ObjectVsBroadPhaseLayerFilterImpl ObjectVsBPLayerFilter;
     ObjectLayerPairFilterImpl OBjectLPFilter;
-    ContactListener contactListener;
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
 
     SUBCASE("Current level: top")
