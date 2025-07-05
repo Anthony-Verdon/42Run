@@ -7,29 +7,27 @@
 #include <vector>
 #include "WorldPhysic/WorldPhysic.hpp"
 
-class Game: public AProgram
+class Game : public AProgram
 {
-    private:
+  private:
+    BPLayerInterfaceImpl BPLayerInterface;
+    ObjectVsBroadPhaseLayerFilterImpl ObjectVsBPLayerFilter;
+    ObjectLayerPairFilterImpl OBjectLPFilter;
 
-        BPLayerInterfaceImpl BPLayerInterface;
-        ObjectVsBroadPhaseLayerFilterImpl ObjectVsBPLayerFilter;
-        ObjectLayerPairFilterImpl OBjectLPFilter;
-        ContactListener contactListener;
+    Camera3D camera;
+    std::vector<std::unique_ptr<ALight>> lights;
+    Player player;
 
-        Camera3D camera;
-        std::vector<std::unique_ptr<ALight>> lights;
-        Player player;
+    float accumulatedTime;
 
-        float accumulatedTime;
+    void ProcessInput();
+    void UpdateCamera();
 
-        void ProcessInput();
-        void UpdateCamera();
+    void Draw();
 
-        void Draw();
+  public:
+    Game();
+    ~Game();
 
-    public:
-        Game();
-        ~Game();
-
-        void Run();
+    void Run();
 };

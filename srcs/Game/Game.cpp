@@ -26,7 +26,6 @@ Game::Game()
     ChunkGenerator::Init();
 
     WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
-    WorldPhysic3D::SetContactListener(&contactListener);
     player.Init();
     MapManager::Init();
 
