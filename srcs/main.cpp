@@ -1,6 +1,5 @@
-#include "Game/Game.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
-#include "globals.hpp"
+#include "Game/Game.hpp"
 #include <cstdlib>
 
 int main()

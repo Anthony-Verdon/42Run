@@ -6,7 +6,10 @@
 #include "MapManager/MapManager.hpp"
 #include "Player/Player.hpp"
 #include "WorldPhysic/WorldPhysic.hpp"
-
+#if DRAW_IMGUI
+#include "imgui.h"
+#include <magic_enum_flags.hpp>
+#endif
 Player::Player()
 {
     column = 0;
@@ -48,7 +51,7 @@ void Player::ProcessInput()
 {
     if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
     {
-        state += PlayerStateFlag::MOVING_LEFT;
+        state |= PlayerStateFlag::MOVING_LEFT;
         timeElapsed = 0;
         lastColumn = column;
         column--;
@@ -56,20 +59,25 @@ void Player::ProcessInput()
 
     if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_D) && column != 1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
     {
-        state += PlayerStateFlag::MOVING_RIGHT;
+        state |= PlayerStateFlag::MOVING_RIGHT;
         timeElapsed = 0;
         lastColumn = column;
         column++;
     }
 
-    if (WindowManager::IsInputPressed(GLFW_KEY_SPACE) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround)
+    if (WindowManager::IsInputPressed(GLFW_KEY_SPACE) && !(state & PlayerStateFlag::JUMPING) && onGround)
     {
-        state += PlayerStateFlag::JUMPING;
+        if (state & PlayerStateFlag::ROLLING)
+        {
+            state &= ~PlayerStateFlag::ROLLING;
+            ModelManager::GetModel(modelIndex).Play("Run");
+        }
+        state |= PlayerStateFlag::JUMPING;
     }
 
     if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_LEFT_SHIFT) && !(state & (PlayerStateFlag::JUMPING | PlayerStateFlag::ROLLING)) && onGround)
     {
-        state += PlayerStateFlag::ROLLING;
+        state |= PlayerStateFlag::ROLLING;
         ModelManager::GetModel(modelIndex).Play("Roll");
         WorldPhysic3D::GetBodyInterface().SetShape(bodyId, rollingShape, true, JPH::EActivation::Activate);
     }
@@ -135,7 +143,7 @@ void Player::Update()
         velocity.SetZ(velocity.GetZ() * 2);
         if (ModelManager::GetModel(modelIndex).CurrentAnimationEnded())
         {
-            state = state - PlayerStateFlag::ROLLING;
+            state &= ~PlayerStateFlag::ROLLING;
             ModelManager::GetModel(modelIndex).Play("Run");
             WorldPhysic3D::GetBodyInterface().SetShape(bodyId, standingShape, true, JPH::EActivation::Activate);
         }
@@ -163,7 +171,7 @@ void Player::Update()
     if (state & PlayerStateFlag::JUMPING)
     {
         velocity.SetY(6);
-        state = state - PlayerStateFlag::JUMPING;
+        state &= ~PlayerStateFlag::JUMPING;
     }
 
     WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
@@ -176,6 +184,13 @@ void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALig
         transform = transform * ml::rotate(ml::mat4(1.0f), 30 * (column - lastColumn), ml::vec3(0, 1, 0));
     bool enableRootMotion = !(state & PlayerStateFlag::ROLLING);
     ModelManager::GetModel(modelIndex).Draw(camPos, lights, projection, view, transform, enableRootMotion);
+
+#if DRAW_IMGUI
+    ImGui::Begin("Player");
+    ImGui::Text("State: %s", magic_enum::enum_flags_name(static_cast<PlayerStateFlag>(state)).c_str());
+    ImGui::Text("On ground: %s", (onGround ? "true" : "false"));
+    ImGui::End();
+#endif
 }
 
 ml::vec3 Player::GetPosition() const

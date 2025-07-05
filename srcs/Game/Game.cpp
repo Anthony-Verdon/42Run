@@ -8,7 +8,11 @@
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "MapManager/MapManager.hpp"
 #include "WorldPhysic/DebugRenderer.hpp"
-#include "globals.hpp"
+#if DRAW_IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#endif
 #include <iostream>
 
 Game::Game()
@@ -29,6 +33,16 @@ Game::Game()
     MapManager::Init();
 
     accumulatedTime = 0;
+
+#if DRAW_IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImGui_ImplGlfw_InitForOpenGL(WindowManager::GetWindow(), true);
+    ImGui_ImplOpenGL3_Init();
+#endif
 }
 
 Game::~Game()
@@ -41,6 +55,12 @@ Game::~Game()
     WorldPhysic3D::Destroy();
     delete JPH::DebugRenderer::sInstance;
     JPH::DebugRenderer::sInstance = nullptr;
+
+#if DRAW_IMGUI
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+#endif
 }
 
 void Game::Run()
@@ -67,17 +87,24 @@ void Game::Run()
 void Game::ProcessInput()
 {
     if (WindowManager::IsInputPressed(GLFW_KEY_ESCAPE))
+#if DRAW_IMGUI
+    {
+        if (WindowManager::GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+            WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        else if (WindowManager::GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+            WindowManager::StopUpdateLoop();
+    }
+#else
         WindowManager::StopUpdateLoop();
+#endif
 
     player.ProcessInput();
     player.Update();
 }
 
-// #define CAMERA_DETACH
-
 void Game::UpdateCamera()
 {
-#ifdef CAMERA_DETACH
+#if CAMERA_DETACH
     // position
     camera.setSpeed(20);
     const float speed = camera.getSpeed() * Time::getDeltaTime();
@@ -132,6 +159,12 @@ void Game::UpdateCamera()
 
 void Game::Draw()
 {
+#if DRAW_IMGUI
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+#endif
+
     ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     player.Draw(camera.getPosition(), lights, projection, view);
@@ -153,4 +186,9 @@ void Game::Draw()
             }
         }
     }
+
+#if DRAW_IMGUI
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
 }

@@ -13,6 +13,7 @@ void ChunkGenerator::TerrainGenerator::GenerateTerrain(Chunk &chunk)
         SpawnAllGround(chunk);
         chunk.type = ChunkType::SPAWN;
     }
+#if SPAWN_TURN
     else if (CanSpawnTurn())
     {
         SpawnTurn(chunk);
@@ -22,8 +23,12 @@ void ChunkGenerator::TerrainGenerator::GenerateTerrain(Chunk &chunk)
         SpawnAllGround(chunk);
         chunk.type = ChunkType::OUT_OF_TURN;
     }
+#endif
     else
     {
+#if FLAT_TERRAIN
+        SpawnAllGround(chunk);
+#else
         for (int i = 0; i < LaneType::COUNT; i++)
         {
             switch (lastChunk.lanes[i].level)
@@ -43,6 +48,7 @@ void ChunkGenerator::TerrainGenerator::GenerateTerrain(Chunk &chunk)
                 break;
             }
         }
+#endif
         chunk.type = ChunkType::CLASSIC;
     }
 }

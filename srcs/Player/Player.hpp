@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Matrix/Matrix.hpp"
-#include <memory>
 #include "Engine/3D/Lights/Lights.hpp"
-#include <vector>
 #include "Engine/3D/ModelManager/ModelManager.hpp"
+#include "Matrix/Matrix.hpp"
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
+#include <memory>
+#include <vector>
 
 enum PlayerStateFlag
 {
@@ -18,41 +18,71 @@ enum PlayerStateFlag
     DEFEATED = 1 << 5,
 };
 
+#if DRAW_IMGUI
+#include <magic_enum.hpp>
+template <>
+struct magic_enum::customize::enum_range<PlayerStateFlag>
+{
+    static constexpr bool is_flags = true;
+};
+#endif
+
 class Player
 {
-    private:
-        int column;
-        int lastColumn;
-        float angle;
-        ml::vec3 direction;
-        float speed;
-        bool onGround;
-        int state;
-        
-        int modelIndex;
-        float timeElapsed;
-        
-        JPH::BodyID bodyId;
-        JPH::RefConst<JPH::Shape> standingShape;
-        JPH::RefConst<JPH::Shape> rollingShape;
+  private:
+    int column;
+    int lastColumn;
+    float angle;
+    ml::vec3 direction;
+    float speed;
+    bool onGround;
+    int state;
 
-    public:
-        Player();
-        ~Player();
+    int modelIndex;
+    float timeElapsed;
 
-        void Init();
-        void Destroy();
-        
-        void ProcessInput();
-        void Update();
-        void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
+    JPH::BodyID bodyId;
+    JPH::RefConst<JPH::Shape> standingShape;
+    JPH::RefConst<JPH::Shape> rollingShape;
 
-        int GetModelIndex() const { return (modelIndex); }
-        void SetModelIndex(int modelIndex) { this->modelIndex = modelIndex; }
-        ml::vec3 GetPosition() const;
-        ml::vec3 GetDirection() const { return direction; }
-        void SetDirection(const ml::vec3 &direction) { this->direction = direction; }
-        float GetAngle() const { return angle; }
-        void AddToAngle(float angle) { this->angle += angle; }
-        bool IsDefeated() const { return (state & PlayerStateFlag::DEFEATED); }
+  public:
+    Player();
+    ~Player();
+
+    void Init();
+    void Destroy();
+
+    void ProcessInput();
+    void Update();
+    void Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view);
+
+    int GetModelIndex() const
+    {
+        return (modelIndex);
+    }
+    void SetModelIndex(int modelIndex)
+    {
+        this->modelIndex = modelIndex;
+    }
+    ml::vec3 GetPosition() const;
+    ml::vec3 GetDirection() const
+    {
+        return direction;
+    }
+    void SetDirection(const ml::vec3 &direction)
+    {
+        this->direction = direction;
+    }
+    float GetAngle() const
+    {
+        return angle;
+    }
+    void AddToAngle(float angle)
+    {
+        this->angle += angle;
+    }
+    bool IsDefeated() const
+    {
+        return (state & PlayerStateFlag::DEFEATED);
+    }
 };
