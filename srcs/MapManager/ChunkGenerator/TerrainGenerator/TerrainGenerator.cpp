@@ -284,7 +284,6 @@ std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml:
     JPH::ConvexHullShapeSettings slopSetting(points.data(), points.size());
     JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), slopCreationSetting, JPH::EActivation::DontActivate);
-
     tile->flag = TileFlag::SLOPE + TileFlag::UPDATE_COLOR;
 
     return (tile);

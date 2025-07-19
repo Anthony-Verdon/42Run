@@ -79,7 +79,7 @@ void Player::ProcessInput()
     {
         state |= PlayerStateFlag::ROLLING;
         ModelManager::GetModel(modelIndex).Play("Roll");
-        WorldPhysic3D::GetBodyInterface().SetShape(GetID(), rollingShape, true, JPH::EActivation::Activate);
+        WorldPhysic3D::SetShape(GetID(), rollingShape, true, JPH::EActivation::Activate);
     }
 }
 
@@ -120,7 +120,7 @@ void Player::Update()
 
     // velocity
     timeElapsed += WorldPhysic3D::GetDeltaTime();
-    JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(GetID()).GetY(), direction.z * speed);
+    JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetLinearVelocity(GetID()).GetY(), direction.z * speed);
 
     if (state & PlayerStateFlag::ROLLING)
     {
@@ -130,7 +130,7 @@ void Player::Update()
         {
             state &= ~PlayerStateFlag::ROLLING;
             ModelManager::GetModel(modelIndex).Play("Run");
-            WorldPhysic3D::GetBodyInterface().SetShape(GetID(), standingShape, true, JPH::EActivation::Activate);
+            WorldPhysic3D::SetShape(GetID(), standingShape, true, JPH::EActivation::Activate);
         }
     }
 
@@ -159,7 +159,7 @@ void Player::Update()
         state &= ~PlayerStateFlag::JUMPING;
     }
 
-    WorldPhysic3D::GetBodyInterface().SetLinearVelocity(GetID(), velocity);
+    WorldPhysic3D::SetLinearVelocity(GetID(), velocity);
 }
 
 void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view)
@@ -180,7 +180,7 @@ void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALig
 
 ml::vec3 Player::GetPosition() const
 {
-    JPH::RVec3 position = WorldPhysic3D::GetBodyInterface().GetPosition(GetID());
+    JPH::RVec3 position = WorldPhysic3D::GetPosition(GetID());
     return (ml::vec3(position.GetX(), position.GetY() - 1, position.GetZ()));
 }
 
