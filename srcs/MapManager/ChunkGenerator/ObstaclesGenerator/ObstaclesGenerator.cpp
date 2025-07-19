@@ -1,7 +1,8 @@
 #include "MapManager/ChunkGenerator/ObstaclesGenerator/ObstaclesGenerator.hpp"
-#include "WorldPhysic/WorldPhysic.hpp"
 #include <Jolt/Physics/Collision/Shape/CylinderShape.h>
+#include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/MeshShape.h>
+#include "Game/Layers.hpp"
 
 void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
 {
@@ -96,7 +97,7 @@ std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(co
     ml::vec3 positionTimeSize = tile->position * tile->size;
     ml::vec3 halfSize = tile->size / 2.0f;
     tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
-    JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+    JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     tile->flag = TileFlag::OBSTACLES | TileFlag::ROTATE_OVER_TIME;
 
@@ -147,7 +148,7 @@ std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml:
 
     JPH::Shape::ShapeResult outResult;
     JPH::MeshShapeSettings gateSettings(triangles);
-    JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+    JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     tile->flag = TileFlag::OBSTACLES | TileFlag::UPDATE_COLOR;
 
@@ -226,7 +227,7 @@ std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const 
     }
 
     ml::vec3 halfSize = tile->size / 2.0f;
-    JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(boxData), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+    JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(boxData), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     tile->flag = TileFlag::OBSTACLES;
 

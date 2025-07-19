@@ -5,8 +5,8 @@
 #include "Engine/Time/Time.hpp"
 #include "MapManager/MapManager.hpp"
 #include "Player/Player.hpp"
-#include "WorldPhysic/WorldPhysic.hpp"
 #include "Engine/3D/WorldPhysic3D/ContactListener/ContactListener.hpp"
+#include "Game/Layers.hpp"
 #if DRAW_IMGUI
 #include "imgui.h"
 #include <magic_enum_flags.hpp>
@@ -32,7 +32,7 @@ void Player::Init()
 {
     standingShape = new JPH::CapsuleShape(0.5, 0.5);
     rollingShape = new JPH::CapsuleShape(0.25, 0.5);
-    JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
+    JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, ObjectLayers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
     capsuleSetting.mFriction = 0;
     WorldPhysic3D::AddBody(this, capsuleSetting, JPH::EActivation::Activate);

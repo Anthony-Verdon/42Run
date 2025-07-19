@@ -1,4 +1,5 @@
 #include "Game/Game.hpp"
+#include "Game/Layers.hpp"
 #include "Engine/3D/LineRenderer3D/LineRenderer3D.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/3D/ModelManager/ModelManager.hpp"
@@ -13,7 +14,7 @@
 #include "imgui_impl_opengl3.h"
 #endif
 #include <iostream>
-
+#include "Engine/3D/WorldPhysic3D/ObjectAndBroadPhaseLayer/ObjectAndBroadPhaseLayer.hpp"
 Game::Game()
 {
     srand(time(NULL));
@@ -25,7 +26,8 @@ Game::Game()
 
     ChunkGenerator::Init();
 
-    WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
+    SetUpLayers();
+    WorldPhysic3D::Init();
     player.Init();
     MapManager::Init();
 
@@ -56,6 +58,18 @@ Game::~Game()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 #endif
+}
+
+void Game::SetUpLayers()
+{
+    WorldPhysic3D::broadPhaseLayerInterface.AddObjectToBroadPhaseLayerRelation(ObjectLayers::NON_MOVING, BroadPhaseLayers::NON_MOVING, "NON_MOVING");
+    WorldPhysic3D::broadPhaseLayerInterface.AddObjectToBroadPhaseLayerRelation(ObjectLayers::MOVING, BroadPhaseLayers::MOVING, "MOVING");
+    WorldPhysic3D::objectVsBroadPhaseLayerFilter.AddObjectToBroadPhaseLayerRelation(ObjectLayers::NON_MOVING, BroadPhaseLayers::MOVING);
+    WorldPhysic3D::objectVsBroadPhaseLayerFilter.AddObjectToBroadPhaseLayerRelation(ObjectLayers::MOVING, BroadPhaseLayers::MOVING);
+    WorldPhysic3D::objectVsBroadPhaseLayerFilter.AddObjectToBroadPhaseLayerRelation(ObjectLayers::MOVING, BroadPhaseLayers::NON_MOVING);
+    WorldPhysic3D::objectLayerPairFilter.AddObjectToObjectRelation(ObjectLayers::NON_MOVING, ObjectLayers::MOVING);
+    WorldPhysic3D::objectLayerPairFilter.AddObjectToObjectRelation(ObjectLayers::MOVING, ObjectLayers::MOVING);
+    WorldPhysic3D::objectLayerPairFilter.AddObjectToObjectRelation(ObjectLayers::MOVING, ObjectLayers::NON_MOVING);
 }
 
 void Game::Run()

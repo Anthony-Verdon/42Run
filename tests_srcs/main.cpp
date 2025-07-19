@@ -3,7 +3,6 @@
 #include "MapManager/ChunkGenerator/ChunkGenerator.hpp"
 #include "MapManager/ChunkGenerator/ObstaclesGenerator/ObstaclesGenerator.hpp"
 #include "MapManager/ChunkGenerator/TerrainGenerator/TerrainGenerator.hpp"
-#include "WorldPhysic/WorldPhysic.hpp"
 #include <doctest/doctest.h>
 #include <magic_enum.hpp>
 
@@ -96,10 +95,7 @@ TEST_CASE("ChunkGenerator::TerrainGenerator::CalculateSlopeRotation")
 TEST_CASE("ChunkGenerator::ObstaclesGenerator::CanGoToLane")
 {
     // @TODO: could be great to find a way to avoid having to init that
-    BPLayerInterfaceImpl BPLayerInterface;
-    ObjectVsBroadPhaseLayerFilterImpl ObjectVsBPLayerFilter;
-    ObjectLayerPairFilterImpl OBjectLPFilter;
-    WorldPhysic3D::Init(BPLayerInterface, ObjectVsBPLayerFilter, OBjectLPFilter);
+    WorldPhysic3D::Init();
 
     SUBCASE("Current level: top")
     {
