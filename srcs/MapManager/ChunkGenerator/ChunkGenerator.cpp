@@ -61,8 +61,8 @@ Chunk ChunkGenerator::GenerateChunk(int dirX, int dirZ)
     chunk.dirZ = dirZ;
 
     TerrainGenerator::GenerateTerrain(chunk);
-    if (chunk.type == ChunkType::CLASSIC)
 #if SPAWN_OBSTACLES
+    if (chunk.type == ChunkType::CLASSIC)
         ObstaclesGenerator::GenerateObstacles(chunk);
 #endif
     UpdateTerrainColor(chunk, DetermineTerrainColor(chunk));
