@@ -98,7 +98,7 @@ std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(co
     tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
     JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
-    tile->flag = TileFlag::OBSTACLES + TileFlag::ROTATE_OVER_TIME;
+    tile->flag = TileFlag::OBSTACLES | TileFlag::ROTATE_OVER_TIME;
 
     return (tile);
 }
@@ -149,7 +149,7 @@ std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml:
     JPH::MeshShapeSettings gateSettings(triangles);
     JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
-    tile->flag = TileFlag::OBSTACLES + TileFlag::UPDATE_COLOR;
+    tile->flag = TileFlag::OBSTACLES | TileFlag::UPDATE_COLOR;
 
     return (tile);
 }
