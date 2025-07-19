@@ -7,6 +7,7 @@
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <memory>
 #include <vector>
+#include "Engine/3D/WorldPhysic3D/PhysicBody3D/PhysicBody3D.hpp"
 
 enum PlayerStateFlag
 {
@@ -27,7 +28,7 @@ struct magic_enum::customize::enum_range<PlayerStateFlag>
 };
 #endif
 
-class Player
+class Player : public PhysicBody3D
 {
   private:
     int column;
@@ -41,9 +42,12 @@ class Player
     int modelIndex;
     float timeElapsed;
 
-    JPH::BodyID bodyId;
     JPH::RefConst<JPH::Shape> standingShape;
     JPH::RefConst<JPH::Shape> rollingShape;
+
+    void OnWorldPhysicUpdated();
+    void OnContactAdded(const JPH::ContactManifold &inManifold);
+    void OnContactPersisted(const JPH::ContactManifold &inManifold);
 
   public:
     Player();

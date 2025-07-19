@@ -18,8 +18,8 @@ class ChunkGenerator::TerrainGenerator
     static void SpawnSlopeUp(Chunk &chunk, int laneIndex, int y);
     static void SpawnSlopeDown(Chunk &chunk, int laneIndex, int y);
 
-    static Tile SpawnGroundTile(const ml::vec3 &position);
-    static Tile SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp);
+    static std::shared_ptr<Tile> SpawnGroundTile(const ml::vec3 &position);
+    static std::shared_ptr<Tile> SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp);
     static std::vector<JPH::Vec3> InitSlopePoints(float angle);
 
   public:

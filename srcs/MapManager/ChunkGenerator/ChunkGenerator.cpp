@@ -97,8 +97,8 @@ void ChunkGenerator::UpdateTerrainColor(Chunk &chunk, TerrainColor color)
         Lane &lane = chunk.lanes[i];
         for (size_t i = 0; i < lane.tiles.size(); i++)
         {
-            if (lane.tiles[i].flag & TileFlag::UPDATE_COLOR)
-                lane.tiles[i].modelIndex += color;
+            if (lane.tiles[i]->flag & TileFlag::UPDATE_COLOR)
+                lane.tiles[i]->modelIndex += color;
         }
     }
 }

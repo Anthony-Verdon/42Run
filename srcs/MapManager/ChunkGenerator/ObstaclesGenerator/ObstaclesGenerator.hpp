@@ -8,10 +8,10 @@ class ChunkGenerator::ObstaclesGenerator
 
   private:
     static void GenerateObstacles(Chunk &chunk);
-    static Tile GenerateSpikeRoller(const ml::vec3 &position);
-    static Tile GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
+    static std::shared_ptr<Tile> GenerateSpikeRoller(const ml::vec3 &position);
+    static std::shared_ptr<Tile> GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate);
     static JPH::TriangleList GetGateHitbox();
-    static Tile GenerateBarrier(const ml::vec3 &position, int chunkDirZ);
+    static std::shared_ptr<Tile> GenerateBarrier(const ml::vec3 &position, int chunkDirZ);
 
   public:
     static bool CanGoToLane(const Lane &currentLane, const Lane &futureLane);

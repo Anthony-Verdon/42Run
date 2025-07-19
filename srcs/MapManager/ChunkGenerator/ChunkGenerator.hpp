@@ -40,13 +40,12 @@ enum TileFlag
     ROTATE_OVER_TIME = 1 << 4,
 };
 
-struct Tile
+struct Tile : public PhysicBody3D
 {
     ml::vec3 position;
     ml::vec3 size;
     int modelIndex;
     ml::mat4 transform;
-    JPH::BodyID bodyId;
     int flag;
 };
 
@@ -80,7 +79,7 @@ enum ChunkType
 
 struct Lane
 {
-    std::vector<Tile> tiles;
+    std::vector<std::shared_ptr<Tile>> tiles;
     Level level;
     bool hasSpikeRoller;
 };

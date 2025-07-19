@@ -241,35 +241,38 @@ void ChunkGenerator::TerrainGenerator::SpawnSlopeUp(Chunk &chunk, int laneIndex,
     }
 }
 
-Tile ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml::vec3 &position)
+std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml::vec3 &position)
 {
-    Tile tile;
-    tile.position = position;
-    tile.modelIndex = elements[ChunkElements::TILE_LOW_BLUE];
-    tile.size = ml::vec3(2, 1, 2);
-    ml::vec3 positionTimeSize = tile.position * tile.size;
-    ml::vec3 halfSize = tile.size / 2.0f;
-    tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
+    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+
+    tile->position = position;
+    tile->modelIndex = elements[ChunkElements::TILE_LOW_BLUE];
+    tile->size = ml::vec3(2, 1, 2);
+    ml::vec3 halfSize = tile->size / 2.0f;
+    ml::vec3 positionTimeSize = tile->position * tile->size;
+    tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-    tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    tile.flag = TileFlag::GROUND_TILE + TileFlag::UPDATE_COLOR;
+    WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
+    tile->flag = TileFlag::GROUND_TILE + TileFlag::UPDATE_COLOR;
+
     return (tile);
 }
 
-Tile ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp)
+std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp)
 {
-    Tile tile;
-    tile.position = ml::vec3(ml::vec3(position));
-    tile.size = ml::vec3(2, 1, 2);
+    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+
+    tile->position = position;
+    tile->size = ml::vec3(2, 1, 2);
     if (isMediumHigh)
-        tile.modelIndex = elements[ChunkElements::SLOPE_MEDIUM_HIGH_BLUE];
+        tile->modelIndex = elements[ChunkElements::SLOPE_MEDIUM_HIGH_BLUE];
     else
-        tile.modelIndex = elements[ChunkElements::SLOPE_LOW_MEDIUM_BLUE];
-    ml::vec3 positionTimeSize = tile.position * tile.size;
-    ml::vec3 halfSize = tile.size / 2.0f;
+        tile->modelIndex = elements[ChunkElements::SLOPE_LOW_MEDIUM_BLUE];
+    ml::vec3 positionTimeSize = tile->position * tile->size;
+    ml::vec3 halfSize = tile->size / 2.0f;
     float angle = CalculateSlopeRotation(direction, goingUp);
     std::vector<JPH::Vec3> points = InitSlopePoints(angle);
-    tile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), angle, ml::vec3(0, 1, 0));
+    tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize) * ml::rotate(ml::mat4(1.0f), angle, ml::vec3(0, 1, 0));
 
     if (isMediumHigh)
     {
@@ -280,8 +283,9 @@ Tile ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, 
     JPH::Shape::ShapeResult outResult;
     JPH::ConvexHullShapeSettings slopSetting(points.data(), points.size());
     JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-    tile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(slopCreationSetting, JPH::EActivation::DontActivate);
-    tile.flag = TileFlag::SLOPE + TileFlag::UPDATE_COLOR;
+    WorldPhysic3D::AddBody(tile.get(), slopCreationSetting, JPH::EActivation::DontActivate);
+
+    tile->flag = TileFlag::SLOPE + TileFlag::UPDATE_COLOR;
 
     return (tile);
 }

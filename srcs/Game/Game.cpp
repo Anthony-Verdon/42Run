@@ -61,14 +61,14 @@ Game::~Game()
 void Game::Run()
 {
     accumulatedTime += Time::getDeltaTime();
-    MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
-    ProcessInput();
-
     while (accumulatedTime >= WorldPhysic3D::GetDeltaTime())
     {
         WorldPhysic3D::Update();
         accumulatedTime -= WorldPhysic3D::GetDeltaTime();
     }
+
+    MapManager::UpdateTerrain(player.GetPosition(), player.GetDirection());
+    ProcessInput();
 
     UpdateCamera();
     Draw();
@@ -174,10 +174,11 @@ void Game::Draw()
             Lane &lane = chunk.lanes[i];
             for (auto it = lane.tiles.begin(); it != lane.tiles.end(); it++)
             {
+                const std::shared_ptr<Tile> &tile = *it;
                 ml::mat4 rotation = ml::mat4(1.0f);
-                if (it->flag & TileFlag::ROTATE_OVER_TIME)
+                if (tile->flag & TileFlag::ROTATE_OVER_TIME)
                     rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
-                ModelManager::GetModel(it->modelIndex).Draw(camera.getPosition(), lights, projection, view, it->transform * rotation);
+                ModelManager::GetModel(tile->modelIndex).Draw(camera.getPosition(), lights, projection, view, tile->transform * rotation);
             }
         }
     }

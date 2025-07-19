@@ -27,7 +27,7 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
             pos = GetHalfChunkSize();
             break;
         }
-        ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos].position.x * 2, lane.tiles[pos].position.y + 1, lane.tiles[pos].position.z * 2);
+        ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos]->position.x * 2, lane.tiles[pos]->position.y + 1, lane.tiles[pos]->position.z * 2);
 
         // check if we can spawn or not a spike roller
         bool spikeRollerCanSpawn;
@@ -86,35 +86,37 @@ bool ChunkGenerator::ObstaclesGenerator::CanGoToLane(Level currentLevel, Level f
     }
 }
 
-Tile ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(const ml::vec3 &position)
+std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(const ml::vec3 &position)
 {
-    Tile newTile;
-    newTile.position = position;
-    newTile.size = ml::vec3(1, 1, 1);
-    newTile.modelIndex = elements[ChunkElements::SPIKE_ROLLER];
-    ml::vec3 positionTimeSize = newTile.position * newTile.size;
-    ml::vec3 halfSize = newTile.size / 2.0f;
-    newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
-    JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-    newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.flag = TileFlag::OBSTACLES + TileFlag::ROTATE_OVER_TIME;
+    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
 
-    return (newTile);
+    tile->position = position;
+    tile->size = ml::vec3(1, 1, 1);
+    tile->modelIndex = elements[ChunkElements::SPIKE_ROLLER];
+    ml::vec3 positionTimeSize = tile->position * tile->size;
+    ml::vec3 halfSize = tile->size / 2.0f;
+    tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
+    JPH::BodyCreationSettings boxSettings(new JPH::CylinderShape(1.5, 0.5), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
+    WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
+    tile->flag = TileFlag::OBSTACLES + TileFlag::ROTATE_OVER_TIME;
+
+    return (tile);
 }
 
-Tile ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
+std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
 {
-    Tile newTile;
-    newTile.position = position;
-    newTile.size = ml::vec3(1, 1, 1);
-    ml::vec3 positionTimeSize = newTile.position * newTile.size;
-    ml::vec3 halfSize = newTile.size / 2.0f;
+    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
 
-    newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
+    tile->position = position;
+    tile->size = ml::vec3(1, 1, 1);
+    ml::vec3 positionTimeSize = tile->position * tile->size;
+    ml::vec3 halfSize = tile->size / 2.0f;
+
+    tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
     JPH::TriangleList triangles = GetGateHitbox();
     if (chunkDirZ == 0)
     {
-        newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
+        tile->transform = tile->transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
         for (size_t i = 0; i < triangles.size(); i++)
         {
             for (size_t j = 0; j < 3; j++)
@@ -128,7 +130,7 @@ Tile ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, 
 
     if (highGate)
     {
-        newTile.modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
+        tile->modelIndex = elements[ChunkElements::GATE_LARGE_BLUE];
         for (size_t i = 0; i < triangles.size(); i++)
         {
             for (size_t j = 0; j < 3; j++)
@@ -140,16 +142,16 @@ Tile ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, 
     }
     else
     {
-        newTile.modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
+        tile->modelIndex = elements[ChunkElements::GATE_SMALL_BLUE];
     }
 
     JPH::Shape::ShapeResult outResult;
     JPH::MeshShapeSettings gateSettings(triangles);
     JPH::BodyCreationSettings boxSettings(new JPH::MeshShape(gateSettings, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-    newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.flag = TileFlag::OBSTACLES + TileFlag::UPDATE_COLOR;
+    WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
+    tile->flag = TileFlag::OBSTACLES + TileFlag::UPDATE_COLOR;
 
-    return (newTile);
+    return (tile);
 }
 
 JPH::TriangleList ChunkGenerator::ObstaclesGenerator::GetGateHitbox()
@@ -205,27 +207,28 @@ JPH::TriangleList ChunkGenerator::ObstaclesGenerator::GetGateHitbox()
     return (triangles);
 }
 
-Tile ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
+std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
 {
-    Tile newTile;
-    newTile.position = position;
-    newTile.size = ml::vec3(1, 1, 1);
-    newTile.modelIndex = elements[ChunkElements::BARRIER];
-    ml::vec3 positionTimeSize = newTile.position * newTile.size;
+    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+
+    tile->position = position;
+    tile->size = ml::vec3(1, 1, 1);
+    tile->modelIndex = elements[ChunkElements::BARRIER];
+    ml::vec3 positionTimeSize = tile->position * tile->size;
     JPH::Vec3 boxData(1.0f, 0.5f, 0.25f);
-    newTile.transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
+    tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
     if (chunkDirZ == 0)
     {
-        newTile.transform = newTile.transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
+        tile->transform = tile->transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
         float tmp = boxData.GetX();
         boxData.SetX(boxData.GetZ());
         boxData.SetZ(tmp);
     }
 
-    ml::vec3 halfSize = newTile.size / 2.0f;
+    ml::vec3 halfSize = tile->size / 2.0f;
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(boxData), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, Layers::NON_MOVING);
-    newTile.bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(boxSettings, JPH::EActivation::DontActivate);
-    newTile.flag = TileFlag::OBSTACLES;
+    WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
+    tile->flag = TileFlag::OBSTACLES;
 
-    return (newTile);
+    return (tile);
 }

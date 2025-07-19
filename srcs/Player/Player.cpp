@@ -35,13 +35,12 @@ void Player::Init()
     JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, Layers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
     capsuleSetting.mFriction = 0;
-    bodyId = WorldPhysic3D::GetBodyInterface().CreateAndAddBody(capsuleSetting, JPH::EActivation::Activate);
+    WorldPhysic3D::AddBody(this, capsuleSetting, JPH::EActivation::Activate);
 }
 
 void Player::Destroy()
 {
-    WorldPhysic3D::GetBodyInterface().RemoveBody(bodyId);
-    WorldPhysic3D::GetBodyInterface().DestroyBody(bodyId);
+    WorldPhysic3D::RemoveBody(GetID());
 }
 
 Player::~Player()
@@ -80,7 +79,7 @@ void Player::ProcessInput()
     {
         state |= PlayerStateFlag::ROLLING;
         ModelManager::GetModel(modelIndex).Play("Roll");
-        WorldPhysic3D::GetBodyInterface().SetShape(bodyId, rollingShape, true, JPH::EActivation::Activate);
+        WorldPhysic3D::GetBodyInterface().SetShape(GetID(), rollingShape, true, JPH::EActivation::Activate);
     }
 }
 
@@ -88,21 +87,6 @@ void Player::Update()
 {
     if (state & PlayerStateFlag::DEFEATED)
         return;
-
-    // collisions
-    auto contactListener = dynamic_cast<WorldPhysic3D::ContactListener *>(WorldPhysic3D::GetContactListener());
-    auto contacts = contactListener->GetContacts(bodyId);
-    for (size_t i = 0; i < contacts.size(); i++)
-    {
-        if (ml::dotProduct(ml::vec3(contacts[i].normal.GetX(), contacts[i].normal.GetY(), contacts[i].normal.GetZ()), ml::vec3(0, 1, 0)) > -0.5)
-        {
-            state = PlayerStateFlag::DEFEATED;
-            ModelManager::GetModel(modelIndex).Play("Defeat", false);
-            WorldPhysic3D::GetBodyInterface().DeactivateBody(bodyId);
-            return;
-        }
-    }
-    onGround = (contacts.size() != 0);
 
     // direction
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
@@ -136,7 +120,7 @@ void Player::Update()
 
     // velocity
     timeElapsed += WorldPhysic3D::GetDeltaTime();
-    JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(bodyId).GetY(), direction.z * speed);
+    JPH::Vec3 velocity = JPH::Vec3(direction.x * speed, WorldPhysic3D::GetBodyInterface().GetLinearVelocity(GetID()).GetY(), direction.z * speed);
 
     if (state & PlayerStateFlag::ROLLING)
     {
@@ -146,7 +130,7 @@ void Player::Update()
         {
             state &= ~PlayerStateFlag::ROLLING;
             ModelManager::GetModel(modelIndex).Play("Run");
-            WorldPhysic3D::GetBodyInterface().SetShape(bodyId, standingShape, true, JPH::EActivation::Activate);
+            WorldPhysic3D::GetBodyInterface().SetShape(GetID(), standingShape, true, JPH::EActivation::Activate);
         }
     }
 
@@ -175,7 +159,7 @@ void Player::Update()
         state &= ~PlayerStateFlag::JUMPING;
     }
 
-    WorldPhysic3D::GetBodyInterface().SetLinearVelocity(bodyId, velocity);
+    WorldPhysic3D::GetBodyInterface().SetLinearVelocity(GetID(), velocity);
 }
 
 void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALight>> &lights, const ml::mat4 &projection, const ml::mat4 &view)
@@ -196,6 +180,21 @@ void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALig
 
 ml::vec3 Player::GetPosition() const
 {
-    JPH::RVec3 position = WorldPhysic3D::GetBodyInterface().GetPosition(bodyId);
+    JPH::RVec3 position = WorldPhysic3D::GetBodyInterface().GetPosition(GetID());
     return (ml::vec3(position.GetX(), position.GetY() - 1, position.GetZ()));
+}
+
+void Player::OnWorldPhysicUpdated()
+{
+    onGround = false;
+}
+
+void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManifold)
+{
+    onGround = true;
+}
+
+void Player::OnContactPersisted([[maybe_unused]] const JPH::ContactManifold &inManifold)
+{
+    onGround = true;
 }

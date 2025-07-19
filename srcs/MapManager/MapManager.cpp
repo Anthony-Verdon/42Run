@@ -7,7 +7,7 @@ int MapManager::playerPosX = 0;
 int MapManager::playerPosZ = 0;
 int MapManager::playerDirX = 0;
 int MapManager::playerDirZ = 1;
-int MapManager::nbChunk = 5;
+const int MapManager::nbChunk = 5;
 bool MapManager::tryDeleteChunk = false;
 
 void MapManager::Init()
@@ -87,8 +87,8 @@ void MapManager::DeleteChunk(const ml::vec3 &playerPos)
             Lane &lane = chunk.lanes[i];
             for (auto it = lane.tiles.begin(); it != lane.tiles.end(); it++)
             {
-                WorldPhysic3D::GetBodyInterface().RemoveBody(it->bodyId);
-                WorldPhysic3D::GetBodyInterface().DestroyBody(it->bodyId);
+                const std::shared_ptr<Tile> &tile = *it;
+                WorldPhysic3D::RemoveBody(tile->GetID());
             }
         }
         chunks.pop();
