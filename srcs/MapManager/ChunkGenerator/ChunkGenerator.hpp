@@ -108,8 +108,8 @@ class ChunkGenerator
     ChunkGenerator() = delete;
 
     static std::map<ChunkElements, int> elements;
-    static int chunkSize;
-    static int halfChunkSize;
+    static const int chunkSize;
+    static const int halfChunkSize;
     static Chunk lastChunk;
     static bool firstChunk;
 
@@ -124,16 +124,7 @@ class ChunkGenerator
 
     static TerrainColor DetermineTerrainColor(const Chunk &chunk);
 
-    static int GetChunkSize()
-    {
-        return (chunkSize);
-    }
-    static int GetHalfChunkSize()
-    {
-        return (halfChunkSize);
-    }
-    static ChunkType LastChunkGeneratedType()
-    {
-        return (lastChunk.type);
-    }
+    static int GetChunkSize() { return (chunkSize); }
+    static int GetHalfChunkSize() { return (halfChunkSize); }
+    static ChunkType LastChunkGeneratedType() { return (lastChunk.type); }
 };

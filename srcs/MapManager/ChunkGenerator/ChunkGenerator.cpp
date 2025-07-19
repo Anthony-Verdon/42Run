@@ -5,8 +5,8 @@
 #include "MapManager/ChunkGenerator/TerrainGenerator/TerrainGenerator.hpp"
 
 std::map<ChunkElements, int> ChunkGenerator::elements = {};
-int ChunkGenerator::chunkSize = 7;
-int ChunkGenerator::halfChunkSize = chunkSize / 2;
+const int ChunkGenerator::chunkSize = 7;
+const int ChunkGenerator::halfChunkSize = chunkSize / 2;
 Chunk ChunkGenerator::lastChunk = {};
 bool ChunkGenerator::firstChunk = true;
 
