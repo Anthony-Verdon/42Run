@@ -86,8 +86,9 @@ void Game::Run()
 
     UpdateCamera();
     Draw();
+#if DEBUG_DRAW_PHYSIC_3D
     WorldPhysic3D::DebugDraw();
-
+#endif
     ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     LineRenderer3D::Draw(projection, view);

@@ -11,8 +11,10 @@ add_requires("doctest")
 
 includes("submodules/Engine/")
 
+DEBUG_DRAW_PHYSIC_3D = 1
 set_config("PATH_TO_ENGINE", "submodules/Engine/")
 set_config("FULL_SCREEN", "0")
+set_config("DEBUG_DRAW_PHYSIC_3D", tostring(DEBUG_DRAW_PHYSIC_3D))
 
 add_rules("plugin.compile_commands.autoupdate")
 
@@ -35,6 +37,7 @@ target("42Run")
     add_defines("SPAWN_OBSTACLES=0")
     add_defines("FLAT_TERRAIN=1")
     add_defines("SPAWN_TURN=0")
+    add_defines("DEBUG_DRAW_PHYSIC_3D=" .. tostring(DEBUG_DRAW_PHYSIC_3D))
     add_defines("CAMERA_DETACH=0")
     add_common_sources()
 
