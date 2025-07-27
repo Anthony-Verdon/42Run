@@ -35,7 +35,7 @@ void Player::Init()
     JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, ObjectLayers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
     capsuleSetting.mFriction = 0;
-    WorldPhysic3D::AddBody(this, capsuleSetting, JPH::EActivation::Activate);
+    WorldPhysic3D::AddRigidBody(this, capsuleSetting, JPH::EActivation::Activate);
 }
 
 void Player::Destroy()

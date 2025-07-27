@@ -252,7 +252,7 @@ std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml
     ml::vec3 positionTimeSize = tile->position * tile->size;
     tile->transform = ml::translate(ml::mat4(1.0f), positionTimeSize);
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
-    WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
+    WorldPhysic3D::AddRigidBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     tile->flag = TileFlag::GROUND_TILE | TileFlag::UPDATE_COLOR;
 
     return (tile);
@@ -283,7 +283,7 @@ std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml:
     JPH::Shape::ShapeResult outResult;
     JPH::ConvexHullShapeSettings slopSetting(points.data(), points.size());
     JPH::BodyCreationSettings slopCreationSetting(new JPH::ConvexHullShape(slopSetting, outResult), JPH::RVec3(positionTimeSize.x - halfSize.x, positionTimeSize.y, positionTimeSize.z - halfSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
-    WorldPhysic3D::AddBody(tile.get(), slopCreationSetting, JPH::EActivation::DontActivate);
+    WorldPhysic3D::AddRigidBody(tile.get(), slopCreationSetting, JPH::EActivation::DontActivate);
     tile->flag = TileFlag::SLOPE | TileFlag::UPDATE_COLOR;
 
     return (tile);
