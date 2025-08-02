@@ -223,9 +223,11 @@ Game::Game()
     // Calculate the map needed for GetBodyIndexToConstraintIndex()
     settings.CalculateBodyIndexToConstraintIndex();
 
-    WorldPhysic3D::AddRagdoll(&ragdoll, settings, JPH::EActivation::Activate);
-    for (JPH::BodyID id : ragdoll.GetBodyIDs())
-        WorldPhysic3D::SetPosition(id, JPH::Vec3(6, 2, 10), JPH::EActivation::Activate);
+/*
+WorldPhysic3D::AddRagdoll(&ragdoll, settings, JPH::EActivation::Activate);
+for (JPH::BodyID id : ragdoll.GetBodyIDs())
+    WorldPhysic3D::SetPosition(id, JPH::Vec3(6, 2, 10), JPH::EActivation::Activate);
+*/
 #pragma endregion
 }
 

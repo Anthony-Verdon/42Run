@@ -11,6 +11,11 @@
 #include "imgui.h"
 #include <magic_enum_flags.hpp>
 #endif
+
+#define PLAYER_CAPSULE_RADIUS 0.5
+#define PLAYER_CAPSULE_HEIGHT_STANDING 0.5
+#define PLAYER_CAPSULE_HEIGHT_ROLLING 0.25
+#define PLAYER_CAPSULE_HEIGHT_DIFF (PLAYER_CAPSULE_HEIGHT_STANDING - PLAYER_CAPSULE_HEIGHT_ROLLING)
 Player::Player()
 {
     column = 0;
@@ -30,8 +35,8 @@ Player::Player()
 
 void Player::Init()
 {
-    standingShape = new JPH::CapsuleShape(0.5, 0.5);
-    rollingShape = new JPH::CapsuleShape(0.25, 0.5);
+    standingShape = new JPH::CapsuleShape(PLAYER_CAPSULE_HEIGHT_STANDING, PLAYER_CAPSULE_RADIUS);
+    rollingShape = new JPH::CapsuleShape(PLAYER_CAPSULE_HEIGHT_ROLLING, PLAYER_CAPSULE_RADIUS);
     JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, ObjectLayers::MOVING);
     capsuleSetting.mAllowedDOFs = JPH::EAllowedDOFs::TranslationX | JPH::EAllowedDOFs::TranslationY | JPH::EAllowedDOFs::TranslationZ | JPH::EAllowedDOFs::RotationY;
     capsuleSetting.mFriction = 0;
@@ -80,6 +85,7 @@ void Player::ProcessInput()
         state |= PlayerStateFlag::ROLLING;
         ModelManager::GetModel(modelIndex).Play("Roll");
         WorldPhysic3D::SetShape(GetID(), rollingShape, true, JPH::EActivation::Activate);
+        WorldPhysic3D::SetPosition(GetID(), WorldPhysic3D::GetPosition(GetID()) - JPH::Vec3::sAxisY() * PLAYER_CAPSULE_HEIGHT_DIFF, JPH::EActivation::Activate);
     }
 }
 
@@ -131,6 +137,7 @@ void Player::Update()
             state &= ~PlayerStateFlag::ROLLING;
             ModelManager::GetModel(modelIndex).Play("Run");
             WorldPhysic3D::SetShape(GetID(), standingShape, true, JPH::EActivation::Activate);
+            WorldPhysic3D::SetPosition(GetID(), WorldPhysic3D::GetPosition(GetID()) + JPH::Vec3::sAxisY() * PLAYER_CAPSULE_HEIGHT_DIFF, JPH::EActivation::Activate);
         }
     }
 
