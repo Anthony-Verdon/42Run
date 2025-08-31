@@ -38,7 +38,7 @@ target("42Run")
     add_defines("FLAT_TERRAIN=1")
     add_defines("SPAWN_TURN=0")
     add_defines("DEBUG_DRAW_PHYSIC_3D=" .. tostring(DEBUG_DRAW_PHYSIC_3D))
-    add_defines("CAMERA_DETACH=0")
+    add_defines("CAMERA_DETACH=1")
     add_common_sources()
 
 target("42RunTester")

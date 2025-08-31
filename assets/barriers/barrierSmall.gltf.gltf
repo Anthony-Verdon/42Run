@@ -1,0 +1,116 @@
+{
+	"accessors": [
+		{
+			"bufferView": 0,
+			"componentType": 5126,
+			"count": 460,
+			"max": [
+				0.98028, 
+				0.999977, 
+				0.0825216
+			],
+			"min": [
+				-0.979916, 
+				2.0124e-05, 
+				-0.0825217
+			],
+			"type": "VEC3"
+		}, 
+		{
+			"bufferView": 1,
+			"componentType": 5126,
+			"count": 460,
+			"type": "VEC3"
+		}, 
+		{
+			"bufferView": 2,
+			"componentType": 5126,
+			"count": 460,
+			"type": "VEC2"
+		}, 
+		{
+			"bufferView": 3,
+			"componentType": 5123,
+			"count": 2016,
+			"type": "SCALAR"
+		}
+	],
+	"asset": {
+		"generator": "Khronos glTF Blender I/O v0.9.36",
+		"version": "2.0"
+	},
+	"bufferViews": [
+		{
+			"buffer": 0,
+			"byteLength": 5520,
+			"byteOffset": 0
+		}, 
+		{
+			"buffer": 0,
+			"byteLength": 5520,
+			"byteOffset": 5520
+		}, 
+		{
+			"buffer": 0,
+			"byteLength": 3680,
+			"byteOffset": 11040
+		}, 
+		{
+			"buffer": 0,
+			"byteLength": 4032,
+			"byteOffset": 14720
+		}
+	],
+	"buffers": [
+		{
+			"bin": "barrierSmall.gltf.bin",
+			"byteLength": 18752
+		}
+	],
+	"materials": [
+		{
+			"name": "Metal",
+			"pbrMetallicRoughness": {
+				"baseColorFactor": [
+					0.401264, 
+					0.478492, 
+					0.517334, 
+					1
+				],
+				"metallicFactor": 0.2,
+				"roughnessFactor": 0.3
+			}
+		}
+	],
+	"meshes": [
+		{
+			"name": "Cube.1541",
+			"primitives": [
+				{
+					"attributes": {
+						"NORMAL": 1,
+						"POSITION": 0,
+						"TEXCOORD_0": 2
+					},
+					"indices": 3,
+					"material": 0
+				}
+			]
+		}
+	],
+	"nodes": [
+		{
+			"mesh": 0,
+			"name": "barrierSmall"
+		}
+	],
+	"scene": 0,
+	"scenes": [
+		{
+			"name": "Scene",
+			"nodes": [
+				0
+			]
+		}
+	]
+}

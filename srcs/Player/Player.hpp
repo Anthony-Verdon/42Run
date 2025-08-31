@@ -7,7 +7,7 @@
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <memory>
 #include <vector>
-#include "Engine/3D/WorldPhysic3D/PhysicBody3D/RigidBody.hpp"
+#include "Engine/3D/WorldPhysic3D/PhysicBody3D/Ragdoll.hpp"
 
 enum PlayerStateFlag
 {
@@ -28,7 +28,7 @@ struct magic_enum::customize::enum_range<PlayerStateFlag>
 };
 #endif
 
-class Player : public RigidBody
+class Player : public Ragdoll
 {
   private:
     int column;
@@ -54,6 +54,7 @@ class Player : public RigidBody
     ~Player();
 
     void Init();
+    void DetermineRagdollData(JPH::Ref<JPH::Skeleton> skeleton, int parentIndex, std::vector<JPH::Ref<JPH::Shape>> &shapes, std::vector<JPH::RVec3> &positions, std::vector<JPH::Quat> &rotations, size_t nodeIndex, std::map<int, NodeModel> &nodes, std::vector<Mesh> &meshes, const ml::mat4 &parentTransform);
     void Destroy();
 
     void ProcessInput();
