@@ -7,7 +7,7 @@
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
 #include <memory>
 #include <vector>
-#include "Engine/3D/WorldPhysic3D/PhysicBody3D/RigidBody.hpp"
+#include "Engine/3D/WorldPhysic3D/PhysicBody3D/PhysicBody3D.hpp"
 
 enum PlayerStateFlag
 {
@@ -28,7 +28,7 @@ struct magic_enum::customize::enum_range<PlayerStateFlag>
 };
 #endif
 
-class Player : public RigidBody
+class Player : public PhysicBody3D
 {
   private:
     int column;

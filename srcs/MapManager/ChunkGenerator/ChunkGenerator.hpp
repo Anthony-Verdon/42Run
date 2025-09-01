@@ -40,7 +40,7 @@ enum TileFlag
     ROTATE_OVER_TIME = 1 << 4,
 };
 
-struct Tile : public RigidBody
+struct Tile : public PhysicBody3D
 {
     ml::vec3 position;
     ml::vec3 size;
