@@ -6,6 +6,7 @@ int main()
 {
     WindowManager::InitWindow("new game", WINDOW_WIDTH, WINDOW_HEIGHT);
     Game game;
+    game.Init();
     WindowManager::StartUpdateLoop(&game);
     WindowManager::DestructWindowManager();
 

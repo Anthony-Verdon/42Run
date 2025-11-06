@@ -40,7 +40,8 @@ enum TileFlag
     ROTATE_OVER_TIME = 1 << 4,
 };
 
-struct Tile : public PhysicBody3D
+// temporary rename because of Tile struct in the Engine
+struct Tile42Run : public PhysicBody3D
 {
     ml::vec3 position;
     ml::vec3 size;
@@ -79,7 +80,7 @@ enum ChunkType
 
 struct Lane
 {
-    std::vector<std::shared_ptr<Tile>> tiles;
+    std::vector<std::shared_ptr<Tile42Run>> tiles;
     Level level;
     bool hasSpikeRoller;
 };

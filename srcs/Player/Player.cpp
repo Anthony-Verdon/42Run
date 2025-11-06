@@ -25,16 +25,16 @@ Player::Player()
     speed = 5;
     onGround = true;
     state = PlayerStateFlag::RUNNING;
-
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
-    modelIndex = ModelManager::GetNbModel() - 1;
-    ModelManager::GetModel(modelIndex).Init();
-    ModelManager::GetModel(modelIndex).Play("Run");
     timeElapsed = 0;
 }
 
 void Player::Init()
 {
+    ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
+    modelIndex = ModelManager::GetNbModel() - 1;
+    ModelManager::GetModel(modelIndex).Init();
+    ModelManager::GetModel(modelIndex).Play("Run");
+
     standingShape = new JPH::CapsuleShape(PLAYER_CAPSULE_HEIGHT_STANDING, PLAYER_CAPSULE_RADIUS);
     rollingShape = new JPH::CapsuleShape(PLAYER_CAPSULE_HEIGHT_ROLLING, PLAYER_CAPSULE_RADIUS);
     JPH::BodyCreationSettings capsuleSetting(standingShape, JPH::RVec3(6, 2, 6), JPH::Quat::sIdentity(), JPH::EMotionType::Dynamic, ObjectLayers::MOVING);

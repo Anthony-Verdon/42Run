@@ -241,10 +241,9 @@ void ChunkGenerator::TerrainGenerator::SpawnSlopeUp(Chunk &chunk, int laneIndex,
     }
 }
 
-std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml::vec3 &position)
+std::shared_ptr<Tile42Run> ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml::vec3 &position)
 {
-    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
-
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
     tile->position = position;
     tile->modelIndex = elements[ChunkElements::TILE_LOW_BLUE];
     tile->size = ml::vec3(2, 1, 2);
@@ -254,13 +253,12 @@ std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     tile->flag = TileFlag::GROUND_TILE | TileFlag::UPDATE_COLOR;
-
     return (tile);
 }
 
-std::shared_ptr<Tile> ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp)
+std::shared_ptr<Tile42Run> ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp)
 {
-    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
 
     tile->position = position;
     tile->size = ml::vec3(2, 1, 2);

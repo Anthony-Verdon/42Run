@@ -1,4 +1,4 @@
-set_languages("cxx17")
+set_languages("cxx20")
 
 set_toolchains("clang")
 set_warnings("allextra", "error")
@@ -9,12 +9,28 @@ add_requires("magic_enum")
 add_requires("imgui", {configs = {glfw = true, opengl3 = true}})
 add_requires("doctest")
 
-includes("submodules/Engine/")
+option("HOTRELOAD")
+    set_showmenu(true)
+    set_description("Enable Hotreload")
+    set_default(false)
+    set_category("Features")
+option_end()
 
+TARGET_NAME = "42Run"
+PATH_TO_ENGINE = "submodules/Engine/"
 DEBUG_DRAW_PHYSIC_3D = 1
+
+includes(PATH_TO_ENGINE)
+
+set_config("PATH_TO_ENGINE", PATH_TO_ENGINE)
+set_config("TARGET_NAME", TARGET_NAME)
 set_config("PATH_TO_ENGINE", "submodules/Engine/")
 set_config("FULL_SCREEN", "0")
 set_config("DEBUG_DRAW_PHYSIC_3D", tostring(DEBUG_DRAW_PHYSIC_3D))
+
+if has_config("HOTRELOAD") then
+    add_defines("HOTRELOAD")
+end 
 
 add_rules("plugin.compile_commands.autoupdate")
 
@@ -28,10 +44,15 @@ function add_common_sources()
     add_deps("Engine")
 end
 
-target("42Run")
+target("Game")
     set_targetdir("./")
-    set_kind("binary")
-    add_files("srcs/main.cpp")
+    if has_config("HOTRELOAD") then
+        set_kind("shared")
+    else 
+        set_kind("binary")
+        add_files("srcs/main.cpp")
+    end
+    set_basename(TARGET_NAME)
     add_includedirs("srcs")
     add_defines("DRAW_IMGUI=1")
     add_defines("SPAWN_OBSTACLES=0")

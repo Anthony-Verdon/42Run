@@ -92,10 +92,11 @@ TEST_CASE("ChunkGenerator::TerrainGenerator::CalculateSlopeRotation")
     CHECK(ChunkGenerator::TerrainGenerator::CalculateSlopeRotation(ml::vec3(0, 0, 1), false) == 90);
 }
 
+void useless_func() {}
 TEST_CASE("ChunkGenerator::ObstaclesGenerator::CanGoToLane")
 {
     // @TODO: could be great to find a way to avoid having to init that
-    WorldPhysic3D::Init();
+    WorldPhysic3D::Init(useless_func);
 
     SUBCASE("Current level: top")
     {

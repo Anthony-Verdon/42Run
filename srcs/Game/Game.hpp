@@ -6,6 +6,10 @@
 #include "Player/Player.hpp"
 #include <vector>
 
+class GameState : public AProgramState
+{
+};
+
 class Game : public AProgram
 {
   private:
@@ -15,15 +19,15 @@ class Game : public AProgram
 
     float accumulatedTime;
 
-    void SetUpLayers();
     void ProcessInput();
     void UpdateCamera();
 
     void Draw();
 
   public:
-    Game();
+    Game(AProgramState *state = nullptr);
     ~Game();
 
+    void Init();
     void Run();
 };

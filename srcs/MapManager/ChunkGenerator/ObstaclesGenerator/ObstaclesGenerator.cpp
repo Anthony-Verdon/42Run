@@ -87,9 +87,9 @@ bool ChunkGenerator::ObstaclesGenerator::CanGoToLane(Level currentLevel, Level f
     }
 }
 
-std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(const ml::vec3 &position)
+std::shared_ptr<Tile42Run> ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(const ml::vec3 &position)
 {
-    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
 
     tile->position = position;
     tile->size = ml::vec3(1, 1, 1);
@@ -104,9 +104,9 @@ std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateSpikeRoller(co
     return (tile);
 }
 
-std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
+std::shared_ptr<Tile42Run> ChunkGenerator::ObstaclesGenerator::GenerateGate(const ml::vec3 &position, int chunkDirZ, bool highGate)
 {
-    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
 
     tile->position = position;
     tile->size = ml::vec3(1, 1, 1);
@@ -208,9 +208,9 @@ JPH::TriangleList ChunkGenerator::ObstaclesGenerator::GetGateHitbox()
     return (triangles);
 }
 
-std::shared_ptr<Tile> ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
+std::shared_ptr<Tile42Run> ChunkGenerator::ObstaclesGenerator::GenerateBarrier(const ml::vec3 &position, int chunkDirZ)
 {
-    std::shared_ptr<Tile> tile = std::make_shared<Tile>();
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
 
     tile->position = position;
     tile->size = ml::vec3(1, 1, 1);
