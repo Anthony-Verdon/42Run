@@ -202,7 +202,7 @@ void Game::Draw()
                 ml::mat4 rotation = ml::mat4(1.0f);
                 if (tile->flag & TileFlag::ROTATE_OVER_TIME)
                     rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
-                ModelManager::GetModel(tile->modelIndex).Draw(camera.getPosition(), lights, projection, view, tile->transform * rotation);
+                ModelManager::Draw(tile->modelIndex, camera.getPosition(), lights, projection, view, tile->transform * rotation);
             }
         }
     }

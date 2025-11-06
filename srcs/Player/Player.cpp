@@ -175,7 +175,7 @@ void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALig
     if (state & PlayerStateFlag::DEFEATED)
         transform = transform * ml::rotate(ml::mat4(1.0f), 30 * (column - lastColumn), ml::vec3(0, 1, 0));
     bool enableRootMotion = !(state & PlayerStateFlag::ROLLING);
-    ModelManager::GetModel(modelIndex).Draw(camPos, lights, projection, view, transform, enableRootMotion);
+    ModelManager::Draw(modelIndex, camPos, lights, projection, view, transform, enableRootMotion);
 
 #if DRAW_IMGUI
     ImGui::Begin("Player");
