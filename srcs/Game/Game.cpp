@@ -15,6 +15,8 @@
 #endif
 #include <iostream>
 #include "Engine/3D/WorldPhysic3D/ObjectAndBroadPhaseLayer/ObjectAndBroadPhaseLayer.hpp"
+#include "Engine/2D/Renderers/TextRenderer/TextRenderer.hpp"
+#include "Engine/2D/Renderers/LineRenderer2D/LineRenderer2D.hpp"
 
 void SetUpLayers();
 
@@ -31,6 +33,9 @@ void Game::Init()
 
     WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    LineRenderer2D::Init();
+    TextRenderer::Init();
+    TextRenderer::LoadFont("arial", "assets/fonts/arial.ttf", 48);
     LineRenderer3D::Init();
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
@@ -67,6 +72,8 @@ Game::~Game()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 #endif
+    LineRenderer2D::Destroy();
+    TextRenderer::Destroy();
 }
 
 void SetUpLayers()
@@ -95,12 +102,6 @@ void Game::Run()
 
     UpdateCamera();
     Draw();
-#if DEBUG_DRAW_PHYSIC_3D
-    WorldPhysic3D::DebugDraw();
-#endif
-    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
-    LineRenderer3D::Draw(projection, view);
 }
 
 void Game::ProcessInput()
@@ -211,6 +212,11 @@ void Game::Draw()
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
+#if DEBUG_DRAW_PHYSIC_3D
+    WorldPhysic3D::DebugDraw();
+#endif
+    LineRenderer3D::Draw(projection, view);
+    TextRenderer::Draw("Hello World", "arial", 0, 0, 1, ml::vec4(1, 1, 1, 1));
 }
 
 #if HOTRELOAD
