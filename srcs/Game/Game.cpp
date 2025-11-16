@@ -66,13 +66,13 @@ Game::~Game()
 
 void Game::Run()
 {
-    if (WindowManager::IsInputPressed(GLFW_KEY_SPACE) && currentScene->GetID() != SceneType::GAMEPLAY)
+    auto ptr = currentScene->Run();
+    if (ptr)
     {
         currentScene->Quit();
-        currentScene = std::make_unique<GameplayScene>();
+        currentScene = std::move(ptr);
         currentScene->Load();
     }
-    currentScene->Run();
 }
 
 #if HOTRELOAD

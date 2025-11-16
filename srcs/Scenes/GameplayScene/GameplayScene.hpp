@@ -25,7 +25,7 @@ class GameplayScene : public AScene
     ~GameplayScene();
 
     void Load();
-    void Run();
+    std::unique_ptr<AScene> Run();
     void Quit();
 
     int GetID() { return SceneType::GAMEPLAY; }

@@ -10,6 +10,7 @@ class MenuScene : public AScene
     ~MenuScene();
 
     void Load();
+    std::unique_ptr<AScene> Run();
     void Quit();
 
     int GetID() { return SceneType::MENU; }

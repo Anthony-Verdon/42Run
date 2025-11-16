@@ -34,7 +34,7 @@ void GameplayScene::Load()
     accumulatedTime = 0;
 }
 
-void GameplayScene::Run()
+std::unique_ptr<AScene> GameplayScene::Run()
 {
     accumulatedTime += Time::getDeltaTime();
     while (accumulatedTime >= WorldPhysic3D::GetDeltaTime())
@@ -48,6 +48,8 @@ void GameplayScene::Run()
 
     UpdateCamera();
     Draw();
+
+    return (NULL);
 }
 
 void GameplayScene::Quit()
