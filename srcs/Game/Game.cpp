@@ -25,8 +25,6 @@ void Game::Init()
 {
     srand(time(NULL));
 
-    WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
     LineRenderer2D::Init();
     TextRenderer::Init();
     TextRenderer::LoadFont("arial", "assets/fonts/arial.ttf", 48);

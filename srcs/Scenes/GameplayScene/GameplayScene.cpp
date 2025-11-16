@@ -25,6 +25,8 @@ GameplayScene::~GameplayScene()
 
 void GameplayScene::Load()
 {
+    WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     ChunkGenerator::Init();
     WorldPhysic3D::Init(SetUpLayers);
     MapManager::Init();

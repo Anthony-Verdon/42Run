@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Engine/AScene/AScene.hpp"
+#include "Scenes/MenuScene/MenuCanvas.hpp"
 #include "Scenes/Scenes.hpp"
 
 class MenuScene : public AScene
 {
+  private:
+    MenuCanvas canvas;
+
   public:
     MenuScene();
     ~MenuScene();

@@ -18,6 +18,8 @@ void MenuScene::Load()
 
 std::unique_ptr<AScene> MenuScene::Run()
 {
+    canvas.Update();
+    canvas.Draw();
     if (WindowManager::IsInputPressed(GLFW_KEY_SPACE))
         return std::make_unique<GameplayScene>();
 
