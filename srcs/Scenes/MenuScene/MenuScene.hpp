@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/AScene/AScene.hpp"
+#include "Engine/Scenes/AScene/AScene.hpp"
 #include "Scenes/MenuScene/MenuCanvas.hpp"
 #include "Scenes/Scenes.hpp"
 
@@ -14,7 +14,7 @@ class MenuScene : public AScene
     ~MenuScene();
 
     void Load();
-    std::unique_ptr<AScene> Run();
+    void Run();
     void Quit();
 
     int GetID() { return SceneType::MENU; }

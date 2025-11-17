@@ -1,7 +1,9 @@
 #include "Scenes/MenuScene/MenuCanvas.hpp"
+#include "Scenes/GameplayScene/GameplayScene.hpp"
 #include "Engine/UI/Button/Button.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/UI/Events.hpp"
+#include "Engine/Scenes/SceneManager/SceneManager.hpp"
 
 MenuCanvas::MenuCanvas()
 {
@@ -32,6 +34,7 @@ void MenuCanvas::HandleEvents(unsigned int componentID, unsigned int event)
             break;
         case CLICK_OFF:
             std::cout << "click off" << std::endl;
+            SceneManager::SwitchScene(std::make_unique<GameplayScene>());
             break;
         default:
             break;

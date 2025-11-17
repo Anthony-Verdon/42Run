@@ -7,7 +7,7 @@
 #include <iostream>
 #include "Engine/2D/Renderers/TextRenderer/TextRenderer.hpp"
 #include "Engine/2D/Renderers/LineRenderer2D/LineRenderer2D.hpp"
-#include "Scenes/GameplayScene/GameplayScene.hpp"
+#include "Engine/Scenes/SceneManager/SceneManager.hpp"
 #include "Scenes/MenuScene/MenuScene.hpp"
 #if DRAW_IMGUI
 #include "imgui.h"
@@ -30,8 +30,7 @@ void Game::Init()
     TextRenderer::LoadFont("arial", "assets/fonts/arial.ttf", 48);
     LineRenderer3D::Init();
 
-    currentScene = std::make_unique<MenuScene>();
-    currentScene->Load();
+    SceneManager::LoadScene(std::make_unique<MenuScene>());
 
 #if DRAW_IMGUI
     IMGUI_CHECKVERSION();
@@ -46,7 +45,7 @@ void Game::Init()
 
 Game::~Game()
 {
-    currentScene->Quit();
+    SceneManager::QuitScene();
 
     for (size_t i = 0; i < ModelManager::GetNbModel(); i++)
         ModelManager::GetModel(i).Destroy();
@@ -64,13 +63,7 @@ Game::~Game()
 
 void Game::Run()
 {
-    auto ptr = currentScene->Run();
-    if (ptr)
-    {
-        currentScene->Quit();
-        currentScene = std::move(ptr);
-        currentScene->Load();
-    }
+    SceneManager::UpdateCurrentScene();
 }
 
 #if HOTRELOAD

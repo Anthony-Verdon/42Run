@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scenes/Scenes.hpp"
-#include "Engine/AScene/AScene.hpp"
+#include "Engine/Scenes/AScene/AScene.hpp"
 #include "Engine/3D/Camera3D/Camera3D.hpp"
 #include "Engine/3D/Lights/Lights.hpp"
 #include "Player/Player.hpp"
@@ -25,7 +25,7 @@ class GameplayScene : public AScene
     ~GameplayScene();
 
     void Load();
-    std::unique_ptr<AScene> Run();
+    void Run();
     void Quit();
 
     int GetID() { return SceneType::GAMEPLAY; }
