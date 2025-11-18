@@ -58,7 +58,7 @@ Player::~Player()
 
 void Player::ProcessInput()
 {
-    if (state & (PlayerStateFlag::DEFEATED_FIRST_FRAME | PlayerStateFlag::DEFEATED))
+    if (state & PlayerStateFlag::DEFEATED)
         return;
 
     if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
@@ -98,17 +98,8 @@ void Player::ProcessInput()
 
 void Player::Update()
 {
-    if (state & (PlayerStateFlag::DEFEATED_FIRST_FRAME | PlayerStateFlag::DEFEATED))
-    {
-        if (state & (PlayerStateFlag::DEFEATED_FIRST_FRAME))
-        {
-            state &= ~PlayerStateFlag::DEFEATED_FIRST_FRAME;
-            state |= PlayerStateFlag::DEFEATED;
-            ModelManager::GetModel(modelIndex).Play("Defeat", false);
-            WorldPhysic3D::DeactivateBody(GetID());
-        }
+    if (state & PlayerStateFlag::DEFEATED)
         return;
-    }
 
     // direction
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
@@ -227,7 +218,11 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
     }
 
     if (playerLost)
-        state |= PlayerStateFlag::DEFEATED_FIRST_FRAME;
+    {
+        state |= PlayerStateFlag::DEFEATED;
+        ModelManager::GetModel(modelIndex).Play("Defeat", false);
+        WorldPhysic3D::DeactivateBodyNextFrame(GetID());
+    }
 }
 
 void Player::OnContactPersisted([[maybe_unused]] const JPH::ContactManifold &inManifold, [[maybe_unused]] const PhysicBody3D *collisionedBody)

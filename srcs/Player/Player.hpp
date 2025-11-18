@@ -16,8 +16,7 @@ enum PlayerStateFlag
     MOVING_RIGHT = 1 << 2,
     JUMPING = 1 << 3,
     ROLLING = 1 << 4,
-    DEFEATED_FIRST_FRAME = 1 << 5, // can't deactivate the body directly in OnContactAdded callback, so I create this state to do it one time and then goes into state DEFEATED
-    DEFEATED = 1 << 6,
+    DEFEATED = 1 << 5,
 };
 
 #if DRAW_IMGUI
