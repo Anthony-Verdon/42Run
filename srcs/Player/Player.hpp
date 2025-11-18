@@ -16,7 +16,8 @@ enum PlayerStateFlag
     MOVING_RIGHT = 1 << 2,
     JUMPING = 1 << 3,
     ROLLING = 1 << 4,
-    DEFEATED = 1 << 5,
+    DEFEATED_FIRST_FRAME = 1 << 5, // can't deactivate the body directly in OnContactAdded callback, so I create this state to do it one time and then goes into state DEFEATED
+    DEFEATED = 1 << 6,
 };
 
 #if DRAW_IMGUI
@@ -46,8 +47,8 @@ class Player : public PhysicBody3D
     JPH::RefConst<JPH::Shape> rollingShape;
 
     void OnWorldPhysicUpdated();
-    void OnContactAdded(const JPH::ContactManifold &inManifold);
-    void OnContactPersisted(const JPH::ContactManifold &inManifold);
+    void OnContactAdded(const JPH::ContactManifold &inManifold, const PhysicBody3D *collisionedBody);
+    void OnContactPersisted(const JPH::ContactManifold &inManifold, const PhysicBody3D *collisionedBody);
 
   public:
     Player();

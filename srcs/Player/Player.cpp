@@ -7,6 +7,8 @@
 #include "Player/Player.hpp"
 #include "Engine/3D/WorldPhysic3D/ContactListener/ContactListener.hpp"
 #include "Game/Layers.hpp"
+#include "PhysicBodyType.hpp"
+
 #if DRAW_IMGUI
 #include "imgui.h"
 #include <magic_enum_flags.hpp>
@@ -16,6 +18,7 @@
 #define PLAYER_CAPSULE_HEIGHT_STANDING 0.5
 #define PLAYER_CAPSULE_HEIGHT_ROLLING 0.25
 #define PLAYER_CAPSULE_HEIGHT_DIFF (PLAYER_CAPSULE_HEIGHT_STANDING - PLAYER_CAPSULE_HEIGHT_ROLLING)
+
 Player::Player()
 {
     column = 0;
@@ -26,6 +29,7 @@ Player::Player()
     onGround = true;
     state = PlayerStateFlag::RUNNING;
     timeElapsed = 0;
+    physicBodyType = PhysicBodyType::PLAYER;
 }
 
 void Player::Init()
@@ -54,6 +58,9 @@ Player::~Player()
 
 void Player::ProcessInput()
 {
+    if (state & (PlayerStateFlag::DEFEATED_FIRST_FRAME | PlayerStateFlag::DEFEATED))
+        return;
+
     if (WindowManager::IsInputPressedOrMaintain(GLFW_KEY_A) && column != -1 && !(state & (PlayerStateFlag::MOVING_RIGHT | PlayerStateFlag::MOVING_LEFT)))
     {
         state |= PlayerStateFlag::MOVING_LEFT;
@@ -91,8 +98,17 @@ void Player::ProcessInput()
 
 void Player::Update()
 {
-    if (state & PlayerStateFlag::DEFEATED)
+    if (state & (PlayerStateFlag::DEFEATED_FIRST_FRAME | PlayerStateFlag::DEFEATED))
+    {
+        if (state & (PlayerStateFlag::DEFEATED_FIRST_FRAME))
+        {
+            state &= ~PlayerStateFlag::DEFEATED_FIRST_FRAME;
+            state |= PlayerStateFlag::DEFEATED;
+            ModelManager::GetModel(modelIndex).Play("Defeat", false);
+            WorldPhysic3D::DeactivateBody(GetID());
+        }
         return;
+    }
 
     // direction
     if (MapManager::GetCurrentChunkType() == ChunkType::TURN && column != 0)
@@ -196,12 +212,25 @@ void Player::OnWorldPhysicUpdated()
     onGround = false;
 }
 
-void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManifold)
+void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManifold, [[maybe_unused]] const PhysicBody3D *collisionedBody)
 {
-    onGround = true;
+    bool playerLost = false;
+
+    if (collisionedBody->GetPhysicBodyType() == PhysicBodyType::OBSTACLE)
+        playerLost = true;
+    else if (collisionedBody->GetPhysicBodyType() == PhysicBodyType::TILE)
+    {
+        if (ml::dotProduct(ml::vec3(inManifold.mWorldSpaceNormal.GetX(), inManifold.mWorldSpaceNormal.GetY(), inManifold.mWorldSpaceNormal.GetZ()), ml::vec3(0, 1, 0)) <= 0.5)
+            playerLost = true;
+        else
+            onGround = true;
+    }
+
+    if (playerLost)
+        state |= PlayerStateFlag::DEFEATED_FIRST_FRAME;
 }
 
-void Player::OnContactPersisted([[maybe_unused]] const JPH::ContactManifold &inManifold)
+void Player::OnContactPersisted([[maybe_unused]] const JPH::ContactManifold &inManifold, [[maybe_unused]] const PhysicBody3D *collisionedBody)
 {
     onGround = true;
 }

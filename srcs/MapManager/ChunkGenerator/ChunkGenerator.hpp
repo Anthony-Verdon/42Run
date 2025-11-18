@@ -4,6 +4,7 @@
 #include "Matrix/Matrix.hpp"
 #include <map>
 #include <vector>
+#include "PhysicBodyType.hpp"
 
 enum ChunkElements
 {
@@ -48,6 +49,11 @@ struct Tile42Run : public PhysicBody3D
     int modelIndex;
     ml::mat4 transform;
     int flag;
+
+    Tile42Run(PhysicBodyType physicBodyType)
+    {
+        this->physicBodyType = physicBodyType;
+    }
 };
 
 enum LaneType

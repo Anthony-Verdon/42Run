@@ -5,6 +5,7 @@
 #include <Jolt/Physics/Collision/Shape/Shape.h>
 #include <magic_enum.hpp>
 #include "Game/Layers.hpp"
+#include "PhysicBodyType.hpp"
 
 void ChunkGenerator::TerrainGenerator::GenerateTerrain(Chunk &chunk)
 {
@@ -243,7 +244,7 @@ void ChunkGenerator::TerrainGenerator::SpawnSlopeUp(Chunk &chunk, int laneIndex,
 
 std::shared_ptr<Tile42Run> ChunkGenerator::TerrainGenerator::SpawnGroundTile(const ml::vec3 &position)
 {
-    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>(PhysicBodyType::TILE);
     tile->position = position;
     tile->modelIndex = elements[ChunkElements::TILE_LOW_BLUE];
     tile->size = ml::vec3(2, 1, 2);
@@ -258,7 +259,7 @@ std::shared_ptr<Tile42Run> ChunkGenerator::TerrainGenerator::SpawnGroundTile(con
 
 std::shared_ptr<Tile42Run> ChunkGenerator::TerrainGenerator::SpawnSlopeTile(const ml::vec3 &position, const ml::vec3 &direction, bool isMediumHigh, bool goingUp)
 {
-    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>();
+    std::shared_ptr<Tile42Run> tile = std::make_shared<Tile42Run>(PhysicBodyType::TILE);
 
     tile->position = position;
     tile->size = ml::vec3(2, 1, 2);
