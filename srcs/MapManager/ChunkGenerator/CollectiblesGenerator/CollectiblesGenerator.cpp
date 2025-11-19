@@ -71,6 +71,6 @@ std::shared_ptr<Tile42Run> ChunkGenerator::CollectiblesGenerator::SpawnStar(cons
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     WorldPhysic3D::DeactivateBody(tile->GetID());
-    tile->flag = 0;
+    tile->flag = TileFlag::UP_AND_DOWN;
     return (tile);
 }

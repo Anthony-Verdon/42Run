@@ -41,7 +41,8 @@ enum TileFlag
     OBSTACLES = 1 << 2,
     UPDATE_COLOR = 1 << 3,
     ROTATE_OVER_TIME = 1 << 4,
-    DONT_DRAW = 1 << 5
+    DONT_DRAW = 1 << 5,
+    UP_AND_DOWN = 1 << 6
 };
 
 // temporary rename because of Tile struct in the Engine

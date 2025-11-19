@@ -144,7 +144,8 @@ void GameplayScene::Draw()
     player.Draw(camera.getPosition(), lights, projection, view);
 
     auto chunks = MapManager::GetChunks();
-    int rotationValue = (int)ml::degrees(Time::getTime() * 2) % 360;
+    float translationValue = sin(Time::getTime()) / 2;
+    float rotationValue = (int)ml::degrees(Time::getTime() * 2) % 360;
     for (; !chunks.empty(); chunks.pop())
     {
         Chunk &chunk = chunks.front();
@@ -156,10 +157,13 @@ void GameplayScene::Draw()
                 const std::shared_ptr<Tile42Run> &tile = *it;
                 if (tile->flag & TileFlag::DONT_DRAW)
                     continue;
+                ml::mat4 translation = ml::mat4(1.0f);
                 ml::mat4 rotation = ml::mat4(1.0f);
+                if (tile->flag & TileFlag::UP_AND_DOWN)
+                    translation = ml::translate(translation, ml::vec3(0, translationValue, 0));
                 if (tile->flag & TileFlag::ROTATE_OVER_TIME)
                     rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));
-                ModelManager::Draw(tile->modelIndex, camera.getPosition(), lights, projection, view, tile->transform * rotation);
+                ModelManager::Draw(tile->modelIndex, camera.getPosition(), lights, projection, view, tile->transform * translation * rotation);
             }
         }
     }
