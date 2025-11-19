@@ -45,8 +45,6 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
             spikeRollerCanSpawn = ((CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller) || (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i + 1].hasSpikeRoller));
             break;
         }
-        // tmp
-        spikeRollerCanSpawn = false;
 
         // spawn obstacle
         int obstacle = (spikeRollerCanSpawn ? rand() % 3 : rand() % 2 + 1);

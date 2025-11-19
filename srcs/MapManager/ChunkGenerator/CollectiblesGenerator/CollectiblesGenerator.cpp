@@ -26,6 +26,15 @@ void ChunkGenerator::CollectiblesGenerator::SpawnStars(Chunk &chunk, int laneNum
     case ChunkElements::NONE:
         break;
     case ChunkElements::SPIKE_ROLLER:
+        for (int i = 1; i <= 3; i++)
+        {
+            ml::vec3 starPos = lane.obstaclePos + ml::vec3(0, 1, 0);
+            if (chunk.dirZ == 0)
+                starPos.x -= i * 2;
+            else
+                starPos.z -= i * 2;
+            lane.AddTile(SpawnStar(starPos, chunk.dirZ), laneNum);
+        }
         break;
     case ChunkElements::GATE_LARGE_BLUE:
     case ChunkElements::GATE_LARGE_RED:
