@@ -221,7 +221,9 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
     {
         state |= PlayerStateFlag::DEFEATED;
         ModelManager::GetModel(modelIndex).Play("Defeat", false);
-        WorldPhysic3D::DeactivateBodyNextFrame(GetID());
+        std::unique_ptr<DeactivateBodyAction> action = std::make_unique<DeactivateBodyAction>();
+        action->id = GetID();
+        WorldPhysic3D::SaveActionDelayed(std::move(action));
     }
 }
 

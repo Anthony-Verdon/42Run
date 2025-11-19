@@ -8,6 +8,7 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
 {
     for (int i = 0; i < LaneType::COUNT; i++)
         chunk.lanes[i].hasSpikeRoller = false;
+
     for (int i = 0; i < LaneType::COUNT; i++)
     {
         Lane &lane = chunk.lanes[i];
@@ -28,7 +29,7 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
             pos = GetHalfChunkSize();
             break;
         }
-        ml::vec3 obstaclePos = ml::vec3(lane.tiles[pos]->position.x * 2, lane.tiles[pos]->position.y + 1, lane.tiles[pos]->position.z * 2);
+        lane.obstaclePos = ml::vec3(lane.tiles[pos]->position.x * 2, lane.tiles[pos]->position.y + 1, lane.tiles[pos]->position.z * 2);
 
         // check if we can spawn or not a spike roller
         bool spikeRollerCanSpawn;
@@ -44,20 +45,30 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
             spikeRollerCanSpawn = ((CanGoToLane(lane, chunk.lanes[i - 1]) && !chunk.lanes[i - 1].hasSpikeRoller) || (CanGoToLane(lane, chunk.lanes[i + 1]) && !chunk.lanes[i + 1].hasSpikeRoller));
             break;
         }
+        // tmp
+        spikeRollerCanSpawn = false;
 
         // spawn obstacle
         int obstacle = (spikeRollerCanSpawn ? rand() % 3 : rand() % 2 + 1);
         switch (obstacle)
         {
         case 0:
-            lane.tiles.push_back(GenerateSpikeRoller(obstaclePos));
+            lane.tiles.push_back(GenerateSpikeRoller(lane.obstaclePos));
             lane.hasSpikeRoller = true;
+            lane.obstacleType = ChunkElements::SPIKE_ROLLER;
             break;
-        case 1:
-            lane.tiles.push_back(GenerateGate(obstaclePos, chunk.dirZ, rand() % 2));
+        case 1: {
+            bool highGate = rand() % 2;
+            lane.tiles.push_back(GenerateGate(lane.obstaclePos, chunk.dirZ, highGate));
+            if (highGate)
+                lane.obstacleType = ChunkElements::GATE_LARGE_BLUE;
+            else
+                lane.obstacleType = ChunkElements::GATE_SMALL_BLUE;
             break;
+        }
         case 2:
-            lane.tiles.push_back(GenerateBarrier(obstaclePos, chunk.dirZ));
+            lane.tiles.push_back(GenerateBarrier(lane.obstaclePos, chunk.dirZ));
+            lane.obstacleType = ChunkElements::BARRIER;
             break;
         }
     }

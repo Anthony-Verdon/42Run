@@ -154,6 +154,8 @@ void GameplayScene::Draw()
             for (auto it = lane.tiles.begin(); it != lane.tiles.end(); it++)
             {
                 const std::shared_ptr<Tile42Run> &tile = *it;
+                if (tile->flag & TileFlag::DONT_DRAW)
+                    continue;
                 ml::mat4 rotation = ml::mat4(1.0f);
                 if (tile->flag & TileFlag::ROTATE_OVER_TIME)
                     rotation = ml::rotate(rotation, rotationValue, ml::vec3(0, 1, 0));

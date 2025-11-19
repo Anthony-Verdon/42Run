@@ -88,7 +88,8 @@ void MapManager::DeleteChunk(const ml::vec3 &playerPos)
             for (auto it = lane.tiles.begin(); it != lane.tiles.end(); it++)
             {
                 const std::shared_ptr<Tile42Run> &tile = *it;
-                WorldPhysic3D::RemoveBody(tile->GetID());
+                if (!tile->BodyRemoved())
+                    WorldPhysic3D::RemoveBody(tile->GetID());
             }
         }
 

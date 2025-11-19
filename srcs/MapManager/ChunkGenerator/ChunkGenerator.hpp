@@ -6,9 +6,10 @@
 #include <vector>
 #include "PhysicBodyType.hpp"
 
-enum ChunkElements
+enum class ChunkElements
 {
-    TILE_LOW_BLUE = 0,
+    NONE = -1,
+    TILE_LOW_BLUE,
     SLOPE_LOW_MEDIUM_BLUE,
     SLOPE_MEDIUM_HIGH_BLUE,
     GATE_SMALL_BLUE,
@@ -30,6 +31,7 @@ enum ChunkElements
     GATE_LARGE_GREEN,
     SPIKE_ROLLER,
     BARRIER,
+    STAR
 };
 
 enum TileFlag
@@ -39,6 +41,7 @@ enum TileFlag
     OBSTACLES = 1 << 2,
     UPDATE_COLOR = 1 << 3,
     ROTATE_OVER_TIME = 1 << 4,
+    DONT_DRAW = 1 << 5
 };
 
 // temporary rename because of Tile struct in the Engine
@@ -50,10 +53,11 @@ struct Tile42Run : public PhysicBody3D
     ml::mat4 transform;
     int flag;
 
-    Tile42Run(PhysicBodyType physicBodyType)
-    {
-        this->physicBodyType = physicBodyType;
-    }
+    int tileIndex;
+    int laneIndex;
+
+    Tile42Run(PhysicBodyType physicBodyType);
+    void OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManifold, [[maybe_unused]] const PhysicBody3D *collisionedBody);
 };
 
 enum LaneType
@@ -88,7 +92,13 @@ struct Lane
 {
     std::vector<std::shared_ptr<Tile42Run>> tiles;
     Level level;
+
+    ChunkElements obstacleType;
+    ml::vec3 obstaclePos;
     bool hasSpikeRoller;
+
+    Lane();
+    void AddTile(const std::shared_ptr<Tile42Run> &newTile, int laneIndex);
 };
 
 struct Chunk
@@ -125,6 +135,7 @@ class ChunkGenerator
   public:
     class TerrainGenerator;
     class ObstaclesGenerator;
+    class CollectiblesGenerator;
 
     static void Init();
     static Chunk GenerateChunk(int dirX, int dirZ);
