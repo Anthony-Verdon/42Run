@@ -18,22 +18,14 @@ void ChunkGenerator::CollectiblesGenerator::SpawnStars(Chunk &chunk, int laneNum
 {
     Lane &lane = chunk.lanes[laneNum];
 
-    if (lane.level != Level::BOTTOM && lane.level != Level::TOP && lane.level != Level::GROUND)
-        return;
-
+    int startLoop = 0, endLoop = -1;
     switch (lane.obstacleType)
     {
-    case ChunkElements::NONE:
-        break;
     case ChunkElements::SPIKE_ROLLER:
-        for (int i = 1; i <= 3; i++)
+        if (lane.level != Level::TOP && lane.level != Level::BOTTOM && lane.level != Level::GROUND)
         {
-            ml::vec3 starPos = lane.obstaclePos + ml::vec3(0, 1, 0);
-            if (chunk.dirZ == 0)
-                starPos.x -= i * 2;
-            else
-                starPos.z -= i * 2;
-            lane.AddTile(SpawnStar(starPos, chunk.dirZ), laneNum);
+            startLoop = -3;
+            endLoop = -1;
         }
         break;
     case ChunkElements::GATE_LARGE_BLUE:
@@ -45,20 +37,23 @@ void ChunkGenerator::CollectiblesGenerator::SpawnStars(Chunk &chunk, int laneNum
     case ChunkElements::GATE_SMALL_YELLOW:
     case ChunkElements::GATE_SMALL_GREEN:
     case ChunkElements::BARRIER:
-        for (int i = -1; i <= 1; i++)
-        {
-            ml::vec3 starPos = lane.obstaclePos + ml::vec3(0, 1, 0);
-            if (chunk.dirZ == 0)
-                starPos.x += i * 2;
-            else
-                starPos.z += i * 2;
-            if (lane.obstacleType == ChunkElements::BARRIER && i == 0)
-                starPos.y += 1;
-            lane.AddTile(SpawnStar(starPos, chunk.dirZ), laneNum);
-        }
+        startLoop = -1;
+        endLoop = 1;
         break;
     default:
         break;
+    }
+
+    for (int i = startLoop; i <= endLoop; i++)
+    {
+        ml::vec3 starPos = lane.obstaclePos + ml::vec3(0, 1, 0);
+        if (chunk.dirZ == 0)
+            starPos.x += i * 2;
+        else
+            starPos.z += i * 2;
+        if (lane.obstacleType == ChunkElements::BARRIER && i == 0)
+            starPos.y += 1;
+        lane.AddTile(SpawnStar(starPos, chunk.dirZ), laneNum);
     }
 }
 

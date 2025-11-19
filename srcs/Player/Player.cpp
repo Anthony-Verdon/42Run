@@ -208,11 +208,19 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
     bool playerLost = false;
 
     if (collisionedBody->GetPhysicBodyType() == PhysicBodyType::OBSTACLE)
+    {
+        std::cout << "hit obstacle" << std::endl;
         playerLost = true;
+    }
     else if (collisionedBody->GetPhysicBodyType() == PhysicBodyType::TILE)
     {
         if (ml::dotProduct(ml::vec3(inManifold.mWorldSpaceNormal.GetX(), inManifold.mWorldSpaceNormal.GetY(), inManifold.mWorldSpaceNormal.GetZ()), ml::vec3(0, 1, 0)) <= 0.5)
+        {
+            std::cout << "hit tile" << std::endl;
+            std::cout << inManifold.mWorldSpaceNormal.GetX() << " " << inManifold.mWorldSpaceNormal.GetY() << " " << inManifold.mWorldSpaceNormal.GetZ() << std::endl;
+            std::cout << ml::dotProduct(ml::vec3(inManifold.mWorldSpaceNormal.GetX(), inManifold.mWorldSpaceNormal.GetY(), inManifold.mWorldSpaceNormal.GetZ()), ml::vec3(0, 1, 0)) << std::endl;
             playerLost = true;
+        }
         else
             onGround = true;
     }
