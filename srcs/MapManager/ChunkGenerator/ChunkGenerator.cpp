@@ -14,6 +14,9 @@ bool ChunkGenerator::firstChunk = true;
 
 void ChunkGenerator::Init()
 {
+    lastChunk = {};
+    firstChunk = true;
+
     std::vector<std::string> paths = {
         "assets/tiles/low/tileLow_teamBlue.gltf.glb",
         "assets/slopes/lowMedium/tileSlopeLowMedium_teamBlue.gltf.glb",

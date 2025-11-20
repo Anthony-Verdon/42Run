@@ -12,6 +12,14 @@ bool MapManager::tryDeleteChunk = false;
 
 void MapManager::Init()
 {
+    playerPosX = 0;
+    playerPosZ = 0;
+    playerDirX = 0;
+    playerDirZ = 1;
+    tryDeleteChunk = false;
+    for (; !chunks.empty(); chunks.pop())
+        ;
+
     for (int i = 0; i <= nbChunk; i++)
     {
         if (ChunkGenerator::LastChunkGeneratedType() == ChunkType::TURN)

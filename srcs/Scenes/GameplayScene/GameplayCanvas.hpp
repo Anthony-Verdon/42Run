@@ -18,10 +18,13 @@ class GameplayCanvas : public UI::ACanvas
   private:
     std::string score;
     UI::ComponentID scoreText;
+    UI::ComponentID menuButton;
 
   public:
     GameplayCanvas();
     ~GameplayCanvas();
+
+    void GameFinished();
 
     void HandleEvents(UI::EventData &data);
 };

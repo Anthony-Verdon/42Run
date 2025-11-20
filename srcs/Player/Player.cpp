@@ -247,6 +247,14 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
         std::unique_ptr<DeactivateBodyAction> action = std::make_unique<DeactivateBodyAction>();
         action->id = GetID();
         WorldPhysic3D::SaveActionDelayed(std::move(action));
+        auto &scene = SceneManager::GetCurrentScene();
+        if (scene->GetID() == SceneType::GAMEPLAY)
+        {
+            GameplayScene *ptr = dynamic_cast<GameplayScene *>(scene.get());
+            if (ptr)
+                ptr->GetCanvas().GameFinished();
+        }
+        WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 }
 
