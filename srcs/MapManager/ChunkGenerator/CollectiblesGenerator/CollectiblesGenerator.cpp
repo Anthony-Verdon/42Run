@@ -22,7 +22,7 @@ void ChunkGenerator::CollectiblesGenerator::SpawnStars(Chunk &chunk, int laneNum
     switch (lane.obstacleType)
     {
     case ChunkElements::SPIKE_ROLLER:
-        if (lane.level != Level::TOP && lane.level != Level::BOTTOM && lane.level != Level::GROUND)
+        if (lane.level == Level::TOP || lane.level == Level::BOTTOM || lane.level == Level::GROUND)
         {
             startLoop = -3;
             endLoop = -1;
