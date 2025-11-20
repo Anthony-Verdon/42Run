@@ -58,7 +58,7 @@ target("Game")
     add_defines("FLAT_TERRAIN=1")
     add_defines("SPAWN_TURN=0")
     add_defines("DEBUG_DRAW_PHYSIC_3D=" .. tostring(DEBUG_DRAW_PHYSIC_3D))
-    add_defines("CAMERA_MODE=2") -- 0: FOLLOWING PLAYER, 1: DETACHED, 2: SIDE
+    add_defines("CAMERA_MODE=0") -- 0: FOLLOWING PLAYER, 1: DETACHED, 2: SIDE
     add_common_sources()
 
 target("42RunTester")

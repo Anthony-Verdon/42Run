@@ -69,6 +69,7 @@ std::shared_ptr<Tile42Run> ChunkGenerator::CollectiblesGenerator::SpawnStar(cons
     if (chunkDirZ == 0)
         tile->transform = tile->transform * ml::rotate(ml::mat4(1.0f), 90, ml::vec3(0, 1, 0));
     JPH::BodyCreationSettings boxSettings(new JPH::BoxShape(JPH::RVec3(halfSize.x, halfSize.y, halfSize.z)), JPH::RVec3(positionTimeSize.x, positionTimeSize.y + halfSize.y, positionTimeSize.z), JPH::Quat::sIdentity(), JPH::EMotionType::Static, ObjectLayers::NON_MOVING);
+    boxSettings.mIsSensor = true;
     WorldPhysic3D::AddBody(tile.get(), boxSettings, JPH::EActivation::DontActivate);
     WorldPhysic3D::DeactivateBody(tile->GetID());
     tile->flag = TileFlag::UP_AND_DOWN;
