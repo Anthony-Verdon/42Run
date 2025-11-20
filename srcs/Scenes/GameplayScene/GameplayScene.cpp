@@ -78,7 +78,18 @@ void GameplayScene::ProcessInput()
 
 void GameplayScene::UpdateCamera()
 {
-#if CAMERA_DETACH
+#if CAMERA_MODE == 0 // FOLLOWING PLAYER
+    ml::vec3 cameraPosition;
+    if (player.IsDefeated())
+        cameraPosition = (ml::vec3(0, 1, 0) * 3 - ml::normalize(player.GetDirection()) * 5);
+    else
+        cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
+    camera.setPosition(player.GetPosition() + cameraPosition);
+
+    ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);
+    camera.setFrontDirection(ml::normalize(player.GetDirection() + cameraOrientation));
+    camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
+#elif CAMERA_MODE == 1 // DETACH
     // position
     camera.setSpeed(20);
     const float speed = camera.getSpeed() * Time::getDeltaTime();
@@ -117,16 +128,14 @@ void GameplayScene::UpdateCamera()
                        sinf(ml::radians(camera.getYaw())) * cosf(ml::radians(camera.getPitch())));
     camera.setFrontDirection(ml::normalize(direction));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
-#else
-    ml::vec3 cameraPosition;
-    if (player.IsDefeated())
-        cameraPosition = (ml::vec3(0, 1, 0) * 3 - ml::normalize(player.GetDirection()) * 5);
-    else
-        cameraPosition = (ml::vec3(0, 1, 0) - ml::normalize(player.GetDirection())) * 3;
+#elif CAMERA_MODE == 2 // SIDE
+    ml::vec3 playerDirection = player.GetDirection();
+    std::swap(playerDirection.x, playerDirection.z);
+    ml::vec3 cameraPosition = ml::vec3(0, 1, 0) * 3 - ml::normalize(playerDirection) * 10;
     camera.setPosition(player.GetPosition() + cameraPosition);
 
     ml::vec3 cameraOrientation = ml::vec3(0, -0.25, 0);
-    camera.setFrontDirection(ml::normalize(player.GetDirection() + cameraOrientation));
+    camera.setFrontDirection(ml::normalize(playerDirection + cameraOrientation));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
 #endif
 }
