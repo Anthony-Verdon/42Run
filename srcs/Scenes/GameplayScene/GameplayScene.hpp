@@ -5,6 +5,7 @@
 #include "Engine/3D/Camera3D/Camera3D.hpp"
 #include "Engine/3D/Lights/Lights.hpp"
 #include "Player/Player.hpp"
+#include "Scenes/GameplayScene/GameplayCanvas.hpp"
 
 class GameplayScene : public AScene
 {
@@ -12,6 +13,7 @@ class GameplayScene : public AScene
     Camera3D camera;
     std::vector<std::unique_ptr<ALight>> lights;
     Player player;
+    GameplayCanvas canvas;
 
     float accumulatedTime;
 
@@ -29,4 +31,5 @@ class GameplayScene : public AScene
     void Quit();
 
     int GetID() { return SceneType::GAMEPLAY; }
+    GameplayCanvas &GetCanvas() { return canvas; }
 };

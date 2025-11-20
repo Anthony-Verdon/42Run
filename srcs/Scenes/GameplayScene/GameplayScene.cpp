@@ -184,8 +184,8 @@ void GameplayScene::Draw()
 #if DEBUG_DRAW_PHYSIC_3D
     WorldPhysic3D::DebugDraw();
 #endif
+    canvas.Update();
     LineRenderer3D::Draw(projection, view);
-    TextRenderer::Draw("Hello World", "arial", 0, 0, 1, ml::vec4(1, 1, 1, 1));
 }
 
 void SetUpLayers()

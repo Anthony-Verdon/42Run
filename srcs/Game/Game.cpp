@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Engine/2D/Renderers/TextRenderer/TextRenderer.hpp"
 #include "Engine/2D/Renderers/LineRenderer2D/LineRenderer2D.hpp"
+#include "Engine/2D/Renderers/SpriteRenderer/SpriteRenderer.hpp"
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
 #include "Scenes/MenuScene/MenuScene.hpp"
 #if DRAW_IMGUI
@@ -29,6 +30,8 @@ void Game::Init()
     TextRenderer::Init();
     TextRenderer::LoadFont("arial", "assets/fonts/arial.ttf", 48);
     LineRenderer3D::Init();
+    SpriteRenderer::Init();
+    RessourceManager::AddTexture("star", "assets/star.png");
 
     SceneManager::LoadScene(std::make_unique<MenuScene>());
 
@@ -59,6 +62,7 @@ Game::~Game()
 #endif
     LineRenderer2D::Destroy();
     TextRenderer::Destroy();
+    SpriteRenderer::Destroy();
 }
 
 void Game::Run()

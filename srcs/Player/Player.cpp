@@ -8,6 +8,8 @@
 #include "Engine/3D/WorldPhysic3D/ContactListener/ContactListener.hpp"
 #include "Game/Layers.hpp"
 #include "PhysicBodyType.hpp"
+#include "Engine/Scenes/SceneManager/SceneManager.hpp"
+#include "Scenes/GameplayScene/GameplayScene.hpp"
 
 #if DRAW_IMGUI
 #include "imgui.h"
@@ -30,6 +32,7 @@ Player::Player()
     state = PlayerStateFlag::RUNNING;
     timeElapsed = 0;
     physicBodyType = PhysicBodyType::PLAYER;
+    nbCollectible = 0;
 }
 
 void Player::Init()
@@ -220,6 +223,21 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
             playerLost = true;
         else
             onGround = true;
+    }
+    else if (collisionedBody->GetPhysicBodyType() == PhysicBodyType::COLLECTIBLE)
+    {
+        nbCollectible++;
+        auto &scene = SceneManager::GetCurrentScene();
+        if (scene->GetID() == SceneType::GAMEPLAY)
+        {
+            GameplayScene *ptr = dynamic_cast<GameplayScene *>(scene.get());
+            if (ptr)
+            {
+                UpdateScoreEventData data;
+                data.score = nbCollectible;
+                ptr->GetCanvas().HandleEvents(data);
+            }
+        }
     }
 
     if (playerLost)

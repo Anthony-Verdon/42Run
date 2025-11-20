@@ -17,22 +17,22 @@ MenuCanvas::~MenuCanvas()
 {
 }
 
-void MenuCanvas::HandleEvents(unsigned int componentID, unsigned int event)
+void MenuCanvas::HandleEvents(UI::EventData &data)
 {
-    if (componentID == playButton)
+    if (data.componentID == playButton)
     {
-        switch (event)
+        switch (data.event)
         {
-        case CURSEUR_ON:
+        case UI::EngineEvents::CURSEUR_ON:
             std::cout << "curseur on" << std::endl;
             break;
-        case CURSEUR_OFF:
+        case UI::EngineEvents::CURSEUR_OFF:
             std::cout << "curseur off" << std::endl;
             break;
-        case CLICK_ON:
+        case UI::EngineEvents::CLICK_ON:
             std::cout << "click on" << std::endl;
             break;
-        case CLICK_OFF:
+        case UI::EngineEvents::CLICK_OFF:
             std::cout << "click off" << std::endl;
             SceneManager::SwitchScene(std::make_unique<GameplayScene>());
             break;

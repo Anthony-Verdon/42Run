@@ -38,6 +38,7 @@ class Player : public PhysicBody3D
     float speed;
     bool onGround;
     int state;
+    int nbCollectible;
 
     int modelIndex;
     float timeElapsed;
