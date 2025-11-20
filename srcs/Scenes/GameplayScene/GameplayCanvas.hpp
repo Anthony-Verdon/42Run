@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/UI/ACanvas/ACanvas.hpp"
-#include "42RunEvents.hpp"
+#include "GameEvents.hpp"
 
 struct UpdateScoreEventData : public UI::EventData
 {
