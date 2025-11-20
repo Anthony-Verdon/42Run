@@ -17,7 +17,7 @@ class GameplayCanvas : public UI::ACanvas
 {
   private:
     std::string score;
-    unsigned int scoreText;
+    UI::ComponentID scoreText;
 
   public:
     GameplayCanvas();

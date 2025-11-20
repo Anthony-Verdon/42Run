@@ -5,7 +5,7 @@
 class MenuCanvas : public UI::ACanvas
 {
   private:
-    unsigned int playButton;
+    UI::ComponentID playButton;
 
     void HandleEvents(UI::EventData &data);
 
