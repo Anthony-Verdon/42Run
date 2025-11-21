@@ -9,17 +9,15 @@
 
 GameplayCanvas::GameplayCanvas()
 {
-    UI::ACanvas::BeginCanvas(this);
     ml::vec2 size = ml::vec2(50, 50);
     Sprite sprite;
     sprite.textureName = "star";
     sprite.textureSize = ml::vec2(1, 1);
     sprite.spriteCoords = ml::vec2(0, 0);
     sprite.size = size;
-    UI::ACanvas::AddComponent(std::make_unique<UI::UISprite>(sprite, size / 2));
+    AddComponent(std::make_unique<UI::UISprite>(sprite, size / 2));
     score = "0";
-    scoreText = UI::ACanvas::AddComponent(std::make_unique<UI::UIText>(score, "arial", size));
-    UI::ACanvas::EndCanvas();
+    scoreText = AddComponent(std::make_unique<UI::UIText>(score, "arial", size));
 }
 
 GameplayCanvas::~GameplayCanvas()
@@ -28,10 +26,8 @@ GameplayCanvas::~GameplayCanvas()
 
 void GameplayCanvas::GameFinished()
 {
-    UI::ACanvas::BeginCanvas(this);
     ml::vec2 size = ml::vec2(100, 100);
     menuButton = UI::ACanvas::AddComponent(std::make_unique<UI::Button>("return to menu", "arial", (WindowManager::GetWindowSize() - size) / 2, size));
-    UI::ACanvas::EndCanvas();
 }
 
 void GameplayCanvas::HandleEvents(UI::EventData &data)
