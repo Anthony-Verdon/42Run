@@ -10,11 +10,15 @@
 #include "Engine/2D/Renderers/SpriteRenderer/SpriteRenderer.hpp"
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
 #include "Scenes/MenuScene/MenuScene.hpp"
+#include "Json/Json.hpp"
+#include "SaveDefines.hpp"
+
 #if DRAW_IMGUI
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #endif
+
 Game::Game(AProgramState *state)
 {
     if (state)
@@ -32,6 +36,16 @@ void Game::Init()
     LineRenderer3D::Init();
     SpriteRenderer::Init();
     RessourceManager::AddTexture("star", "assets/star.png");
+
+    if (!std::filesystem::exists(SCORE_FILE))
+    {
+        Json::Node file;
+        file[STARS_KEY] = 0;
+        if (!std::filesystem::exists(SAVE_DIRECTORY))
+            std::filesystem::create_directory(SAVE_DIRECTORY);
+
+        Json::WriteFile(SCORE_FILE, file);
+    }
 
     SceneManager::LoadScene(std::make_unique<MenuScene>());
 

@@ -10,6 +10,7 @@
 #include "PhysicBodyType.hpp"
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
 #include "Scenes/GameplayScene/GameplayScene.hpp"
+#include "SaveDefines.hpp"
 
 #if DRAW_IMGUI
 #include "imgui.h"
@@ -255,6 +256,11 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
                 ptr->GetCanvas().GameFinished();
         }
         WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+        Json::Node file = Json::ParseFile(SCORE_FILE);
+        file[STARS_KEY] = (int)file[STARS_KEY] + nbCollectible;
+
+        Json::WriteFile(SCORE_FILE, file);
     }
 }
 
