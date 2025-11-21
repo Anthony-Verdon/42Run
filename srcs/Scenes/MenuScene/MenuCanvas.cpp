@@ -21,10 +21,22 @@ MenuCanvas::MenuCanvas()
     UI::ACanvas::AddComponent(std::make_unique<UI::UISprite>(sprite, sizeStarIcon / 2));
     Json::Node file = Json::ParseFile(SCORE_FILE);
     int score = file[STARS_KEY];
-    UI::ACanvas::AddComponent(std::make_unique<UI::UIText>(std::to_string(score), "arial", ml::vec2(sizeStarIcon.x, WindowManager::GetWindowHeight() - sizeStarIcon.y)));
+    UI::ACanvas::AddComponent(std::make_unique<UI::UIText>(std::to_string(score), "arial", sizeStarIcon));
     ml::vec2 sizeButton = ml::vec2(100, 100);
     playButton = UI::ACanvas::AddComponent(std::make_unique<UI::Button>("Play", "arial", (WindowManager::GetWindowSize() - sizeButton) / 2, sizeButton));
+
+    ml::vec2 buttonPos = WindowManager::GetWindowSize();
+    float offset = buttonPos.x * 0.25;
+    buttonPos.x = offset - sizeButton.x / 2;
+    buttonPos.y = buttonPos.y * 0.75;
+    duckButton = UI::ACanvas::AddComponent(std::make_unique<UI::Button>("duck", "arial", buttonPos, sizeButton));
+    buttonPos.x += offset;
+    bearButton = UI::ACanvas::AddComponent(std::make_unique<UI::Button>("bear", "arial", buttonPos, sizeButton));
+    buttonPos.x += offset;
+    dogButton = UI::ACanvas::AddComponent(std::make_unique<UI::Button>("dog", "arial", buttonPos, sizeButton));
     UI::ACanvas::EndCanvas();
+
+    modelChosen = "assets/characters/duck.glb"; // default
 }
 
 MenuCanvas::~MenuCanvas()
@@ -37,18 +49,44 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
     {
         switch (data.event)
         {
-        case UI::EngineEvents::CURSEUR_ON:
-            std::cout << "curseur on" << std::endl;
-            break;
-        case UI::EngineEvents::CURSEUR_OFF:
-            std::cout << "curseur off" << std::endl;
-            break;
-        case UI::EngineEvents::CLICK_ON:
-            std::cout << "click on" << std::endl;
-            break;
         case UI::EngineEvents::CLICK_OFF:
-            std::cout << "click off" << std::endl;
-            SceneManager::SwitchScene(std::make_unique<GameplayScene>());
+            SceneManager::SwitchScene(std::make_unique<GameplayScene>(modelChosen));
+            break;
+        default:
+            break;
+        }
+    }
+    else if (data.componentID == duckButton)
+    {
+        switch (data.event)
+        {
+        case UI::EngineEvents::CLICK_OFF:
+            modelChosen = "assets/characters/duck.glb";
+            std::cout << "duck chosen" << std::endl;
+            break;
+        default:
+            break;
+        }
+    }
+    else if (data.componentID == bearButton)
+    {
+        switch (data.event)
+        {
+        case UI::EngineEvents::CLICK_OFF:
+            modelChosen = "assets/characters/bear.glb";
+            std::cout << "bear chosen" << std::endl;
+            break;
+        default:
+            break;
+        }
+    }
+    else if (data.componentID == dogButton)
+    {
+        switch (data.event)
+        {
+        case UI::EngineEvents::CLICK_OFF:
+            modelChosen = "assets/characters/dog.glb";
+            std::cout << "dog chosen" << std::endl;
             break;
         default:
             break;

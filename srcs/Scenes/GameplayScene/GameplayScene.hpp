@@ -13,6 +13,7 @@ class GameplayScene : public AScene
     Camera3D camera;
     std::vector<std::unique_ptr<ALight>> lights;
     Player player;
+    std::string playerModelPath;
     GameplayCanvas canvas;
 
     float accumulatedTime;
@@ -23,7 +24,7 @@ class GameplayScene : public AScene
     void Draw();
 
   public:
-    GameplayScene();
+    GameplayScene(const std::string &playerModelPath);
     ~GameplayScene();
 
     void Load();

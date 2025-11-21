@@ -36,9 +36,9 @@ Player::Player()
     nbCollectible = 0;
 }
 
-void Player::Init()
+void Player::Init(const std::string &modelPath)
 {
-    ModelManager::AddModels(ModelLoader::LoadModel("assets/duck.glb"));
+    ModelManager::AddModels(ModelLoader::LoadModel(modelPath));
     modelIndex = ModelManager::GetNbModel() - 1;
     ModelManager::GetModel(modelIndex).Init();
     ModelManager::GetModel(modelIndex).Play("Run");

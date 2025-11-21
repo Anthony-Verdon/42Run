@@ -15,7 +15,7 @@
 
 void SetUpLayers();
 
-GameplayScene::GameplayScene()
+GameplayScene::GameplayScene(const std::string &playerModelPath) : playerModelPath(playerModelPath)
 {
 }
 
@@ -32,7 +32,7 @@ void GameplayScene::Load()
     MapManager::Init();
 
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
-    player.Init();
+    player.Init(playerModelPath);
     accumulatedTime = 0;
 }
 

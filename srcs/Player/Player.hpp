@@ -54,7 +54,7 @@ class Player : public PhysicBody3D
     Player();
     ~Player();
 
-    void Init();
+    void Init(const std::string &modelPath);
     void Destroy();
 
     void ProcessInput();
