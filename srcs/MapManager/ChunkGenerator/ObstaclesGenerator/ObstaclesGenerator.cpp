@@ -13,24 +13,6 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
     {
         Lane &lane = chunk.lanes[i];
 
-        // determine position
-        int pos;
-        switch (lane.level)
-        {
-        case TOP:
-        case GROUND:
-        case BOTTOM:
-            pos = rand() % (GetChunkSize() - 2) + 1; // avoid spawning on first or last tile
-            break;
-        case GOING_DOWN_TO_GROUND:
-        case GOING_TO_TOP:
-        case GOING_TO_BOTTOM:
-        case GOING_UP_TO_GROUND:
-            pos = GetHalfChunkSize();
-            break;
-        }
-        lane.obstaclePos = ml::vec3(lane.tiles[pos]->position.x * 2, lane.tiles[pos]->position.y + 1, lane.tiles[pos]->position.z * 2);
-
         // check if we can spawn or not a spike roller
         bool spikeRollerCanSpawn;
         switch (i)
@@ -46,8 +28,34 @@ void ChunkGenerator::ObstaclesGenerator::GenerateObstacles(Chunk &chunk)
             break;
         }
 
-        // spawn obstacle
+        // determine obstacle we will spawn
+        // 0 = spike roller
+        // 1 = gate
+        // 2 = barrier
         int obstacle = (spikeRollerCanSpawn ? rand() % 3 : rand() % 2 + 1);
+
+        // determine position
+        int pos;
+        switch (lane.level)
+        {
+        case TOP:
+        case GROUND:
+        case BOTTOM:
+            pos = rand() % (GetChunkSize() - 2) + 1; // avoid spawning on first or last tile
+            if (obstacle == 0)                       // in case of spike roller, we want it to spawn at least on tile 2 to have the space for 3 collectibles (last tile of precedent chunk + 2 before it)
+                pos++;
+            break;
+        case GOING_DOWN_TO_GROUND:
+        case GOING_TO_TOP:
+        case GOING_TO_BOTTOM:
+        case GOING_UP_TO_GROUND:
+            pos = GetHalfChunkSize();
+            break;
+        }
+
+        lane.obstaclePos = ml::vec3(lane.tiles[pos]->position.x * 2, lane.tiles[pos]->position.y + 1, lane.tiles[pos]->position.z * 2);
+
+        // spawn obstacle
         switch (obstacle)
         {
         case 0:
