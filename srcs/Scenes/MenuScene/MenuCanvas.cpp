@@ -19,7 +19,7 @@ MenuCanvas::MenuCanvas()
     sprite.size = sizeStarIcon;
     AddComponent(std::make_unique<UI::UISprite>(sprite, sizeStarIcon / 2));
     Json::Node file = Json::ParseFile(SCORE_FILE);
-    int score = file[STARS_KEY];
+    int score = file[NB_STARS];
     AddComponent(std::make_unique<UI::UIText>(std::to_string(score), "arial", sizeStarIcon));
     ml::vec2 sizeButton = ml::vec2(100, 100);
     playButton = AddComponent(std::make_unique<UI::Button>("Play", "arial", (WindowManager::GetWindowSize() - sizeButton) / 2, sizeButton));
@@ -30,9 +30,15 @@ MenuCanvas::MenuCanvas()
     buttonPos.y = buttonPos.y * 0.75;
     duckButton = AddComponent(std::make_unique<UI::Button>("duck", "arial", buttonPos, sizeButton));
     buttonPos.x += offset;
-    bearButton = AddComponent(std::make_unique<UI::Button>("bear", "arial", buttonPos, sizeButton));
+    if (file[BEAR_UNLOCK])
+        bearButton = AddComponent(std::make_unique<UI::Button>("bear", "arial", buttonPos, sizeButton));
+    else
+        bearButton = AddComponent(std::make_unique<UI::Button>("unlock bear (" + std::to_string(BEAR_PRIZE) + ")", "arial", buttonPos, sizeButton));
     buttonPos.x += offset;
-    dogButton = AddComponent(std::make_unique<UI::Button>("dog", "arial", buttonPos, sizeButton));
+    if (file[DOG_UNLOCK])
+        dogButton = AddComponent(std::make_unique<UI::Button>("dog", "arial", buttonPos, sizeButton));
+    else
+        dogButton = AddComponent(std::make_unique<UI::Button>("unlock dog (" + std::to_string(DOG_PRIZE) + ")", "arial", buttonPos, sizeButton));
 
     modelChosen = "assets/characters/duck.glb"; // default
 }
@@ -66,26 +72,50 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
             break;
         }
     }
-    else if (data.componentID == bearButton)
+    else if (data.componentID == bearButton || data.componentID == dogButton)
     {
         switch (data.event)
         {
-        case UI::EngineEvents::CLICK_OFF:
-            modelChosen = "assets/characters/bear.glb";
-            std::cout << "bear chosen" << std::endl;
-            break;
-        default:
+        case UI::EngineEvents::CLICK_OFF: {
+            std::string unlock_tag, character_name;
+            int prize;
+            if (data.componentID == bearButton)
+            {
+                character_name = "bear";
+                unlock_tag = BEAR_UNLOCK;
+                prize = BEAR_PRIZE;
+            }
+            else
+            {
+                character_name = "dog";
+                unlock_tag = DOG_UNLOCK;
+                prize = DOG_PRIZE;
+            }
+            Json::Node file = Json::ParseFile(SCORE_FILE);
+            if (!file[unlock_tag.c_str()])
+            {
+                int nbStars = file[NB_STARS];
+                if (nbStars >= prize)
+                {
+                    file[NB_STARS] = nbStars - prize;
+                    file[unlock_tag.c_str()] = true;
+                    auto &component = GetComponent(data.componentID);
+                    auto button = dynamic_cast<UI::Button *>(component.get());
+                    button->UpdateText(character_name);
+                    Json::WriteFile(SCORE_FILE, file);
+                }
+                else
+                {
+                    std::cout << "not enough stars to unlock " << character_name << std::endl;
+                }
+            }
+            if (file[unlock_tag.c_str()])
+            {
+                modelChosen = "assets/characters/" + character_name + ".glb";
+                std::cout << character_name << " chosen" << std::endl;
+            }
             break;
         }
-    }
-    else if (data.componentID == dogButton)
-    {
-        switch (data.event)
-        {
-        case UI::EngineEvents::CLICK_OFF:
-            modelChosen = "assets/characters/dog.glb";
-            std::cout << "dog chosen" << std::endl;
-            break;
         default:
             break;
         }

@@ -40,7 +40,9 @@ void Game::Init()
     if (!std::filesystem::exists(SCORE_FILE))
     {
         Json::Node file;
-        file[STARS_KEY] = 0;
+        file[NB_STARS] = 0;
+        file[BEAR_UNLOCK] = false;
+        file[DOG_UNLOCK] = false;
         if (!std::filesystem::exists(SAVE_DIRECTORY))
             std::filesystem::create_directory(SAVE_DIRECTORY);
 

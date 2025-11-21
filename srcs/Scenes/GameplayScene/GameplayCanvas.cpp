@@ -43,7 +43,6 @@ void GameplayCanvas::HandleEvents(UI::EventData &data)
     }
     case UI::CLICK_OFF: {
         SceneManager::SwitchScene(std::make_unique<MenuScene>());
-
         break;
     }
     }

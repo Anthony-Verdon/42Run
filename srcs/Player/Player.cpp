@@ -258,7 +258,7 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
         WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
         Json::Node file = Json::ParseFile(SCORE_FILE);
-        file[STARS_KEY] = (int)file[STARS_KEY] + nbCollectible;
+        file[NB_STARS] = (int)file[NB_STARS] + nbCollectible;
 
         Json::WriteFile(SCORE_FILE, file);
     }

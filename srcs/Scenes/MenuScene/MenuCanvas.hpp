@@ -2,6 +2,9 @@
 
 #include "Engine/UI/ACanvas/ACanvas.hpp"
 
+#define BEAR_PRIZE 25
+#define DOG_PRIZE 50
+
 class MenuCanvas : public UI::ACanvas
 {
   private:

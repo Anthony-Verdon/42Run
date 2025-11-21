@@ -3,4 +3,6 @@
 #define SAVE_DIRECTORY "game_data/"
 #define SCORE_FILE SAVE_DIRECTORY "score.json"
 
-#define STARS_KEY "stars"
+#define NB_STARS "stars"
+#define BEAR_UNLOCK "bear_unlock"
+#define DOG_UNLOCK "dog_unlock"
