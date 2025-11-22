@@ -15,6 +15,8 @@ MenuScene::~MenuScene()
 
 void MenuScene::Load()
 {
+    WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
     camera.setPosition(ml::vec3(0, 0, 0));
     camera.setFrontDirection(ml::vec3(1, 0, 0));
     camera.setRightDirection(ml::normalize(ml::crossProduct(camera.getFrontDirection(), camera.getUpDirection())));
