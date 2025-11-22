@@ -38,6 +38,7 @@ void MenuScene::Load()
     characterSelect = 0;
     angle = 180;
     angleOffset = 360.0f / characters.size();
+    UpdateCharacterSelect(file[CHARACTER_SELECTED]);
 
     canvas.Init();
 }
@@ -79,6 +80,7 @@ void MenuScene::Quit()
         }
     }
     file[NB_STARS] = nbStars;
+    file[CHARACTER_SELECTED] = characterSelect;
 
     Json::WriteFile(SCORE_FILE, file);
 }

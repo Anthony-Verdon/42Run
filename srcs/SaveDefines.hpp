@@ -6,3 +6,4 @@
 #define NB_STARS "stars"
 #define BEAR_UNLOCK "bear_unlock"
 #define DOG_UNLOCK "dog_unlock"
+#define CHARACTER_SELECTED "selected_character"

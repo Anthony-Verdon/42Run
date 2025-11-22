@@ -8,9 +8,9 @@
 
 enum CharacterSkin
 {
-  DUCK,
-  BEAR,
-  DOG
+    DUCK = 0,
+    BEAR,
+    DOG
 };
 
 struct Character
@@ -21,7 +21,6 @@ struct Character
     int prize;
     CharacterSkin skin;
 };
-
 
 class MenuScene : public AScene
 {
