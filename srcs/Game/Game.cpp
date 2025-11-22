@@ -36,6 +36,8 @@ void Game::Init()
     LineRenderer3D::Init();
     SpriteRenderer::Init();
     RessourceManager::AddTexture("star", "assets/UI/star.png");
+    RessourceManager::AddTexture("rectangle_button_flat", "assets/UI/buttons/button_rectangle_flat.png");
+    RessourceManager::AddTexture("rectangle_button_depth_flat", "assets/UI/buttons//button_rectangle_depth_flat.png");
 
     if (!std::filesystem::exists(SCORE_FILE))
     {

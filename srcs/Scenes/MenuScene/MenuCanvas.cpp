@@ -4,13 +4,13 @@
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/UI/Events.hpp"
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
-#include "Engine/2D/Sprite/Sprite.hpp"
 #include "Engine/UI/UISprite/UISprite.hpp"
 #include "Engine/UI/UIText/UIText.hpp"
 #include "SaveDefines.hpp"
 
 MenuCanvas::MenuCanvas()
 {
+    // score
     ml::vec2 sizeStarIcon = ml::vec2(50, 50);
     Sprite sprite;
     sprite.textureName = "star";
@@ -21,12 +21,19 @@ MenuCanvas::MenuCanvas()
     Json::Node file = Json::ParseFile(SCORE_FILE);
     int score = file[NB_STARS];
     AddComponent(std::make_unique<UI::UIText>(std::to_string(score), "arial", sizeStarIcon));
-    ml::vec2 sizeButton = ml::vec2(100, 100);
-    playButton = AddComponent(std::make_unique<UI::Button>("Play", "arial", (WindowManager::GetWindowSize() - sizeButton) / 2, sizeButton));
 
+    // play button
+    defaultSpriteButton.textureName = "rectangle_button_depth_flat";
+    defaultSpriteButton.textureSize = ml::vec2(1, 1);
+    defaultSpriteButton.spriteCoords = ml::vec2(0, 0);
+    defaultSpriteButton.size = ml::vec2(300, 100);
+    playButton = AddComponent(std::make_unique<UI::SpriteButton>(defaultSpriteButton, "Play", "arial", WindowManager::GetWindowSize() / 2));
+
+    // character buttons
     ml::vec2 buttonPos = WindowManager::GetWindowSize();
+    ml::vec2 sizeButton = ml::vec2(100, 100);
     float offset = buttonPos.x * 0.25;
-    buttonPos.x = offset - sizeButton.x / 2;
+    buttonPos.x = offset;
     buttonPos.y = buttonPos.y * 0.75;
     duckButton = AddComponent(std::make_unique<UI::Button>("duck", "arial", buttonPos, sizeButton));
     buttonPos.x += offset;
@@ -51,8 +58,23 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
 {
     if (data.componentID == playButton)
     {
+        // maybe it should be moved or handle inside the button but I don't know for the moment
         switch (data.event)
         {
+        case UI::EngineEvents::CURSEUR_ON: {
+            auto &component = GetComponent(playButton);
+            auto button = dynamic_cast<UI::SpriteButton *>(component.get());
+            defaultSpriteButton.textureName = "rectangle_button_flat";
+            button->UpdateSprite(defaultSpriteButton);
+            break;
+        }
+        case UI::EngineEvents::CURSEUR_OFF: {
+            auto &component = GetComponent(playButton);
+            auto button = dynamic_cast<UI::SpriteButton *>(component.get());
+            defaultSpriteButton.textureName = "rectangle_button_depth_flat";
+            button->UpdateSprite(defaultSpriteButton);
+            break;
+        }
         case UI::EngineEvents::CLICK_OFF:
             SceneManager::SwitchScene(std::make_unique<GameplayScene>(modelChosen));
             break;
