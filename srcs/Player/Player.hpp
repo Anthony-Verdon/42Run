@@ -46,6 +46,10 @@ class Player : public PhysicBody3D
     JPH::RefConst<JPH::Shape> standingShape;
     JPH::RefConst<JPH::Shape> rollingShape;
 
+#ifdef DRAW_IMGUI
+    bool isWindowFocused;
+#endif
+
     void OnWorldPhysicUpdated();
     void OnContactAdded(const JPH::ContactManifold &inManifold, const PhysicBody3D *collisionedBody);
     void OnContactPersisted(const JPH::ContactManifold &inManifold, const PhysicBody3D *collisionedBody);
@@ -90,4 +94,11 @@ class Player : public PhysicBody3D
     {
         return (state & PlayerStateFlag::DEFEATED);
     }
+
+#ifdef DRAW_IMGUI
+    bool IsWindowFocused()
+    {
+        return isWindowFocused;
+    }
+#endif
 };

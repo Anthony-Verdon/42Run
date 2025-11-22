@@ -26,8 +26,8 @@ GameplayCanvas::~GameplayCanvas()
 
 void GameplayCanvas::GameFinished()
 {
-    ml::vec2 size = ml::vec2(100, 100);
-    menuButton = UI::ACanvas::AddComponent(std::make_unique<UI::Button>("return to menu", "arial", (WindowManager::GetWindowSize() - size) / 2, size));
+    menuButtonSprite = {"rectangle_button_depth_flat", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(300, 100)};
+    menuButton = AddComponent(std::make_unique<UI::SpriteButton>(menuButtonSprite, "Menu", "arial", WindowManager::GetWindowSize() / 2));
 }
 
 void GameplayCanvas::HandleEvents(UI::EventData &data)
@@ -39,6 +39,18 @@ void GameplayCanvas::HandleEvents(UI::EventData &data)
         auto &component = GetComponent(scoreText);
         auto textComponent = dynamic_cast<UI::UIText *>(component.get());
         textComponent->UpdateText(std::to_string(dataCast.score));
+        break;
+    }
+    case UI::EngineEvents::CURSEUR_ON: {
+        auto button = dynamic_cast<UI::SpriteButton *>(GetComponent(menuButton).get());
+        menuButtonSprite.textureName = "rectangle_button_flat";
+        button->UpdateSprite(menuButtonSprite);
+        break;
+    }
+    case UI::EngineEvents::CURSEUR_OFF: {
+        auto button = dynamic_cast<UI::SpriteButton *>(GetComponent(menuButton).get());
+        menuButtonSprite.textureName = "rectangle_button_depth_flat";
+        button->UpdateSprite(menuButtonSprite);
         break;
     }
     case UI::CLICK_OFF: {

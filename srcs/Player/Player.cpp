@@ -190,6 +190,7 @@ void Player::Draw(const ml::vec3 &camPos, const std::vector<std::unique_ptr<ALig
 
 #if DRAW_IMGUI
     ImGui::Begin("Player");
+    isWindowFocused = ImGui::IsWindowFocused();
     ImGui::Text("State: %s", magic_enum::enum_flags_name(static_cast<PlayerStateFlag>(state)).c_str());
     ImGui::Text("On ground: %s", (onGround ? "true" : "false"));
     ImGui::End();

@@ -2,6 +2,7 @@
 
 #include "Engine/UI/ACanvas/ACanvas.hpp"
 #include "GameEvents.hpp"
+#include "Engine/2D/Sprite/Sprite.hpp"
 
 struct UpdateScoreEventData : public UI::EventData
 {
@@ -18,6 +19,7 @@ class GameplayCanvas : public UI::ACanvas
   private:
     std::string score;
     UI::ComponentID scoreText;
+    Sprite menuButtonSprite;
     UI::ComponentID menuButton;
 
   public:

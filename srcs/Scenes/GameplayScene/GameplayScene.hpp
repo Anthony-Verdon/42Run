@@ -18,6 +18,10 @@ class GameplayScene : public AScene
 
     float accumulatedTime;
 
+#ifdef DRAW_IMGUI
+    bool isWindowFocused;
+#endif
+
     void ProcessInput();
     void UpdateCamera();
 

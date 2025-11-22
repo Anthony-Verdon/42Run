@@ -34,6 +34,9 @@ void GameplayScene::Load()
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
     player.Init(playerModelPath);
     accumulatedTime = 0;
+#if DRAW_IMGUI
+    isWindowFocused = false;
+#endif
 }
 
 void GameplayScene::Run()
@@ -60,16 +63,11 @@ void GameplayScene::Quit()
 
 void GameplayScene::ProcessInput()
 {
-    if (WindowManager::IsInputPressed(GLFW_KEY_ESCAPE))
 #if DRAW_IMGUI
-    {
-        if (WindowManager::GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
-            WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        else if (WindowManager::GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
-            WindowManager::StopUpdateLoop();
-    }
-#else
-        WindowManager::StopUpdateLoop();
+    if (WindowManager::IsInputPressed(GLFW_KEY_ESCAPE) && WindowManager::GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+        WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    else if (WindowManager::IsInputPressed(GLFW_MOUSE_BUTTON_1) && WindowManager::GetInputMode(GLFW_CURSOR) == GLFW_CURSOR_NORMAL && !isWindowFocused)
+        WindowManager::SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 #endif
 
     player.ProcessInput();
@@ -178,6 +176,7 @@ void GameplayScene::Draw()
     }
 
 #if DRAW_IMGUI
+    isWindowFocused = player.IsWindowFocused();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
