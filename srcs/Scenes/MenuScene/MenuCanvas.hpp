@@ -9,8 +9,9 @@
 class MenuCanvas : public UI::ACanvas
 {
   private:
-    UI::ComponentID playButton;
+    UI::ComponentID playButton, unlockButton;
     UI::ComponentID leftArrow, rightArrow;
+    UI::ComponentID nbStarText;
     Sprite playButtonSprite;
 
     void HandleEvents(UI::EventData &data);
