@@ -32,10 +32,10 @@ void Game::Init()
 
     LineRenderer2D::Init();
     TextRenderer::Init();
-    TextRenderer::LoadFont("arial", "assets/fonts/arial.ttf", 48);
+    TextRenderer::LoadFont("arial", "assets/UI/fonts/arial.ttf", 48);
     LineRenderer3D::Init();
     SpriteRenderer::Init();
-    RessourceManager::AddTexture("star", "assets/star.png");
+    RessourceManager::AddTexture("star", "assets/UI/star.png");
 
     if (!std::filesystem::exists(SCORE_FILE))
     {

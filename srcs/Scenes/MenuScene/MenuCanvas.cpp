@@ -40,7 +40,7 @@ MenuCanvas::MenuCanvas()
     else
         dogButton = AddComponent(std::make_unique<UI::Button>("unlock dog (" + std::to_string(DOG_PRIZE) + ")", "arial", buttonPos, sizeButton));
 
-    modelChosen = "assets/characters/duck.glb"; // default
+    modelChosen = "assets/models/characters/duck.glb"; // default
 }
 
 MenuCanvas::~MenuCanvas()
@@ -65,7 +65,7 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
         switch (data.event)
         {
         case UI::EngineEvents::CLICK_OFF:
-            modelChosen = "assets/characters/duck.glb";
+            modelChosen = "assets/models/characters/duck.glb";
             std::cout << "duck chosen" << std::endl;
             break;
         default:
@@ -111,7 +111,7 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
             }
             if (file[unlock_tag.c_str()])
             {
-                modelChosen = "assets/characters/" + character_name + ".glb";
+                modelChosen = "assets/models/characters/" + character_name + ".glb";
                 std::cout << character_name << " chosen" << std::endl;
             }
             break;
