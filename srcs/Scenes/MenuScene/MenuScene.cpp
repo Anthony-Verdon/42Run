@@ -56,7 +56,10 @@ void MenuScene::Run()
     {
         ml::mat4 characterRotationOverPoint = ml::rotate(ml::mat4(1.0f), angle - i * angleOffset, ml::vec3(0, 1, 0)) * ml::translate(ml::mat4(1.0f), ml::vec3(1, 0, 0)); // rotation around the point, rotate is the angle, translate is the distance to the point
         ml::mat4 transform = pointPosition * characterRotationOverPoint * characterRotation;                                                                             // final transform
-        ModelManager::Draw(characters[i].modelIndex, camera.getPosition(), lights, projection, view, transform);
+        if (characters[i].unlock)
+            ModelManager::Draw(characters[i].modelIndex, camera.getPosition(), lights, projection, view, transform);
+        else
+            ModelManager::Draw(characters[i].modelIndex, camera.getPosition(), lights, projection, view, transform, true, ml::vec3(0, 0, 0));
     }
     canvas.Update();
 }
