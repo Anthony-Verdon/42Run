@@ -3,6 +3,7 @@
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/Time/Time.hpp"
+#include "SaveDefines.hpp"
 
 MenuScene::MenuScene()
 {
@@ -20,24 +21,25 @@ void MenuScene::Load()
 
     lights.push_back(std::make_unique<DirectionalLight>(ml::vec3(1, 1, 1), 3, ml::vec3(0, -1, 0)));
 
-    paths = {
-        "assets/models/characters/duck.glb",
-        "assets/models/characters/bear.glb",
-        "assets/models/characters/dog.glb",
-    };
+    Json::Node file = Json::ParseFile(SCORE_FILE);
+    characters.push_back({"assets/models/characters/duck.glb", 0, true, 0, DUCK});
+    characters.push_back({"assets/models/characters/bear.glb", 0, file[BEAR_UNLOCK], BEAR_PRIZE, BEAR});
+    characters.push_back({"assets/models/characters/dog.glb", 0, file[DOG_UNLOCK], DOG_PRIZE, DOG});
+    nbStars = file[NB_STARS];
 
-    for (size_t i = 0; i < paths.size(); i++)
+    for (size_t i = 0; i < characters.size(); i++)
     {
-        ModelManager::AddModels(ModelLoader::LoadModel(paths[i]));
-        int modelIndex = ModelManager::GetNbModel() - 1;
-        ModelManager::GetModel(modelIndex).Init();
-        ModelManager::GetModel(modelIndex).Play("Idle");
-        charactersModelIndex.push_back(modelIndex);
+        ModelManager::AddModels(ModelLoader::LoadModel(characters[i].path));
+        characters[i].modelIndex = ModelManager::GetNbModel() - 1;
+        ModelManager::GetModel(characters[i].modelIndex).Init();
+        ModelManager::GetModel(characters[i].modelIndex).Play("Idle");
     }
 
     characterSelect = 0;
     angle = 180;
-    angleOffset = 360.0f / charactersModelIndex.size();
+    angleOffset = 360.0f / characters.size();
+
+    canvas.Init();
 }
 
 void MenuScene::Run()
@@ -49,17 +51,36 @@ void MenuScene::Run()
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     ml::mat4 characterRotation = ml::rotate(ml::mat4(1.0f), 270, ml::vec3(0, 1, 0)); // rotation on himself
     ml::mat4 pointPosition = ml::translate(ml::mat4(1.0f), ml::vec3(4, -0.5, 0));    // point around characters rotate
-    for (size_t i = 0; i < charactersModelIndex.size(); i++)
+    for (size_t i = 0; i < characters.size(); i++)
     {
         ml::mat4 characterRotationOverPoint = ml::rotate(ml::mat4(1.0f), angle - i * angleOffset, ml::vec3(0, 1, 0)) * ml::translate(ml::mat4(1.0f), ml::vec3(1, 0, 0)); // rotation around the point, rotate is the angle, translate is the distance to the point
         ml::mat4 transform = pointPosition * characterRotationOverPoint * characterRotation;                                                                             // final transform
-        ModelManager::Draw(charactersModelIndex[i], camera.getPosition(), lights, projection, view, transform);
+        ModelManager::Draw(characters[i].modelIndex, camera.getPosition(), lights, projection, view, transform);
     }
     canvas.Update();
 }
 
 void MenuScene::Quit()
 {
+    Json::Node file = Json::ParseFile(SCORE_FILE);
+
+    for (size_t i = 0; i < characters.size(); i++)
+    {
+        switch (characters[i].skin)
+        {
+        case BEAR:
+            file[BEAR_UNLOCK] = characters[i].unlock;
+            break;
+        case DOG:
+            file[DOG_UNLOCK] = characters[i].unlock;
+            break;
+        default:
+            break;
+        }
+    }
+    file[NB_STARS] = nbStars;
+
+    Json::WriteFile(SCORE_FILE, file);
 }
 
 void MenuScene::UpdateCharacterSelect(int nbOffset)
@@ -67,6 +88,6 @@ void MenuScene::UpdateCharacterSelect(int nbOffset)
     angle += angleOffset * nbOffset;
     characterSelect = characterSelect + nbOffset;
     if (characterSelect < 0)
-        characterSelect = charactersModelIndex.size() - 1;
-    characterSelect = characterSelect % charactersModelIndex.size();
+        characterSelect = characters.size() - 1;
+    characterSelect = characterSelect % characters.size();
 }

@@ -18,4 +18,6 @@ class MenuCanvas : public UI::ACanvas
   public:
     MenuCanvas();
     ~MenuCanvas();
+
+    void Init();
 };

@@ -11,13 +11,16 @@
 
 MenuCanvas::MenuCanvas()
 {
+}
+
+void MenuCanvas::Init()
+{
     // score
     ml::vec2 sizeStarIcon = ml::vec2(50, 50);
     Sprite sprite = {"star", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(50, 50)};
     AddComponent(std::make_unique<UI::UISprite>(sprite, sprite.size / 2));
-    Json::Node file = Json::ParseFile(SCORE_FILE);
-    int score = file[NB_STARS];
-    AddComponent(std::make_unique<UI::UIText>(std::to_string(score), "arial", sprite.size));
+    MenuScene *ptr = dynamic_cast<MenuScene *>(SceneManager::GetCurrentScene().get());
+    AddComponent(std::make_unique<UI::UIText>(std::to_string(ptr->GetNbStars()), "arial", sprite.size));
 
     // play button
     playButtonSprite = {"rectangle_button_depth_flat", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(300, 100)};
@@ -56,9 +59,18 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
             break;
         }
         case UI::EngineEvents::CLICK_OFF: {
-            auto &scene = SceneManager::GetCurrentScene();
-            MenuScene *ptr = dynamic_cast<MenuScene *>(scene.get());
-            SceneManager::SwitchScene(std::make_unique<GameplayScene>(ptr->GetCharacterSelectPath()));
+            MenuScene *ptr = dynamic_cast<MenuScene *>(SceneManager::GetCurrentScene().get());
+            Character &characterSelect = ptr->GetCharacterSelect();
+            int &nbStars = ptr->GetNbStars();
+            if (characterSelect.unlock)
+                SceneManager::SwitchScene(std::make_unique<GameplayScene>(characterSelect.path));
+            else if (characterSelect.prize < nbStars)
+            {
+                nbStars -= characterSelect.prize;
+                characterSelect.unlock = true;
+                auto button = dynamic_cast<UI::SpriteButton *>(GetComponent(playButton).get());
+                button->UpdateText("Play");
+            }
             break;
         }
         break;
@@ -75,6 +87,12 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
             MenuScene *ptr = dynamic_cast<MenuScene *>(scene.get());
             int nbOffset = (data.componentID == leftArrow) ? -1 : 1;
             ptr->UpdateCharacterSelect(nbOffset);
+
+            auto button = dynamic_cast<UI::SpriteButton *>(GetComponent(playButton).get());
+            if (ptr->GetCharacterSelect().unlock)
+                button->UpdateText("Play");
+            else
+                button->UpdateText("Unlock");
             break;
         }
         default:

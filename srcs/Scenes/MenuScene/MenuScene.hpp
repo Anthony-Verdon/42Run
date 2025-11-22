@@ -6,6 +6,23 @@
 #include "Engine/3D/Camera3D/Camera3D.hpp"
 #include "Engine/3D/Lights/Lights.hpp"
 
+enum CharacterSkin
+{
+  DUCK,
+  BEAR,
+  DOG
+};
+
+struct Character
+{
+    std::string path;
+    int modelIndex;
+    bool unlock;
+    int prize;
+    CharacterSkin skin;
+};
+
+
 class MenuScene : public AScene
 {
   private:
@@ -13,11 +30,11 @@ class MenuScene : public AScene
 
     Camera3D camera;
     std::vector<std::unique_ptr<ALight>> lights;
-    std::vector<std::string> paths;
-    std::vector<int> charactersModelIndex;
+    std::vector<Character> characters;
     int characterSelect;
     float angle;
     float angleOffset;
+    int nbStars;
 
   public:
     MenuScene();
@@ -30,5 +47,6 @@ class MenuScene : public AScene
     int GetID() { return SceneType::MENU; }
 
     void UpdateCharacterSelect(int nbOffset);
-    std::string GetCharacterSelectPath() { return (paths[characterSelect]); }
+    Character &GetCharacterSelect() { return (characters[characterSelect]); }
+    int &GetNbStars() { return (nbStars); }
 };
