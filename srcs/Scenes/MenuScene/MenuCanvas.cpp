@@ -14,6 +14,9 @@ MenuCanvas::MenuCanvas()
 {
 }
 
+// probably won't change it now,
+// but a good thing I could have done would be to create a function to init buttons states,
+// because it's a bit duplicated with code inside events
 void MenuCanvas::Init()
 {
     MenuScene *ptr = dynamic_cast<MenuScene *>(SceneManager::GetCurrentScene().get());
