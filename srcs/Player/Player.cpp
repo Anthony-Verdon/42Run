@@ -87,6 +87,8 @@ void Player::ProcessInput()
         {
             state &= ~PlayerStateFlag::ROLLING;
             ModelManager::GetModel(modelIndex).Play("Run");
+            WorldPhysic3D::SetShape(GetID(), standingShape, true, JPH::EActivation::Activate);
+            WorldPhysic3D::SetPosition(GetID(), WorldPhysic3D::GetPosition(GetID()) + JPH::Vec3::sAxisY() * PLAYER_CAPSULE_HEIGHT_DIFF, JPH::EActivation::Activate);
         }
         state |= PlayerStateFlag::JUMPING;
     }
