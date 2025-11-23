@@ -32,7 +32,14 @@ void MenuCanvas::Init()
     if (character.unlock)
         GetComponent(unlockButton)->Hide();
     else
+    {
         GetComponent(playButton)->Hide();
+        if (ptr->GetNbStars() < character.prize)
+        {
+            auto button = dynamic_cast<UnlockButton *>(GetComponent(unlockButton).get());
+            button->Disable();
+        }
+    }
 
     // arrow button
     Sprite spriteArrow = {"arrow_basic_w", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(50, 50)};
@@ -85,7 +92,6 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
         }
         case UI::EngineEvents::CURSEUR_OFF: {
             auto button = dynamic_cast<UnlockButton *>(GetComponent(unlockButton).get());
-            playButtonSprite.textureName = "rectangle_button_depth_flat";
             button->CurseurOff();
             break;
         }
@@ -129,6 +135,10 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
                 UnlockButton *ptrButton = dynamic_cast<UnlockButton *>(GetComponent(unlockButton).get());
                 ptrButton->Show();
                 ptrButton->UpdateText("Unlock : " + std::to_string(character.prize));
+                if (ptr->GetNbStars() < character.prize)
+                    ptrButton->Disable();
+                else
+                    ptrButton->Enable();
             }
             break;
         }

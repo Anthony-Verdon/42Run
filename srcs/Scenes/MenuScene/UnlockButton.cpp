@@ -12,9 +12,12 @@ UnlockButton::~UnlockButton()
 
 void UnlockButton::Draw()
 {
-    SpriteRenderer::Draw(SpriteRenderDataBuilder().SetPosition(pos).SetSprite(background).SetSize(background.size).SetDrawAbsolute(true).Build());
-    SpriteRenderer::Draw(SpriteRenderDataBuilder().SetPosition(ml::vec2(pos.x + (size.x * 0.9 - star.size.x) / 2, pos.y)).SetSprite(star).SetSize(star.size).SetDrawAbsolute(true).Build());
-    TextRenderer::Draw(text, font, pos.x - (size.x * 0.9) / 2, pos.y, 0.75, ml::vec4(1, 1, 1, 1), TextRenderer::TextAlign::LEFT);
+    ml::vec4 color = ml::vec4(1, 1, 1, 1);
+    if (disable)
+        color = ml::vec4(0.5, 0.5, 0.5, 1);
+    SpriteRenderer::Draw(SpriteRenderDataBuilder().SetPosition(pos).SetSprite(background).SetSize(background.size).SetDrawAbsolute(true).SetColor(color).Build());
+    SpriteRenderer::Draw(SpriteRenderDataBuilder().SetPosition(ml::vec2(pos.x + (size.x * 0.9 - star.size.x) / 2, pos.y)).SetSprite(star).SetSize(star.size).SetColor(color).SetDrawAbsolute(true).Build());
+    TextRenderer::Draw(text, font, pos.x - (size.x * 0.9) / 2, pos.y, 0.75, color, TextRenderer::TextAlign::LEFT);
 }
 
 void UnlockButton::CurseurOn()
