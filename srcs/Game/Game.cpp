@@ -12,6 +12,7 @@
 #include "Scenes/MenuScene/MenuScene.hpp"
 #include "Json/Json.hpp"
 #include "SaveDefines.hpp"
+#include "Engine/AudioManager/AudioManager.hpp"
 
 #if DRAW_IMGUI
 #include "imgui.h"
@@ -35,6 +36,7 @@ void Game::Init()
     TextRenderer::LoadFont("arial", "assets/UI/fonts/arial.ttf", 48);
     LineRenderer3D::Init();
     SpriteRenderer::Init();
+    AudioManager::Init();
     RessourceManager::AddTexture("star", "assets/UI/star.png");
     RessourceManager::AddTexture("rectangle_button_flat", "assets/UI/buttons/button_rectangle_flat.png");
     RessourceManager::AddTexture("rectangle_button_depth_flat", "assets/UI/buttons//button_rectangle_depth_flat.png");
@@ -84,6 +86,7 @@ Game::~Game()
     LineRenderer2D::Destroy();
     TextRenderer::Destroy();
     SpriteRenderer::Destroy();
+    AudioManager::Destroy();
 }
 
 void Game::Run()

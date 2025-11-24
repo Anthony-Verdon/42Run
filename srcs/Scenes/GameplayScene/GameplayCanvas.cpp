@@ -6,6 +6,7 @@
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
 #include "Scenes/MenuScene/MenuScene.hpp"
+#include "Engine/AudioManager/AudioManager.hpp"
 
 GameplayCanvas::GameplayCanvas()
 {
@@ -55,6 +56,7 @@ void GameplayCanvas::HandleEvents(UI::EventData &data)
     }
     case UI::CLICK_OFF: {
         SceneManager::SwitchScene(std::make_unique<MenuScene>());
+        AudioManager::Play("assets/sounds/click-b.mp3");
         break;
     }
     }

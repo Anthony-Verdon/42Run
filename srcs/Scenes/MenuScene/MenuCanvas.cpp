@@ -9,6 +9,7 @@
 #include "SaveDefines.hpp"
 #include "Scenes/MenuScene/MenuScene.hpp"
 #include "Scenes/MenuScene/UnlockButton.hpp"
+#include "Engine/AudioManager/AudioManager.hpp"
 
 MenuCanvas::MenuCanvas()
 {
@@ -77,6 +78,7 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
         case UI::EngineEvents::CLICK_OFF: {
             MenuScene *ptr = dynamic_cast<MenuScene *>(SceneManager::GetCurrentScene().get());
             SceneManager::SwitchScene(std::make_unique<GameplayScene>(ptr->GetCharacterSelect().path));
+            AudioManager::Play("assets/sounds/click-b.mp3");
             break;
         }
         default:
@@ -111,6 +113,7 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
                 GetComponent(playButton)->Show();
                 GetComponent(unlockButton)->Hide();
             }
+            AudioManager::Play("assets/sounds/click-b.mp3");
             break;
         }
         default:
