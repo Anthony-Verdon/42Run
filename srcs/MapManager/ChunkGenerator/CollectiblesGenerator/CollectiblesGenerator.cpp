@@ -46,7 +46,7 @@ void ChunkGenerator::CollectiblesGenerator::SpawnStars(Chunk &chunk, int laneNum
 
     for (int i = startLoop; i <= endLoop; i++)
     {
-        ml::vec3 starPos = lane.obstaclePos + ml::vec3(0, 1, 0);
+        ml::vec3 starPos = lane.obstaclePos + ml::vec3(0, 0.5, 0);
         if (chunk.dirZ == 0)
             starPos.x += i * 2;
         else

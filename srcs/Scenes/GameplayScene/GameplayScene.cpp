@@ -151,7 +151,7 @@ void GameplayScene::Draw()
     player.Draw(camera.getPosition(), lights, projection, view);
 
     auto chunks = MapManager::GetChunks();
-    float translationValue = sin(Time::getTime()) / 2;
+    float translationValue = sin(Time::getTime()) / 2 + 0.5;
     float rotationValue = (int)ml::degrees(Time::getTime() * 2) % 360;
     for (; !chunks.empty(); chunks.pop())
     {
