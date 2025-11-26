@@ -7,3 +7,4 @@
 #define BEAR_UNLOCK "bear_unlock"
 #define DOG_UNLOCK "dog_unlock"
 #define CHARACTER_SELECTED "selected_character"
+#define SOUND_VOLUME "sound_volume"

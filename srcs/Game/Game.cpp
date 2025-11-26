@@ -54,6 +54,7 @@ void Game::Init()
         file[BEAR_UNLOCK] = false;
         file[DOG_UNLOCK] = false;
         file[CHARACTER_SELECTED] = DUCK;
+        file[SOUND_VOLUME] = 1;
         if (!std::filesystem::exists(SAVE_DIRECTORY))
             std::filesystem::create_directory(SAVE_DIRECTORY);
 

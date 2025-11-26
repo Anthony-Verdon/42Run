@@ -42,8 +42,10 @@ void MenuScene::Load()
     angleOffset = 360.0f / characters.size();
     UpdateCharacterSelect(file[CHARACTER_SELECTED]);
 
+    soundVolume = file[SOUND_VOLUME];
     canvas.Init();
 
+    AudioManager::SetVolume(soundVolume);
     AudioManager::InitSound(backgroundAudio, "assets/sounds/1. Palm Tree Shade.wav");
     backgroundAudio.SetLooping(true);
     backgroundAudio.Play();
@@ -91,6 +93,7 @@ void MenuScene::Quit()
     }
     file[NB_STARS] = nbStars;
     file[CHARACTER_SELECTED] = characterSelect;
+    file[SOUND_VOLUME] = soundVolume;
 
     Json::WriteFile(SCORE_FILE, file);
 

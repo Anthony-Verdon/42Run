@@ -67,7 +67,7 @@ void MenuCanvas::Init()
     Sprite boundary = {"slider_horizontal", ml::vec2(6, 1), ml::vec2(0, 0), sliderSpriteSize};
     Sprite pipe = {"slider_horizontal", ml::vec2(6, 1), ml::vec2(1, 0), sliderSpriteSize};
     Sprite thumb = {"slider_thumb", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(24, 32)};
-    soundSlider = AddComponent(std::make_unique<UI::FloatSlider>(boundary, pipe, thumb, 0, 2, 1, WindowManager::GetWindowSize() / 2, sliderSize, "arial", [this](const UI::CallbackData &data) { SoundSliderCallback(data); }));
+    soundSlider = AddComponent(std::make_unique<UI::FloatSlider>(boundary, pipe, thumb, 0, 2, ptr->GetSoundVolume(), WindowManager::GetWindowSize() / 2, sliderSize, "arial", [this](const UI::CallbackData &data) { SoundSliderCallback(data); }));
     GetComponent(soundSlider)->Hide();
 
     // slider text
@@ -191,6 +191,8 @@ void MenuCanvas::SoundSliderCallback(const UI::CallbackData &data)
     case UI::EngineCallbacks::UPDATE_VALUE: {
         UI::FloatSlider::UpdateValueEventData dataCast = dynamic_cast<const UI::FloatSlider::UpdateValueEventData &>(data);
         AudioManager::SetVolume(dataCast.newValue);
+        MenuScene *ptr = dynamic_cast<MenuScene *>(SceneManager::GetCurrentScene().get());
+        ptr->SetSoundVolume(dataCast.newValue);
         break;
     }
     default:

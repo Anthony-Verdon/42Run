@@ -35,6 +35,7 @@ class MenuScene : public AScene
     float angle;
     float angleOffset;
     int nbStars;
+    float soundVolume;
 
     Audio backgroundAudio;
 
@@ -51,4 +52,6 @@ class MenuScene : public AScene
     void UpdateCharacterSelect(int nbOffset);
     Character &GetCharacterSelect() { return (characters[characterSelect]); }
     int &GetNbStars() { return (nbStars); }
+    void SetSoundVolume(float soundVolume) { this->soundVolume = soundVolume; }
+    float GetSoundVolume() { return (soundVolume); }
 };
