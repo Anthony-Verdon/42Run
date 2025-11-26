@@ -35,10 +35,6 @@ class MenuScene : public AScene
     float angleOffset;
     int nbStars;
 
-#if DRAW_IMGUI
-    float soundValue;
-#endif
-
   public:
     MenuScene();
     ~MenuScene();

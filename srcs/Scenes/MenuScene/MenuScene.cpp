@@ -4,12 +4,6 @@
 #include "Engine/3D/ModelLoader/ModelLoader.hpp"
 #include "Engine/Time/Time.hpp"
 #include "SaveDefines.hpp"
-#if DRAW_IMGUI
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "Engine/AudioManager/AudioManager.hpp"
-#endif
 
 MenuScene::MenuScene()
 {
@@ -49,10 +43,6 @@ void MenuScene::Load()
     UpdateCharacterSelect(file[CHARACTER_SELECTED]);
 
     canvas.Init();
-
-#if DRAW_IMGUI
-    soundValue = 1;
-#endif
 }
 
 void MenuScene::Run()
@@ -74,19 +64,6 @@ void MenuScene::Run()
             ModelManager::Draw(characters[i].modelIndex, camera.getPosition(), lights, projection, view, transform, true, ml::vec3(0, 0, 0));
     }
 
-#if DRAW_IMGUI
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-    ImGui::Begin("Sound level");
-    if (ImGui::SliderFloat("sound level", &soundValue, 0, 2))
-        AudioManager::SetVolume(soundValue);
-    if (ImGui::Button("play sound"))
-        AudioManager::Play("assets/sounds/click-b.mp3");
-    ImGui::End();
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#endif
     canvas.Update();
 }
 
