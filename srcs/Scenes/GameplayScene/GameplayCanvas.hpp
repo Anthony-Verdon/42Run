@@ -8,10 +8,7 @@ struct UpdateScoreEventData : public UI::EventData
 {
     int score;
 
-    UpdateScoreEventData()
-    {
-        event = UPDATE_SCORE;
-    }
+    UpdateScoreEventData() : UI::EventData(UPDATE_SCORE) {}
 };
 
 class GameplayCanvas : public UI::ACanvas

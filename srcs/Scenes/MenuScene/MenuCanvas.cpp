@@ -1,6 +1,7 @@
 #include "Scenes/MenuScene/MenuCanvas.hpp"
 #include "Scenes/GameplayScene/GameplayScene.hpp"
 #include "Engine/UI/Button/Button.hpp"
+#include "Engine/UI/Slider/Slider.hpp"
 #include "Engine/WindowManager/WindowManager.hpp"
 #include "Engine/UI/Events.hpp"
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
@@ -50,6 +51,13 @@ void MenuCanvas::Init()
     leftArrow = AddComponent(std::make_unique<UI::SpriteButton>(spriteArrow, "", "", ml::vec2((WindowManager::GetWindowWidth() - playButtonSprite.size.x - spriteArrow.size.x) / 2, WindowManager::GetWindowHeight() * 0.75 - playButtonSprite.size.y)));
     spriteArrow.textureName = "arrow_basic_e";
     rightArrow = AddComponent(std::make_unique<UI::SpriteButton>(spriteArrow, "", "", ml::vec2((WindowManager::GetWindowWidth() + playButtonSprite.size.x + spriteArrow.size.x) / 2, WindowManager::GetWindowHeight() * 0.75 - playButtonSprite.size.y)));
+
+    // slider
+    ml::vec2 sliderSize = ml::vec2(32, 32);
+    Sprite boundary = {"slider_horizontal", ml::vec2(6, 1), ml::vec2(0, 0), sliderSize};
+    Sprite pipe = {"slider_horizontal", ml::vec2(6, 1), ml::vec2(1, 0), sliderSize};
+    Sprite thumb = {"slider_thumb", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(24, 32)};
+    soundSlider = AddComponent(std::make_unique<UI::FloatSlider>(boundary, pipe, thumb, 0, 2, 1, ml::vec2(WindowManager::GetWindowWidth() * 0.75, WindowManager::GetWindowHeight() * 0.25), ml::vec2(200, 50), "arial"));
 }
 
 MenuCanvas::~MenuCanvas()
@@ -150,6 +158,14 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
         }
         default:
             break;
+        }
+    }
+    else if (data.componentID == soundSlider)
+    {
+        if (data.event == UI::EngineEvents::UPDATE_VALUE)
+        {
+            UI::FloatSlider::UpdateValueEventData dataCast = dynamic_cast<UI::FloatSlider::UpdateValueEventData &>(data);
+            AudioManager::SetVolume(dataCast.newValue);
         }
     }
 }

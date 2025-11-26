@@ -12,6 +12,7 @@ class MenuCanvas : public UI::ACanvas
     UI::ComponentID playButton, unlockButton;
     UI::ComponentID leftArrow, rightArrow;
     UI::ComponentID nbStarText;
+    UI::ComponentID soundSlider;
     Sprite playButtonSprite;
 
     void HandleEvents(UI::EventData &data);

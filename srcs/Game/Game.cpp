@@ -41,7 +41,9 @@ void Game::Init()
     RessourceManager::AddTexture("rectangle_button_flat", "assets/UI/buttons/button_rectangle_flat.png");
     RessourceManager::AddTexture("rectangle_button_depth_flat", "assets/UI/buttons//button_rectangle_depth_flat.png");
     RessourceManager::AddTexture("arrow_basic_w", "assets/UI/buttons/arrow_basic_w.png");
-    RessourceManager::AddTexture("arrow_basic_e", "assets/UI/buttons//arrow_basic_e.png");
+    RessourceManager::AddTexture("arrow_basic_e", "assets/UI/buttons/arrow_basic_e.png");
+    RessourceManager::AddTexture("slider_horizontal", "assets/UI/slider/slide_horizontal_color.png");
+    RessourceManager::AddTexture("slider_thumb", "assets/UI/slider/slide_hangle.png");
 
     if (!std::filesystem::exists(SCORE_FILE))
     {
