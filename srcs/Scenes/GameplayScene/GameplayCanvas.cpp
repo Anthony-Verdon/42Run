@@ -18,7 +18,7 @@ GameplayCanvas::GameplayCanvas()
     sprite.size = size;
     AddComponent(std::make_unique<UI::UISprite>(sprite, size / 2));
     score = "0";
-    scoreText = AddComponent(std::make_unique<UI::UIText>(score, "arial", size));
+    scoreText = AddComponent(std::make_unique<UI::UIText>(score, "arial", size, TextRenderer::TextAlign::LEFT));
 }
 
 GameplayCanvas::~GameplayCanvas()

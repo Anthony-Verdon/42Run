@@ -10,10 +10,15 @@ class MenuCanvas : public UI::ACanvas
 {
   private:
     UI::ComponentID playButton, unlockButton;
+    Sprite playButtonSprite;
     UI::ComponentID leftArrow, rightArrow;
     UI::ComponentID nbStarText;
     UI::ComponentID soundSlider;
-    Sprite playButtonSprite;
+    UI::ComponentID soundSliderText;
+    UI::ComponentID settingsBackground;
+    UI::ComponentID settingsButton;
+
+    bool settingsOpen;
 
     void HandleEvents(UI::EventData &data);
 
