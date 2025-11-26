@@ -5,6 +5,7 @@
 #include "Scenes/Scenes.hpp"
 #include "Engine/3D/Camera3D/Camera3D.hpp"
 #include "Engine/3D/Lights/Lights.hpp"
+#include "Engine/AudioManager/AudioManager.hpp"
 
 enum CharacterSkin
 {
@@ -34,6 +35,8 @@ class MenuScene : public AScene
     float angle;
     float angleOffset;
     int nbStars;
+
+    Audio backgroundAudio;
 
   public:
     MenuScene();

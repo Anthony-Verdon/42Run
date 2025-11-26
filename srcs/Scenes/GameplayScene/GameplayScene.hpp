@@ -6,6 +6,7 @@
 #include "Engine/3D/Lights/Lights.hpp"
 #include "Player/Player.hpp"
 #include "Scenes/GameplayScene/GameplayCanvas.hpp"
+#include "Engine/AudioManager/AudioManager.hpp"
 
 class GameplayScene : public AScene
 {
@@ -17,6 +18,8 @@ class GameplayScene : public AScene
     GameplayCanvas canvas;
 
     float accumulatedTime;
+
+    Audio backgroundAudio;
 
 #ifdef DRAW_IMGUI
     bool isWindowFocused;

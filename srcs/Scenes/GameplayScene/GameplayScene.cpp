@@ -37,6 +37,10 @@ void GameplayScene::Load()
 #if DRAW_IMGUI
     isWindowFocused = false;
 #endif
+
+    AudioManager::InitSound(backgroundAudio, "assets/sounds/3. Road Trip through Nevada.wav");
+    backgroundAudio.SetLooping(true);
+    backgroundAudio.Play();
 }
 
 void GameplayScene::Run()
@@ -59,6 +63,9 @@ void GameplayScene::Quit()
 {
     player.Destroy();
     WorldPhysic3D::Destroy();
+
+    backgroundAudio.SetLooping(false);
+    backgroundAudio.Stop();
 }
 
 void GameplayScene::ProcessInput()

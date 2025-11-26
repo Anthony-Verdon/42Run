@@ -43,6 +43,10 @@ void MenuScene::Load()
     UpdateCharacterSelect(file[CHARACTER_SELECTED]);
 
     canvas.Init();
+
+    AudioManager::InitSound(backgroundAudio, "assets/sounds/1. Palm Tree Shade.wav");
+    backgroundAudio.SetLooping(true);
+    backgroundAudio.Play();
 }
 
 void MenuScene::Run()
@@ -89,6 +93,9 @@ void MenuScene::Quit()
     file[CHARACTER_SELECTED] = characterSelect;
 
     Json::WriteFile(SCORE_FILE, file);
+
+    backgroundAudio.SetLooping(false);
+    backgroundAudio.Stop();
 }
 
 void MenuScene::UpdateCharacterSelect(int nbOffset)

@@ -169,6 +169,7 @@ void MenuCanvas::HandleEvents(UI::EventData &data)
                 else
                     ptrButton->Enable();
             }
+            AudioManager::Play("assets/sounds/click-b.mp3");
             break;
         }
         default:
