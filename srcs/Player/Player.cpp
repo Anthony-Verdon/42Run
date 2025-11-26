@@ -236,11 +236,7 @@ void Player::OnContactAdded([[maybe_unused]] const JPH::ContactManifold &inManif
         {
             GameplayScene *ptr = dynamic_cast<GameplayScene *>(scene.get());
             if (ptr)
-            {
-                UpdateScoreEventData data;
-                data.score = nbCollectible;
-                ptr->GetCanvas().HandleEvents(data);
-            }
+                ptr->GetCanvas().UpdateScore(nbCollectible);
         }
     }
 

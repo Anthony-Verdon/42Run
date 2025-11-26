@@ -1,15 +1,7 @@
 #pragma once
 
 #include "Engine/UI/ACanvas/ACanvas.hpp"
-#include "GameEvents.hpp"
 #include "Engine/2D/Sprite/Sprite.hpp"
-
-struct UpdateScoreEventData : public UI::EventData
-{
-    int score;
-
-    UpdateScoreEventData() : UI::EventData(UPDATE_SCORE) {}
-};
 
 class GameplayCanvas : public UI::ACanvas
 {
@@ -19,11 +11,12 @@ class GameplayCanvas : public UI::ACanvas
     Sprite menuButtonSprite;
     UI::ComponentID menuButton;
 
+    void menuButtonCallback(const UI::CallbackData &data);
+
   public:
     GameplayCanvas();
     ~GameplayCanvas();
 
+    void UpdateScore(int score);
     void GameFinished();
-
-    void HandleEvents(UI::EventData &data);
 };

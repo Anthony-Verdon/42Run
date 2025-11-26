@@ -9,18 +9,26 @@
 class MenuCanvas : public UI::ACanvas
 {
   private:
-    UI::ComponentID playButton, unlockButton;
-    Sprite playButtonSprite;
-    UI::ComponentID leftArrow, rightArrow;
     UI::ComponentID nbStarText;
+
+    UI::ComponentID playButton;
+    Sprite playButtonSprite;
+    void PlayButtonCallback(const UI::CallbackData &data);
+
+    UI::ComponentID unlockButton;
+    void UnlockButtonCallback(const UI::CallbackData &data);
+
+    UI::ComponentID leftArrow, rightArrow;
+    void ArrowButtonCallback(const UI::CallbackData &data, bool leftArrow);
+
     UI::ComponentID soundSlider;
     UI::ComponentID soundSliderText;
-    UI::ComponentID settingsBackground;
+    void SoundSliderCallback(const UI::CallbackData &data);
+
     UI::ComponentID settingsButton;
-
+    UI::ComponentID settingsBackground;
     bool settingsOpen;
-
-    void HandleEvents(UI::EventData &data);
+    void SettingsButtonCallback(const UI::CallbackData &data);
 
   public:
     MenuCanvas();

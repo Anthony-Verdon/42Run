@@ -7,6 +7,7 @@
 #include "Engine/Scenes/SceneManager/SceneManager.hpp"
 #include "Scenes/MenuScene/MenuScene.hpp"
 #include "Engine/AudioManager/AudioManager.hpp"
+#include "Engine/UI/Callbacks.hpp"
 
 GameplayCanvas::GameplayCanvas()
 {
@@ -28,33 +29,33 @@ GameplayCanvas::~GameplayCanvas()
 void GameplayCanvas::GameFinished()
 {
     menuButtonSprite = {"rectangle_button_depth_flat", ml::vec2(1, 1), ml::vec2(0, 0), ml::vec2(300, 100)};
-    menuButton = AddComponent(std::make_unique<UI::SpriteButton>(menuButtonSprite, "Menu", "arial", WindowManager::GetWindowSize() / 2));
+    menuButton = AddComponent(std::make_unique<UI::SpriteButton>(menuButtonSprite, "Menu", "arial", WindowManager::GetWindowSize() / 2, [this](const UI::CallbackData &data) { menuButtonCallback(data); }));
 }
 
-void GameplayCanvas::HandleEvents(UI::EventData &data)
+void GameplayCanvas::UpdateScore(int score)
 {
-    switch (data.event)
+    auto textComponent = dynamic_cast<UI::UIText *>(GetComponent(scoreText).get());
+    textComponent->UpdateText(std::to_string(score));
+}
+
+void GameplayCanvas::menuButtonCallback(const UI::CallbackData &data)
+{
+    switch (data.callback)
     {
-    case UPDATE_SCORE: {
-        UpdateScoreEventData dataCast = dynamic_cast<UpdateScoreEventData &>(data);
-        auto &component = GetComponent(scoreText);
-        auto textComponent = dynamic_cast<UI::UIText *>(component.get());
-        textComponent->UpdateText(std::to_string(dataCast.score));
-        break;
-    }
-    case UI::EngineEvents::CURSEUR_ON: {
+
+    case UI::EngineCallbacks::CURSEUR_ON: {
         auto button = dynamic_cast<UI::SpriteButton *>(GetComponent(menuButton).get());
         menuButtonSprite.textureName = "rectangle_button_flat";
         button->UpdateSprite(menuButtonSprite);
         break;
     }
-    case UI::EngineEvents::CURSEUR_OFF: {
+    case UI::EngineCallbacks::CURSEUR_OFF: {
         auto button = dynamic_cast<UI::SpriteButton *>(GetComponent(menuButton).get());
         menuButtonSprite.textureName = "rectangle_button_depth_flat";
         button->UpdateSprite(menuButtonSprite);
         break;
     }
-    case UI::CLICK_OFF: {
+    case UI::EngineCallbacks::CLICK_OFF: {
         SceneManager::SwitchScene(std::make_unique<MenuScene>());
         AudioManager::Play("assets/sounds/click-b.mp3");
         break;
