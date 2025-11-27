@@ -47,8 +47,6 @@ void Game::Init()
     RessourceManager::AddTexture("slider_horizontal", "assets/UI/slider/slide_horizontal_color.png");
     RessourceManager::AddTexture("slider_thumb", "assets/UI/slider/slide_hangle.png");
 
-    WindowManager::SetWindowIcon("assets/téléchargement.jpeg");
-
     if (!std::filesystem::exists(SCORE_FILE))
     {
         Json::Node file;
