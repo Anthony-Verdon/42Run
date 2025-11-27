@@ -56,7 +56,7 @@ void MenuScene::Run()
     if (WindowManager::IsInputPressed(GLFW_KEY_ESCAPE))
         WindowManager::StopUpdateLoop();
 
-    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), WindowManager::GetWindowAspectRatio(), 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     ml::mat4 characterRotation = ml::rotate(ml::mat4(1.0f), 270, ml::vec3(0, 1, 0)); // rotation on himself
     ml::mat4 pointPosition = ml::translate(ml::mat4(1.0f), ml::vec3(4, -0.5, 0));    // point around characters rotate

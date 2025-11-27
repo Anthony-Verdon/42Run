@@ -153,7 +153,7 @@ void GameplayScene::Draw()
     ImGui::NewFrame();
 #endif
 
-    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    ml::mat4 projection = ml::perspective(ml::radians(camera.getFov()), WindowManager::GetWindowAspectRatio(), 0.1f, 100.0f);
     ml::mat4 view = ml::lookAt(camera.getPosition(), camera.getPosition() + camera.getFrontDirection(), camera.getUpDirection());
     player.Draw(camera.getPosition(), lights, projection, view);
 

@@ -4,7 +4,7 @@
 
 int main()
 {
-    WindowManager::InitWindow("new game", WINDOW_WIDTH, WINDOW_HEIGHT);
+    WindowManager::InitWindow("42Run");
     Game game;
     game.Init();
     WindowManager::StartUpdateLoop(&game);
